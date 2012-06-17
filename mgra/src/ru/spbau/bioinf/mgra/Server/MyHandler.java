@@ -101,23 +101,23 @@ public class MyHandler extends AbstractHandler {
             }
         } else if (path.contains("showtree.html")) {
             log.debug("Handling request " + path);
-            updateDateDir();
-
-            File datasetDir;
-            do {
-                String dir = JettyServer.REQUEST_START + requestId.getAndIncrement();
-                datasetDir = new File(dateDir, dir);
-            } while (datasetDir.exists());
-            datasetDir.mkdirs();
-
-            String pathDir = datasetDir.getCanonicalPath().replaceAll("\\\\", "/");
-
-            String[] data = null;
-            if (request.getParameterValues("trees")[0] != null) {
-                data = request.getParameterValues("trees")[0].split(";");
-            }
-
             try {
+                updateDateDir();
+
+                File datasetDir;
+                do {
+                    String dir = JettyServer.REQUEST_START + requestId.getAndIncrement();
+                    datasetDir = new File(dateDir, dir);
+                } while (datasetDir.exists());
+                datasetDir.mkdirs();
+
+                String pathDir = datasetDir.getCanonicalPath().replaceAll("\\\\", "/");
+
+                String[] data = null;
+                if (request.getParameterValues("trees")[0] != null) {
+                    data = request.getParameterValues("trees")[0].split(";");
+                }
+
                 TreeReader.createShowTree(data, pathDir);
                 applyXslt("showtree.xml", "showtree.html", pathDir, 4);
                 writeInRequest(new File(pathDir, "showtree.html"), response);
@@ -127,15 +127,14 @@ public class MyHandler extends AbstractHandler {
             log.debug(path + " request processed.");
         } else if (path.contains("tree.html")) {
             log.debug("Handling request " + path);
-            //path = path.substring("/file".length()); //
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
             log.debug(path + " request processed.");
         } else if (path.contains("_gen.html") || path.contains("_trs.html")) {
-            //path = path.substring("/file".length()); //
-            String nameFile = path.substring(path.lastIndexOf("/") + 1);
-            String pathDirectory = path.substring(0, path.lastIndexOf("/"));
-            int width = Integer.valueOf(request.getParameterValues("width")[0]);
             try {
+                String nameFile = path.substring(path.lastIndexOf("/") + 1);
+                int width = Integer.valueOf(request.getParameterValues("width")[0]);
+                String parentHref = request.getParameterValues("parentHref")[0].substring("http://".length());
+                String pathDirectory = parentHref.substring(parentHref.indexOf("/"), parentHref.lastIndexOf("/"));
                 String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
                 Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
                 if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("gen")) {
@@ -145,45 +144,60 @@ public class MyHandler extends AbstractHandler {
                     Transformer.createTransformationToXml(nameFile.substring(0, nameFile.indexOf("_")), config);
                     applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 2);
                 }
-                writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
+                writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), pathDirectory + "/" + nameFile), response);
                 log.debug(nameFile + " created. " + path + " request processed.");
             } catch (Exception e) {
-                log.error("Problem with create file " + nameFile + " " + e);
+                log.error("Problem with create file " + path.substring(path.lastIndexOf("/") + 1) + " " + e);
             }
         } else if (path.contains(".html")) {
             log.debug("Handling request " + path);
-            //path = path.substring("/file".length()); //
-            int idRear = Integer.valueOf(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".")));
-            String nameTransf = path.substring(path.lastIndexOf('/', path.lastIndexOf('/') - 1) + 1, path.lastIndexOf('_'));
-            String pathDirectory = path.substring(0, path.lastIndexOf("/", path.lastIndexOf('/') - 1));
-            int width = Integer.valueOf(request.getParameterValues("width")[0]);
-            String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
-            Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
-            String answer = Transformer.createTransformationToPng(nameTransf, config, idRear);
-            if (answer != null) {
-                ServletOutputStream out = response.getOutputStream();
-                out.write(answer.getBytes(), 0, answer.getBytes().length);
-                out.close();
+            try {
+                int idRear = Integer.valueOf(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".")));
+                String nameTransf = path.substring(path.lastIndexOf('/', path.lastIndexOf('/') - 1) + 1, path.lastIndexOf('_'));
+                int width = Integer.valueOf(request.getParameterValues("width")[0]);
+                String parentHref = request.getParameterValues("parentHref")[0].substring("http://".length());
+                String pathDirectory = parentHref.substring(parentHref.indexOf("/"), parentHref.lastIndexOf("/"));
+                String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
+                Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
+                String answer = Transformer.createTransformationToPng(nameTransf, config, idRear);
+                if (answer != null) {
+                    ServletOutputStream out = response.getOutputStream();
+                    out.write(answer.getBytes(), 0, answer.getBytes().length);
+                    out.close();
+                }
+                log.debug(path + " request processed.");
+            } catch (Exception e) {
+                log.error("Problem with return file " + path.substring(path.lastIndexOf("/") + 1) + " " + e);
             }
-            log.debug(path + " request processed.");
         } else if (path.contains("download")) {
             log.debug("Download request " + path);
-            //path = path.substring("/file".length()); //
-            String nameFile = path.substring(path.indexOf("download") + "download".length() + 1);
-            String pathDirectory = path.substring(0, path.indexOf("download"));
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + nameFile + "\"");
-            writeInRequest(new File(JettyServer.uploadDir, pathDirectory + "/" + nameFile), response);
-            log.debug(path + " download request processed.");
+            try {
+                String nameFile = path.substring(path.lastIndexOf("/") + 1);
+                String parentHref = request.getParameterValues("parentHref")[0].substring("http://".length());
+                //System.out.println(nameFile + " " + parentHref);
+                String pathDirectory = parentHref.substring(parentHref.indexOf("/"), parentHref.lastIndexOf("/"));
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + nameFile + "\"");
+                writeInRequest(new File(JettyServer.uploadDir, pathDirectory + "/" + nameFile), response);
+                log.debug(path + " download request processed.");
+            } catch (Exception e) {
+                log.error("Problem with dowload file " + path.substring(path.lastIndexOf("/") + 1) + " " + e);
+            }
         } else if (path.contains("lib")) {
             log.debug("Handling request " + path);
-            //path = path.substring("/file".length()); //
-            writeInRequest(new File(JettyServer.libDir, path.substring(path.lastIndexOf('/'))), response);
-            log.debug(path + " request processed.");
+            try {
+                writeInRequest(new File(JettyServer.libDir, path.substring(path.lastIndexOf('/'))), response);
+                log.debug(path + " request processed.");
+            } catch (Exception e) {
+                log.error("Problem with return file " + path.substring(path.lastIndexOf("/") + 1) + " " + e);
+            }
         } else if (path.contains(JettyServer.REQUEST_START)) {
             log.debug("Handling request " + path);
-            //path = path.substring("/file".length());
-            writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
-            log.debug(path + " request processed.");
+            try {
+                writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
+                log.debug(path + " request processed.");
+            } catch (Exception e) {
+                log.error("Problem with return file " + path + " " + e);
+            }
         }
     }
 

@@ -39,7 +39,7 @@ public class JettyServer {
     public static File exeFile;
 
     public static File uploadDir = new File("upload");
-    public static File libDir = new File("/home/student/Desktop/MGRA/mgra/html/lib");//new File("/var/www/mgra/lib");//new File("/home/student/Desktop/MGRA/mgra/html/lib"); //change on server
+    public static File libDir = new File("/var/www/mgra/lib");//new File("/home/anikks/Desktop/MGRA/mgra/html/lib");//new File("/home/student/Desktop/MGRA/mgra/html/lib"); //change on server
     public static final String GENOME_FILE_NAME = "genome.txt";
     public static final String CFG_FILE_NAME = "mgra.cfg";
 

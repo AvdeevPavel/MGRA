@@ -361,12 +361,12 @@
 				async: false,
 				cashe: false,
 				context: document.body,
-				data: "width="+$(window).width(),
+				data: "width="+$(window).width() + "&amp;parentHref=" + location.href,
 				dataType: 'html',
 				beforeSend: function() { 
 					$("#" + nameInf + "_bar" + id).html("&lt;u&gt;Please wait. We processed this request: read information, generate images or html text, send. This may take some time.&lt;/u&gt;");	
 				}, 
-				success: function(data) { 
+				success	: function(data) { 
 					$("#" + nameInf + "_info" + id).html(data);
 				}, 
 				error: function() {
@@ -469,22 +469,13 @@
 	<xsl:apply-templates select = "genome"/>
 </xsl:template>
 
-<xsl:template match="genome" mode ="target">
-    <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-	<p id="gen{./name}_bar" align="center"></p>
-	<div id="gen{./name}_info"></div>
-	<div id="button_text_gen_{./name}" align="center">
-		<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.gen'"/>
-	</div>
-</xsl:template>
-
 <xsl:template match="genome">
 	<div id="gen{./name}" style="display:none;">
     	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 		<p id="gen{./name}_bar" align="center"></p>
 		<div id="gen{./name}_info"></div>
 		<div id="button_text_gen_{./name}" align="center">
-			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.gen'"/>
+			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='{./name}.gen'"/>
 		</div>
 	</div>
 </xsl:template>
@@ -500,7 +491,7 @@
 		<p id="trs{./name}_bar" align="center"></p>
 		<div id="trs{./name}_info"></div>
 		<div id="buttons_trs_{./name}" align="center">
-			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.trs'"/>
+			<input name="download_text" type="button" value="Save as text" onclick="window.location.href={./name}.trs'"/>
 		</div>	
 	</div>
 </xsl:template>

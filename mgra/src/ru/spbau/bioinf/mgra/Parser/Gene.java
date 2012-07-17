@@ -1,6 +1,7 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +53,7 @@ public class Gene {
     public void reverse() {
         direction = direction.reverse();
     }
+    
     public Element toXml() {
         Element gene = new Element("gene");
         XmlUtil.addElement(gene, "id", id);

@@ -1,6 +1,7 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 public class End {
 

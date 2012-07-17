@@ -1,7 +1,8 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Parser;
 
 import org.apache.log4j.Logger;
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,17 +30,21 @@ public class Tree {
 
     public Tree(Tree parent, String s) {
         this.parent = parent;
+
         for (int i = 0;  i < s.length(); i++) {
              char ch = s.charAt(i);
              if (Character.isLetterOrDigit(ch)) {
                  root += ch;
              }
         }
+
         if (s.length() == root.length())
             return;
+
         if (s.startsWith("(")) {
             s = s.substring(1, s.length() - 1);
         }
+
         int stat = 0;
         String cur = "";
         for (int i = 0;  i < s.length(); i++) {
@@ -47,6 +52,7 @@ public class Tree {
             if (ch == '(') {
                 stat++;
             }
+            
             if (ch == ')') {
                 stat--;
             }
@@ -61,6 +67,7 @@ public class Tree {
                 cur += ch;
             }
         }
+        
         if (cur.length() > 0) {
             children.add(new Tree(this, cur));
         }
@@ -80,7 +87,6 @@ public class Tree {
                 child.addCells(row, level, maxDepth - level, dataDir);
             }
             tree.addContent(row);
-
         }
         return tree;
     }
@@ -111,6 +117,7 @@ public class Tree {
                 BufferedReader input = TreeReader.getBufferedInputReader(new File(dataDir, root + ".trs"));
                 List<Transformation> transformations = new ArrayList<Transformation>();
                 String s;
+         
                 while ((s = input.readLine())!=null) {
                     transformations.add(new Transformation(s));
                 }
@@ -118,11 +125,14 @@ public class Tree {
                 for (Transformation transformation : transformations) {
                     transformation.update(genome);
                 }
+                
                 XmlUtil.addElement(cell, "length", transformations.size());
                 Element trs = new Element("transformations");
+                
                 for (Transformation transformation : transformations) {
                     trs.addContent(transformation.toXml());
                 }
+                
                 cell.addContent(trs);
             } catch (Exception e) {
                 log.error("Problems with " + root + ".trs file.", e);
@@ -140,6 +150,7 @@ public class Tree {
             }
         }
     }
+    
     public int getDepth() {
         if (depth == 0) {
             depth = 1;

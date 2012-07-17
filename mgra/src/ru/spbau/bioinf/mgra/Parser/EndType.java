@@ -1,4 +1,4 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Parser;
 
 public enum EndType {
     HEAD("h"), TAIL("t"), OO("oo");

@@ -1,4 +1,4 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
 import java.util.ArrayList;

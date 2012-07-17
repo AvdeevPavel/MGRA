@@ -1,4 +1,4 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Parser;
 
 public class Position implements Comparable<Position> {
     private int pos;

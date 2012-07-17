@@ -1,4 +1,4 @@
-package ru.spbau.bioinf.mgra;
+package ru.spbau.bioinf.mgra.Server;
 
 import org.apache.log4j.Logger;
 import org.jdom.Document;

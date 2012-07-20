@@ -49,7 +49,6 @@ public class JettyServer {
     private static MultiPartFilter uploadFilter;
 
     private static final Processor processor = new Processor(false);
-
     private static final XsltCompiler comp = processor.newXsltCompiler();
     private static XsltTransformer xslt;
 
@@ -231,8 +230,7 @@ public class JettyServer {
 
         String treeLink = path.substring(cur + 1) + "/tree.html";
 
-        //out.println("<html><title>MGRA processing information</title><body>");
-        out.println("<p>MGRA tree will appear <a href=\"" +treeLink + "\">here</a>.</p>");
+        out.println("<html><title>MGRA processing information</title><body>");
         response(out, "<pre>");
 
         response(out, "Create genome file...");
@@ -249,7 +247,7 @@ public class JettyServer {
                 new String[]{}, datasetDir);
 
         Thread outputThread = listenOutput(process.getInputStream(), out, "output");
-        //Thread errorThread = listenOutput(process.getErrorStream(), out, "error ");
+        Thread errorThread = listenOutput(process.getErrorStream(), out, "output");
 
         do {
             try {
@@ -262,7 +260,7 @@ public class JettyServer {
         } while (true);
 
         outputThread.join();
-        //errorThread.join();
+        errorThread.join();
 
         response(out, "Generating results XML...");
         new TreeReader(new File(datasetDir, CFG_FILE_NAME));
@@ -303,7 +301,7 @@ public class JettyServer {
                     s = globalTrim(s);
                     genomeFile.println(s);
                     genomeId++;
-                    //genomeFile.println();
+                    genomeFile.println();
                     key = "genome" + genomeId;
                 } while (properties.containsKey(key));
             } else {

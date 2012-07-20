@@ -1,0 +1,6 @@
+Run local
+	change variable REQUEST_FILE in JettyServer
+	change path to library kinetic.js in tree.xsl
+	change adress form in index.html
+
+globalTrim is very late. Fix mgratool

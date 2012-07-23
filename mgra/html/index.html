@@ -306,19 +306,19 @@
 			initGenomesInf(3); 
 
 			document.getElementById("inf_name1").value = 'P';
-            document.getElementById("inf_name2").value = 'F';
-            document.getElementById("inf_name3").value = 'M';
+            document.getElementById("inf_name2").value = 'S';
+            document.getElementById("inf_name3").value = 'V';
            
-            document.getElementById("inf_alias1").value = 'prunus';
-            document.getElementById("inf_alias2").value = 'fragaria';
-            document.getElementById("inf_alias3").value = 'malus';
+            document.getElementById("inf_alias1").value = 'pp prunus';
+            document.getElementById("inf_alias2").value = 'fv fragaria';
+            document.getElementById("inf_alias3").value = 'vv vitus';
             
             document.getElementById("inf_genome").value = loadFile('rosaceae/rosaceae.txt');
-            document.getElementById("inf_trees").value = '';
+            document.getElementById("inf_trees").value = '((P,S),V)';
             document.getElementById("inf_stages").value = '3';
-            document.getElementById("inf_target").value = '';
+            document.getElementById("inf_target").value = 'PS';
             document.getElementById("inf_completion").value = '';
-            showTargetInf(false);
+            showTargetInf(true);
 		} 
 
 	</script>

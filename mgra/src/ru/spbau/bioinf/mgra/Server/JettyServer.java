@@ -63,6 +63,8 @@ public class JettyServer {
     private static File exeFile;
     private static File dateDir;
 
+    private static String lastCurrentRequest = "";
+
     private static int port = 8080;
 
     private static AtomicInteger requestId;
@@ -138,8 +140,30 @@ public class JettyServer {
             public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                     throws IOException, ServletException {
                    String path = request.getPathInfo();
-                   if (path.startsWith(REQUEST_START) ) { //"/file/")) {
+
+                   if (path.contains("kinetic")) {
+                       log.debug("Handling request " + lastCurrentRequest);
+
+                       File file = new File(uploadDir.getAbsolutePath(), lastCurrentRequest);
+                       if (file.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
+                           ServletOutputStream out = response.getOutputStream();
+                           FileInputStream in = new FileInputStream(file);
+
+                           byte[] buf = new byte[4048];
+                           int count = 0;
+                           while ((count = in.read(buf)) >= 0) {
+                               out.write(buf, 0, count);
+                           }
+                           in.close();
+                           out.close();
+                       }
+                       log.debug(lastCurrentRequest + " request processed.");
+                       lastCurrentRequest = "";
+                       return;
+                   }
+                   if (path.startsWith(REQUEST_START) || path.contains("kinetic")) { //"/file/")) {
                        log.debug("Handling request " + path);
+                       lastCurrentRequest = path;
                        File file = new File(uploadDir.getAbsolutePath(), path);
                        if (file.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
                            ServletOutputStream out = response.getOutputStream();

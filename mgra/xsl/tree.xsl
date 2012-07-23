@@ -217,7 +217,7 @@
 				<xsl:apply-templates select="tree/row/cell/transformations"/>
          		<footer>
 				<hr/>
-				MGRA 1.0 by Max Alekseyev
+				MGRA 1.0 2008,09 by Max Alekseyev
 				</footer>
 			</body>
 		</html>

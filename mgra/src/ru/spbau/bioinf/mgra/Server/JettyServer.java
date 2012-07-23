@@ -298,7 +298,6 @@ public class JettyServer {
                 String key = "genome" + genomeId;
                 do {
                     String s = (String) properties.get(key);
-                    s = globalTrim(s);
                     genomeFile.println(s);
                     genomeId++;
                     genomeFile.println();
@@ -307,7 +306,6 @@ public class JettyServer {
             } else {
                 String key = "genome";
                 String s = (String) properties.get(key);
-                s = globalTrim(s);
                 genomeFile.println(s);
             }
 
@@ -373,24 +371,6 @@ public class JettyServer {
         String ans = (String) proporties.get("useFormat");
         log.debug("Genome format detection: " + ans);
         return ans;
-    }
-
-    private static String globalTrim(String input) {
-        String answer = "";
-        int indexStart = 0;
-        int indexFinish = input.indexOf('\n');
-
-        while(indexFinish != -1) {
-            String p = input.substring(indexStart, indexFinish);
-            answer += p.trim();
-            answer += '\n';
-            indexStart = indexFinish + 1;
-            indexFinish = input.indexOf('\n', indexFinish + 1);
-        }
-        answer += input.substring(indexStart).trim();
-        answer += '\n';
-
-        return answer;
     }
 
     private static Thread listenOutput(InputStream inputStream, final PrintWriter out, final String type) {

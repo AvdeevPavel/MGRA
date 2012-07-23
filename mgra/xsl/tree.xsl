@@ -14,7 +14,7 @@
 	                .end3{color:maroon}
 	            </style>
 
-				<script src="http://www.kineticjs.com/download/kinetic-v3.10.3.js"></script>
+				<script src="../../../../../html/lib/kinetic-v3.10.4.js"></script>
             	<script>
                 	var values =  [
                	    	<xsl:apply-templates select="tree/row/cell/text"/>

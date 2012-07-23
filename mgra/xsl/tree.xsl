@@ -211,7 +211,7 @@
 				</script>
 			</head>
 			<body>
-			    <h1> <center> MGRA TREE </center> </h1>
+			    <h1> <center> MGRA TREE, beta version </center> </h1>
 				<xsl:apply-templates select="tree" mode = "createForm"/>
    			    <xsl:apply-templates select="tree/row/cell/genome"/>	
 				<xsl:apply-templates select="tree/row/cell/transformations"/>

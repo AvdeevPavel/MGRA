@@ -3,7 +3,8 @@
     <xsl:output encoding="UTF-8" method="html" omit-xml-declaration="yes" indent="yes"/>
 
 	<xsl:template match="trees">
-		<html>
+		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
+    	<html>
 			<head>
 				<title>MGRA tree</title>
 				
@@ -217,7 +218,7 @@
 				<xsl:apply-templates select="tree/row/cell/transformations"/>
          		<footer>
 				<hr/>
-				MGRA 1.0 2008,09 by Max Alekseyev
+				MGRA 1.0 &#169; 2008,09 by Max Alekseyev
 				</footer>
 			</body>
 		</html>

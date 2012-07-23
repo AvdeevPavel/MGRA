@@ -98,6 +98,7 @@
 			clearGrimmFormat();
 			document.getElementById('showInferCarsForm').style.display = 'none'; 
 			document.getElementById('showGrimmForm').style.display = '';
+			document.getElementById('showHelp').style.display = 'none';
 		}
 
 		/*InferCARs format functions*/
@@ -157,6 +158,7 @@
 			clearInferCarsFormat();
 			document.getElementById('showInferCarsForm').style.display = ''; 
 			document.getElementById('showGrimmForm').style.display = 'none';	
+			document.getElementById('showHelp').style.display = 'none'; 
 		} 
 	 
     	function loadFile(file) {
@@ -291,7 +293,7 @@
             document.getElementById("grm_name4").value = '4';
             document.getElementById("grm_alias4").value = 'P4';
     		document.getElementById("grm_genome4").value = loadFile('toy/toyblks_4.txt');
-		
+			
             document.getElementById("grm_trees").value = '((1,2),(3,4))';
 
             document.getElementById("grm_stages").value = '3';
@@ -321,6 +323,13 @@
             showTargetInf(true);
 		} 
 
+		function viewHelp() { 
+			clearGrimmFormat();
+			clearInferCarsFormat();
+			document.getElementById('showInferCarsForm').style.display = 'none'; 
+			document.getElementById('showGrimmForm').style.display = 'none'; 
+			document.getElementById('showHelp').style.display = ''; 
+		} 
 	</script>
 </head>
 <body>
@@ -500,7 +509,14 @@
 		    </p>
     </form>
 	</div> </div>
-	
+
+	<div id = "showHelp" style="display:none;"> <div id = "content">
+		<h2><p align="center">How to work</p></h2>		
+    	This is web server provide interface for working <a href="http://cseweb.ucsd.edu/~ppevzner/download/mgra20090215.zip">MGRA algorithm</a>. 
+		It supported input formats are `grimm' and `infercars'. <br>
+		<strong>appear later</strong>		  
+	</div></div>	
+
 	<footer>
 	<hr>
 	MGRA 1.0 &copy; 2008,09 by Max Alekseyev

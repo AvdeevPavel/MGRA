@@ -428,7 +428,7 @@
 		</div> 
 			<p>
 				<div align = "center"> 
-			        <input type="submit" value="submit form"/>
+			        <input type="submit" value="run calculate"/>
 				</div>
 		    </p>
     </form>
@@ -504,7 +504,7 @@
 		</div> 
 			<p>
 				<div align = "center"> 
-			        <input type="submit" value="submit form"/>
+			        <input type="submit" value="run calculate"/>
 				</div>
 		    </p>
     </form>
@@ -513,8 +513,50 @@
 	<div id = "showHelp" style="display:none;"> <div id = "content">
 		<h2><p align="center">How to work</p></h2>		
     	This is web server provide interface for working <a href="http://cseweb.ucsd.edu/~ppevzner/download/mgra20090215.zip">MGRA algorithm</a>. 
-		It supported input formats are `grimm' and `infercars'. <br>
-		<strong>appear later</strong>		  
+		<h3><u>Algorithm:</u></h3>		
+		<ol type = "1">
+		<li>
+			<strong>You need choose input data format. Server supported two input formats are grimm and infercars. </strong> 
+		</li>
+		<br>
+		<li>
+			<strong>You enter their data in form:</strong> 
+			<ul type="square">
+			<li><u>Grimm form</u> <br>
+				Name of genome must be a single unique letter.
+			</li>
+			<br>
+			<li><u>Infercars form</u> <br>
+				Name of genome must be a single unique letter.
+			</li>
+			</ul>
+			<br>
+			We recomended see examples (mam6, mam7, rosaceae - infercars format, murphy and toy - grimm format) before they enter their data. 	
+		</li>
+		<br>
+		<li>
+			<strong> Push button "run calculate", and server will begin processing the data, which may take some time. </strong>
+		</li>
+		<br>
+		<li>
+			<strong> Information on what step is processing the data will be displayed on the screen. </strong> 
+		</li>
+		<br>
+		<li>
+			<strong> After completion of data processing, it will display the phylogenetic tree. </strong> <br>
+			Tree nodes can be placed as you wish by dragging the mouse. <br> 
+			If you double click on the yellow tree node, you saw information of genome and genome transformation.    
+			<ul type="square">
+			<br>
+			<li><u>Genome</u> <br>
+				Genome represented as the sequence of synteny blocks. Each synteny block has its number and oriented to the head or to the tail. If we will 				use numbers for the representation it will be pretty hard to figure the length of the genome or its part. That's why we use > and &lt; to 					represent synteny blocks, depending on their orientation. The synteny block number can be viewed as title to the link associated with > or 					&lt; sign. 
+			</li>
+			<br>
+			<li><u>Genome transformation</u> <br>
+				The original MGRA outputs only the ends of the breaks of the transformations. We show this ends using h and t letters. Each end has its own 				color that allows us to show where it goes after the transformation. We use similar colors for the ends that are clued after the 					transformation.
+			</li>
+		</li>
+		<ol>
 	</div></div>	
 
 	<footer>

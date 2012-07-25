@@ -1,269 +1,357 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-    <xsl:output encoding="UTF-8" method="html" omit-xml-declaration="yes" indent="yes"/>
+<xsl:output encoding="UTF-8" method="html" omit-xml-declaration="yes" indent="yes"/>
 
-	<xsl:template match="trees">
-		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
-    	<html>
-			<head>
-				<title>MGRA tree</title>
+<xsl:template match="trees">
+<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
+<html>
+<head>
+<title>MGRA tree</title>
 				
-				<style type="text/css">
-	                .end0{color:green}
-	                .end1{color:red}
-	                .end2{color:lime}
-	                .end3{color:maroon}
-	            </style>
+<style type="text/css">
+	.end0{color:green}
+	.end1{color:red}
+	.end2{color:lime}
+	.end3{color:maroon}
+</style>
 
-				<!--<script src="/home/Desktop/MGRA/kinetic-v3.10.4.js"></script>-->
-				<script src="http://www.kineticjs.com/download/kinetic-v3.10.4.js"></script>
-            	<script>
-                	var values =  [
-               	    	<xsl:apply-templates select="tree/row/cell/text"/>
-                	]
+<!--<script src="/home/Desktop/MGRA/kinetic-v3.10.4.js"></script>-->
+<script src="http://www.kineticjs.com/download/kinetic-v3.10.4.js"></script>
+<script>
+	var values =  [
+		<xsl:apply-templates select="tree/row/cell/text"/>
+	]
+				
+	var trees = [ 
+		<xsl:apply-templates select="tree" mode = "array"/>
+	]
+
+	function getClientWidth() {
+		return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
+	}
+		
+	function getClientHeight() {
+		return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientHeight:document.body.clientHeight;
+	}
 					
-					var trees = [ 
-						<xsl:apply-templates select="tree" mode = "array"/>
-					]
+	function changeStyle(id, show){
+		var element = document.getElementById(id);
+		if (element != null) {
+			element.style.display= id == show ? "" : "none";;
+		}
+	}
 
-					function getClientWidth() {
-						return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
-					}
-		
-					function getClientHeight() {
-						return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientHeight:document.body.clientHeight;
-					}
-					
-					function changeStyle(id, show){
-	                    var element = document.getElementById(id);
-	                    if (element != null) {
-	                        element.style.display= id == show ? "" : "none";;
-	                    }
-	                }
+	function createStage(nameContainer, width_, height_) {	
+		var stage = new Kinetic.Stage({ 
+			container: nameContainer,
+			width: width_,  
+			height: height_
+		});
 
-					function createStage(nameContainer, width_, height_) {	
-						var stage = new Kinetic.Stage({ 
-							container: nameContainer,
-							width: width_,  
-							height: height_
-						});
-						stage.on("mouseup", function() {
-          					document.body.style.cursor = "default";
-        				});
-						return stage; 		 
-					} 	
+		stage.on("mouseup", function() {
+       		document.body.style.cursor = "default";
+       	});
+		return stage; 		 
+	} 	
 			
-					function createText(str, color, coorX, coorY, layer) { 
-						var text = new Kinetic.Text({
-							text: str,	
-							x: coorX,
-							y: coorY,
-							cornerRadius: 5,
-							stroke: "black",
-							strokeWidth: 2,
-							fill: color,
-							fontSize: 13,
-							padding: 13, 
-							fontFamily: "Calibri",
-							textFill: "black",
-							align: 'center',
-							fontStyle: 'italic',
-							shadow: {
-								color: 'black',
-								blur: 1,
-								offset: [10, 10],
-								alpha: 0.2
-							}
-		  				});
-						text.on("mouseover", function() { 
-							this.setDraggable(true);
-							this.setFill("blue");
-							layer.draw();
-						});	
-						text.on("mouseout", function() { 
-							this.setDraggable(false);
-							var element = document.getElementById('gen'+str);
-	                    	if (element != null) {
-								this.setFill("yellow");
-	                 		} else {
-								this.setFill("#00dddd");
-							}
-							layer.draw();
-						});	
+	function createText(str, color, coorX, coorY, layer) { 
+		var text = new Kinetic.Text({
+			text: str,	
+			x: coorX,
+			y: coorY,
+			cornerRadius: 5,
+			stroke: "black",
+			strokeWidth: 2,
+			fill: color,
+			fontSize: 13,
+			padding: 13, 
+			fontFamily: "Calibri",
+			textFill: "black",
+			align: 'center',
+			fontStyle: 'italic',
+			shadow: {
+				color: 'black',
+				blur: 1,
+				offset: [10, 10],
+				alpha: 0.2
+			}
+		});
 
-						text.on("mousedown", function() {
-			          		document.body.style.cursor = "pointer";
-			        	});
+		text.on("mouseover", function() { 
+			this.setDraggable(true);
+			this.setFill("blue");
+			layer.draw();
+		});	
 
-						text.on("dblclick", function(evt) { 
-							for (var i = 0; i &lt; values.length; ++i) {
-	                        	changeStyle('trs'+values[i], 'trs'+str);
-	                        	changeStyle('gen'+values[i], 'gen'+str);
-	                    	}	
-						});
-						return text;  
-					}
+		text.on("mouseout", function() { 
+			this.setDraggable(false);
+			if (document.getElementById('gen'+str) != null) {
+				this.setFill("yellow");
+       		} else {
+				this.setFill("#00dddd");
+			}
+			layer.draw();
+		});	
 
-					function createLine(x1, y1, x2, y2) { 
-						var line = new Kinetic.Line({
-							points: [{x: x1, y: y1} , {x: x2, y: y2}],
-							stroke: "black", 
-							lineCap: "round",
-							lineJoin: "round", 
-							strokeWidth: 3,
-						});
-						return line;
-					} 
-		
-					function createEventDrag(rect, lines, layer) { 
-						rect.on("dragmove dragend", function() {
-							if (lines[0] != null)
-								lines[0].attrs.points[1] ={x:(this.getX()+this.getBoxWidth() / 2), y:this.getY()};				
-							if (lines[1] != null)		
-								lines[1].attrs.points[0] ={x:(this.getX()+this.getBoxWidth() / 2), y:(this.getY()+this.getBoxHeight())};
-							if (lines[2] != null)	
-								lines[2].attrs.points[0] ={x:(this.getX()+this.getBoxWidth() / 2), y:(this.getY()+this.getBoxHeight())};						
-							layer.draw();
-    	    			});
-					} 
+		text.on("mousedown", function() {
+       		document.body.style.cursor = "pointer";
+       	});
 
- 					function createNodes(k, stage, layer) {
- 						var stepHeight = stage.getHeight() / (trees[k].length + 1); 
-						var countInLevel = 2; 
+		text.on("dblclick", function(evt) { 
+			for (var i = 0; i &lt; values.length; ++i) {
+				changeStyle('gen'+values[i], 'gen'+str);
+				changeStyle('trs'+values[i], 'gen'+str);
+			}
+		});
+		return text;  
+	}
 
-						for(var i = 0; i &lt; trees[k].length; ++i) { 
-							countInLevel = countInLevel * 2;
-							var stepWidth = 1; 
-							for(var j = 0; j &lt; trees[k][i].length; ++j) { 
-								var element = document.getElementById('gen'+trees[k][i][j].text);
-	                    		if (element != null) {
-										trees[k][i][j].viewRect = createText(trees[k][i][j].text, "yellow", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
-								} else { 
-										trees[k][i][j].viewRect = createText(trees[k][i][j].text, "#00dddd", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
-								} 
-								stepWidth += 2;								
-							}
-						} 
-					}
+	function createLine(x1, y1, x2, y2, color, strId, strName) { 
+		var line = new Kinetic.Line({
+			points: [x1, y1, x2, y2],
+			stroke: color, 
+			lineCap: "round",
+			lineJoin: "round", 
+			strokeWidth: 4,
+			id: strId + "_" + strName,
+			name: strName
+		});
+		return line;
+	}
 
-					function createEdge(k, stage) { 
+	function createRootArrow(fromX, fromY, toX, toY, text, stage, color) { 
+		var group = new Kinetic.Group();
+		var headlen = 15;   
+		var angle = Math.atan2(fromY - toY, fromX - toX);
 
-						for(var i = 0; i &lt; trees[k].length; ++i) { 
-							for(var j = 0; j &lt; trees[k][i].length; ++j) { 
-								trees[k][i][j].lines = new Array(3);
-							} 
-						}
-			
-						trees[k][0][0].lines[0] = createLine(stage.getWidth() / 2, 5, (trees[k][0][0].viewRect.getX() + trees[k][0][0].viewRect.getBoxWidth() / 2), trees[k][0][0].viewRect.getY());
-						trees[k][0][1].lines[0] = createLine(stage.getWidth() / 2, 5, (trees[k][0][1].viewRect.getX() + trees[k][0][1].viewRect.getBoxWidth() / 2), trees[k][0][1].viewRect.getY());
-		
-						for(var i = 0; i &lt; trees[k].length; ++i) { 
-							for(var j = 0; j &lt; trees[k][i].length; ++j) {
-								var x1 = trees[k][i][j].viewRect.getX() + trees[k][i][j].viewRect.getBoxWidth() / 2;
-								var y1 = trees[k][i][j].viewRect.getY() + trees[k][i][j].viewRect.getBoxHeight(); 
-
-								if (trees[k][i][j].leftChildNumber != -1) { 
-									var x2 = trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getX() + trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getBoxWidth() / 2; 
-									var y2 = trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getY(); 
-									trees[k][i][j].lines[1] = createLine(x1, y1, x2, y2);								
-									trees[k][i + 1][trees[k][i][j].leftChildNumber].lines[0] = trees[k][i][j].lines[1]; 
-								} 
-								
-								if (trees[k][i][j].rightChildNumber != -1) { 
-									var x2 = trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getX() + trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getBoxWidth() / 2; 
-									var y2 = trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getY(); 
-									trees[k][i][j].lines[2] = createLine(x1, y1, x2, y2);
-									trees[k][i + 1][trees[k][i][j].rightChildNumber].lines[0] = trees[k][i][j].lines[2]; 
-								}
-							} 
-						} 					
-					} 
-
-					function main(k, stage, layer) { 
-						createNodes(k, stage, layer); 
-						createEdge(k, stage);
-
-						for(var i = 0; i &lt; trees[k].length; ++i) { 
-							for(var j = 0; j &lt; trees[k][i].length; ++j) { 
-								layer.add(trees[k][i][j].viewRect);
-							} 
-						}
-			
-						for(var i = 0; i &lt; trees[k].length; ++i) { 
-							for(var j = 0; j &lt; trees[k][i].length; ++j) { 
-								createEventDrag(trees[k][i][j].viewRect, trees[k][i][j].lines, layer);
-							} 
-						}					
-
-						for(var i = 0; i &lt; trees[k].length - 1; ++i) { 
-							for(var j = 0; j &lt; trees[k][i].length; ++j) { 
-								for(var c = 0; c &lt; trees[k][i][j].lines.length; ++c) { 
-									if (trees[k][i][j].lines[c] != null) { 
-										layer.add(trees[k][i][j].lines[c]);
-									} 
-								} 
-							} 
-						}
-					} 
-
-					window.onload = function() {
-						<xsl:apply-templates select="tree" mode = "code"/>
-    				};
-				</script>
-			</head>
-			<body>
-			    <h1> <center> MGRA TREE, beta version </center> </h1>
-				<xsl:apply-templates select="tree" mode = "createForm"/>
-   			    <xsl:apply-templates select="tree/row/cell/genome"/>	
-				<xsl:apply-templates select="tree/row/cell/transformations"/>
-         		<footer>
-				<hr/>
-				MGRA 1.0 &#169; 2008,09 by Max Alekseyev
-				</footer>
-			</body>
-		</html>
-	</xsl:template>
-
-	<xsl:template match="tree" mode = "array">
-		[
-			<xsl:apply-templates select="row"/>
-		], 
-    </xsl:template>
-
-	<xsl:template match="tree" mode = "code">
-			var stage = createStage("tree<xsl:value-of select="number"/>", 99 * getClientWidth() / 100,  getClientHeight() / 2);
-			var layer = new Kinetic.Layer();
-			main(<xsl:value-of select="number"/>, stage, layer);
-			stage.add(layer);
-    </xsl:template>
-
-	<xsl:template match="tree" mode = "createForm">
-			<div id="tree{./number}"></div>  	
-    </xsl:template>
-
-
-  	 <xsl:template match="row">
-        	[
-				<xsl:apply-templates select="cell"/>
-			],
-    </xsl:template>
-
-	 <xsl:template match="cell">
-			{	
-				viewRect: null, 
-				lines: null,
-		  		leftChildNumber: <xsl:value-of select="leftChildNumber"/>,
-				rightChildNumber: <xsl:value-of select="rightChildNumber"/>,
-				text: "<xsl:value-of select="text"/>"
+		var line1 = new Kinetic.Shape({
+         	drawFunc: function(context) {
+	      	  context.beginPath();
+	       	  context.moveTo(fromX, fromY);
+	       	  context.quadraticCurveTo(stage.getWidth() / 2, 5, toX, toY);
+	       	  this.stroke(context);
 			},
-    </xsl:template>
+	        stroke: color,
+			lineJoin: "round",
+			strokeWidth: 4,
+			id: "mainLine_" + text,
+			name: text
+		});
+
+		group.add(line1);				
+		group.add(createLine(toX, toY, toX + headlen*Math.cos(angle-Math.PI/6), toY + headlen*Math.sin(angle-Math.PI/6), color, "leftLine", text));
+		group.add(createLine(toX, toY, toX + headlen*Math.cos(angle+Math.PI/6), toY + headlen*Math.sin(angle+Math.PI/6), color, "rightLine", text)); 
+		return group;
+	} 
+
+	function createArrow(fromX, fromY, toX, toY, text, color) { 
+		var group = new Kinetic.Group();
+		var headlen = 15;   
+    	var angle = Math.atan2(fromY - toY, fromX - toX);
+
+		group.add(createLine(fromX, fromY, toX, toY, color, "mainLine", text)); 
+		group.add(createLine(fromX, fromY, fromX - headlen*Math.cos(angle-Math.PI/6), fromY - headlen*Math.sin(angle-Math.PI/6), color, "leftLine", text));   
+		group.add(createLine(fromX, fromY, fromX - headlen*Math.cos(angle+Math.PI/6), fromY - headlen*Math.sin(angle+Math.PI/6), color, "rightLine", text));   
+		return group;
+	} 	
+
+	function createNodes(k, stage, layer) {
+ 		var stepHeight = stage.getHeight() / (trees[k].length + 1); 
+		var countInLevel = 2; 
+
+		for(var i = 0; i &lt; trees[k].length; ++i) { 
+			countInLevel = countInLevel * 2;
+			var stepWidth = 1; 
+			for(var j = 0; j &lt; trees[k][i].length; ++j) { 
+	     		if (document.getElementById('gen'+trees[k][i][j].text) != null) {
+					trees[k][i][j].viewRect = createText(trees[k][i][j].text, "yellow", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
+				} else { 
+					trees[k][i][j].viewRect = createText(trees[k][i][j].text, "#00dddd", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
+				} 
+				stepWidth += 2;								
+			}
+		} 
+
+		for(var i = 0; i &lt; trees[k].length; ++i) { 
+			for(var j = 0; j &lt; trees[k][i].length; ++j) { 
+				layer.add(trees[k][i][j].viewRect);
+			} 
+		}				
+		stage.add(layer);
+	}
+
+	function createEdges(k, stage, layer) { 
+		for(var i = 0; i &lt; trees[k].length; ++i) { 
+			for(var j = 0; j &lt; trees[k][i].length; ++j) { 
+				trees[k][i][j].arrows = new Array(3);
+			} 
+		}
+			
+		var rootArray = null;
+		if (document.getElementById('trs' + trees[k][0][0].text) != null) {
+			rootArrow = createRootArrow((trees[k][0][0].viewRect.getX() + trees[k][0][0].viewRect.getBoxWidth()), trees[k][0][0].viewRect.getY(), trees[k][0][1].viewRect.getX(), trees[k][0][1].viewRect.getY(), trees[k][0][0].text, stage, "red");
+		} else { 
+			rootArrow = createRootArrow((trees[k][0][0].viewRect.getX() + trees[k][0][0].viewRect.getBoxWidth()), trees[k][0][0].viewRect.getY(), trees[k][0][1].viewRect.getX(), trees[k][0][1].viewRect.getY(), trees[k][0][0].text, stage, "black");
+		} 
+		trees[k][0][0].arrows[0] = rootArrow; 
+		trees[k][0][1].arrows[0] = rootArrow;
+		
+		for(var i = 0; i &lt; trees[k].length; ++i) { 
+			for(var j = 0; j &lt; trees[k][i].length; ++j) {
+				if (trees[k][i][j].leftChildNumber != -1) {
+					var x1 = trees[k][i][j].viewRect.getX();
+					var y1 = trees[k][i][j].viewRect.getY() + trees[k][i][j].viewRect.getBoxHeight(); 
+					var x2 = trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getX() + trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getBoxWidth() / 2; 
+					var y2 = trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getY(); 
+					if (document.getElementById('trs' + trees[k][i + 1][trees[k][i][j].leftChildNumber].text) != null) { 
+						trees[k][i][j].arrows[1] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].leftChildNumber].text, "red");								
+					} else { 
+						trees[k][i][j].arrows[1] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].leftChildNumber].text, "black");							
+					} 
+					trees[k][i + 1][trees[k][i][j].leftChildNumber].arrows[0] = trees[k][i][j].arrows[1]; 
+				} 
+								
+				if (trees[k][i][j].rightChildNumber != -1) { 
+					var x1 = trees[k][i][j].viewRect.getX() + trees[k][i][j].viewRect.getBoxWidth();
+					var y1 = trees[k][i][j].viewRect.getY() + trees[k][i][j].viewRect.getBoxHeight(); 
+					var x2 = trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getX() + trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getBoxWidth() / 2; 
+					var y2 = trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getY(); 												
+					if (document.getElementById('trs' + trees[k][i + 1][trees[k][i][j].rightChildNumber].text) != null) { 
+						trees[k][i][j].arrows[2] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].rightChildNumber].text, "red");								
+					} else {
+						trees[k][i][j].arrows[2] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].rightChildNumber].text, "black");							
+					}	
+					trees[k][i + 1][trees[k][i][j].rightChildNumber].arrows[0] = trees[k][i][j].arrows[2]; 
+				}
+			} 
+		} 					
+							
+		for(var i = 0; i &lt; trees[k].length - 1; ++i) { 
+			for(var j = 0; j &lt; trees[k][i].length; ++j) { 
+				for(var c = 0; c &lt; trees[k][i][j].arrows.length; ++c) { 
+					if (trees[k][i][j].arrows[c] != null) { 
+						layer.add(trees[k][i][j].arrows[c]);
+					} 
+				} 
+			} 
+		}
+		stage.add(layer);
+
+		for(var i = 0; i &lt; values.length; ++i) { 
+			var line = layer.get('#mainLine_' + values[i])[0];
+			if (line != null) { 
+				line.saveImageData();
+				line.on("dblclick", function(evt) { 
+					str = 'trs' + this.getName();
+					for (var i = 0; i &lt; values.length; ++i) {
+	                	changeStyle('gen'+values[i], str);
+						changeStyle('trs'+values[i], str);
+                 	}	
+				});
+			} 		
+		}
+	} 
+		
+	function changeLines(i, lines, x1, y1) { 
+		if (lines[0] != null) { 
+			lines[0].attrs.points[i] ={x: x1, y: y1};				
+			lines[0].saveImageData();
+			var headlen = 15;   
+			var angle = Math.atan2(lines[0].attrs.points[0].y - lines[0].attrs.points[1].y, lines[0].attrs.points[0].x - lines[0].attrs.points[1].x);
+			lines[1].setPoints([lines[0].attrs.points[0].x, lines[0].attrs.points[0].y, lines[0].attrs.points[0].x - headlen*Math.cos(angle-Math.PI/6), lines[0].attrs.points[0].y - headlen*Math.sin(angle-Math.PI/6)]);
+
+			lines[2].setPoints([lines[0].attrs.points[0].x, lines[0].attrs.points[0].y, lines[0].attrs.points[0].x - headlen*Math.cos(angle+Math.PI/6), lines[0].attrs.points[0].y - headlen*Math.sin(angle+Math.PI/6)]);						
+		} 
+	} 
+
+	function createEventDrag(rect, arrows, layer) { 
+		rect.on("dragmove dragend", function() {
+			if (arrows[0] != null) {
+				var lines = arrows[0].getChildren();
+				changeLines(1, lines, this.getX() + this.getBoxWidth() / 2, this.getY());
+			} 
+
+			if (arrows[1] != null) { 
+				var lines = arrows[1].getChildren();
+				changeLines(0, lines, this.getX(), this.getY() + this.getBoxHeight());		 		
+			} 
+
+			if (arrows[2] != null) { 
+				var lines = arrows[2].getChildren();
+				changeLines(0, lines, this.getX()+this.getBoxWidth(), this.getY() + this.getBoxHeight());				 
+			}  											
+			layer.draw();
+		});
+ 	} 
+
+	function main(k, stage, layer) { 
+		createNodes(k, stage, layer); 			
+		createEdges(k, stage, layer);
+
+		for(var i = 1; i &lt; trees[k].length; ++i) { 
+			for(var j = 0; j &lt; trees[k][i].length; ++j) {
+				createEventDrag(trees[k][i][j].viewRect, trees[k][i][j].arrows, layer);	 
+			} 
+		}		
+	} 
+
+	window.onload = function() {
+		<xsl:apply-templates select="tree" mode = "code"/>
+	};
+</script>
+</head>
+<body>
+    <p><center><font size = "18"><string> MGRA tree, beta version </string></font></center></p> <!--not use <h1> because bug in kinetic js-->
+    <xsl:apply-templates select="tree" mode = "createForm"/>
+    <xsl:apply-templates select="tree/row/cell/genome"/>	
+	<xsl:apply-templates select="tree/row/cell/transformations"/>
+	<footer>
+	<hr/>
+	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
+	</footer>
+</body>
+</html>
+</xsl:template>
+
+<xsl:template match="tree" mode = "array">
+	[
+		<xsl:apply-templates select="row"/>
+	], 
+</xsl:template>
+
+<xsl:template match="tree" mode = "code">
+	var stage = createStage("tree<xsl:value-of select="number"/>", getClientWidth(),  getClientHeight() / 2);
+	var layer = new Kinetic.Layer();
+	main(<xsl:value-of select="number"/>, stage, layer);
+</xsl:template>
+
+<xsl:template match="tree" mode = "createForm">
+	<div id="tree{./number}"></div>  	
+</xsl:template>
+
+
+<xsl:template match="row">
+   	[
+		<xsl:apply-templates select="cell"/>
+	],
+</xsl:template>
+
+<xsl:template match="cell">
+	{	
+		viewRect: null, 
+		arrows: null,
+  		leftChildNumber: <xsl:value-of select="leftChildNumber"/>,
+		rightChildNumber: <xsl:value-of select="rightChildNumber"/>,
+		text: "<xsl:value-of select="text"/>"
+	},
+</xsl:template>
 	
-	<xsl:template match="transformations">
-        <div id="trs{../text}" style="display:none;">
+<xsl:template match="transformations">
+	<div id="trs{../text}" style="display:none;">
             <h3>Transformations for <xsl:value-of select="../text"/></h3>
             <xsl:apply-templates select="transformation"/>
         </div>
-    </xsl:template>
+</xsl:template>
 
 	<xsl:template match="transformation">
         <xsl:apply-templates select="before/chromosome">
@@ -322,11 +410,11 @@
         <span class="end{color}"><xsl:value-of select="type"/></span>
     </xsl:template>
 
-	<xsl:template match="text">
-		'<xsl:value-of select="."/>',
-	</xsl:template>
+<xsl:template match="text">
+	'<xsl:value-of select="."/>',
+</xsl:template>
 
-	<xsl:template match="number">
-		'<xsl:value-of select="."/>',
-	</xsl:template>
+<xsl:template match="number">
+	'<xsl:value-of select="."/>',
+</xsl:template>
 </xsl:stylesheet>

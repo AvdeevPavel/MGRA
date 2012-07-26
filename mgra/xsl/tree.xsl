@@ -121,8 +121,6 @@
 
 	function createRootArrow(fromX, fromY, toX, toY, text, stage, color) { 
 		var group = new Kinetic.Group();
-		var headlen = 15;   
-		var angle = Math.atan2(fromY - toY, fromX - toX);
 
 		var line1 = new Kinetic.Shape({
          	drawFunc: function(context) {
@@ -138,6 +136,8 @@
 			name: text
 		});
 
+		var headlen = 15;   
+		var angle = Math.atan2(5 - toY, stage.getWidth() / 2 - toX);
 		group.add(line1);				
 		group.add(createLine(toX, toY, toX + headlen*Math.cos(angle-Math.PI/6), toY + headlen*Math.sin(angle-Math.PI/6), color, "leftLine", text));
 		group.add(createLine(toX, toY, toX + headlen*Math.cos(angle+Math.PI/6), toY + headlen*Math.sin(angle+Math.PI/6), color, "rightLine", text)); 
@@ -284,10 +284,39 @@
 		});
  	} 
 
+	function createEventForRoot(rect, arrows, rect1, helpArrows, flag) { 
+		rect.on("dragmove dragend", function() {
+			if (arrows[0] != null) {		
+				var line = arrows[0].getChildren()[0];			
+				this.getLayer().remove(arrows[0]);
+				if (flag == true) { 
+					arrows[0] = createRootArrow(this.getX() + this.getBoxWidth(), this.getY(), rect1.getX(), rect1.getY(), line.getName(), this.getStage(), line.getStroke());
+				} else { 
+					arrows[0] = createRootArrow(rect1.getX() + rect1.getBoxWidth(), rect1.getY(), this.getX(), this.getY(), line.getName(), this.getStage(), line.getStroke());
+				} 
+				helpArrows[0] = arrows[0]; 
+				this.getLayer().add(arrows[0]);
+			} 
+
+			if (arrows[1] != null) { 
+				var lines = arrows[1].getChildren();
+				changeLines(0, lines, this.getX(), this.getY() + this.getBoxHeight());		 		
+			} 
+
+			if (arrows[2] != null) { 
+				var lines = arrows[2].getChildren();
+				changeLines(0, lines, this.getX()+this.getBoxWidth(), this.getY() + this.getBoxHeight());				 
+			}  											
+			this.getLayer().draw();
+		});
+	} 
+
 	function main(k, stage, layer) { 
 		createNodes(k, stage, layer); 			
 		createEdges(k, stage, layer);
-
+		
+		createEventForRoot(trees[k][0][0].viewRect, trees[k][0][0].arrows, trees[k][0][1].viewRect, trees[k][0][1].arrows, true); 
+		createEventForRoot(trees[k][0][1].viewRect, trees[k][0][1].arrows, trees[k][0][0].viewRect, trees[k][0][0].arrows, false);
 		for(var i = 1; i &lt; trees[k].length; ++i) { 
 			for(var j = 0; j &lt; trees[k][i].length; ++j) {
 				createEventDrag(trees[k][i][j].viewRect, trees[k][i][j].arrows, layer);	 

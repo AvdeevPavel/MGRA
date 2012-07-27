@@ -1,0 +1,31 @@
+graph {
+edge [colorscheme=set19];
+	"ah"	--	"ch"	[color=1];
+	"ah"	--	"dh"	[color=3];
+	"ah"	--	"dh"	[color=4];
+	"ah"	--	"ft"	[color=2];
+	"at"	--	"ch"	[color=4];
+	"at"	--	"-1"	[len=0.75,color=1];
+	"at"	--	"-1"	[len=0.75,color=2];
+	"at"	--	"-1"	[len=0.75,color=3];
+	"bt"	--	"eh"	[color=2];
+	"bt"	--	"et"	[color=3];
+	"bt"	--	"et"	[color=4];
+	"bt"	--	"-2"	[len=0.75,color=1];
+	"ch"	--	"-3"	[len=0.75,color=2];
+	"ch"	--	"-3"	[len=0.75,color=3];
+	"dh"	--	"et"	[color=1];
+	"dh"	--	"et"	[color=2];
+	"eh"	--	"fh"	[color=3];
+	"eh"	--	"fh"	[color=4];
+	"eh"	--	"ft"	[color=1];
+	"fh"	--	"-4"	[len=0.75,color=1];
+	"fh"	--	"-4"	[len=0.75,color=2];
+	"ft"	--	"-5"	[len=0.75,color=3];
+	"ft"	--	"-5"	[len=0.75,color=4];
+	"-5"	[shape=point,color=black];
+	"-4"	[shape=point,color=black];
+	"-3"	[shape=point,color=black];
+	"-2"	[shape=point,color=black];
+	"-1"	[shape=point,color=black];
+}

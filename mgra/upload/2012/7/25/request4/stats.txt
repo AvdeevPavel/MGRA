@@ -1,0 +1,436 @@
+Initial graph:
+... complete multiedges: 15h~16t 229h~oo 288h~oo 36h~37t	(total: 4)
+... connected components: 1^2 2^6 4^5 5^1 22^1 553^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\bf W + HMRCDP} & 41 + 127 = 168 & 82 & 41 + 11 = 52 & 30 + 1 = 31 & 0 + 27 = 27\\
+{\bf MR + HCWDP} & 50 + 100 = 150 & 76 & 29 + 13 = 42 & 22 + 1 = 23 & 0 + 8 = 8\\
+{\bf D + HMRCWP} & 25 + 114 = 139 & 50 & 25 + 5 = 30 & 20 + 1 = 21 & 0 + 48 = 48\\
+{\bf P + HMRCWD} & 15 + 70 = 85 & 30 & 15 + 1 = 16 & 14 + 0 = 14 & 0 + 12 = 12\\
+{\bf M + HRCWDP} & 17 + 58 = 75 & 34 & 17 + 2 = 19 & 15 + 0 = 15 & 0 + 16 = 16\\
+{\bf R + HMCWDP} & 11 + 56 = 67 & 21 & 10 + 2 = 12 & 8 + 0 = 8 & 1 + 17 = 18\\
+{\bf C + HMRWDP} & 5 + 56 = 61 & 10 & 5 + 1 = 6 & 4 + 0 = 4 & 0 + 12 = 12\\
+{\bf H + MRCWDP} & 35 + 4 = 39 & 8 & 0 + 4 = 4 & 4 + 0 = 4 & 12 + 0 = 12\\
+{MRD + HCWP} & 10 + 6 = 16 & 2 & 1 + 0 = 1 & 1 + 0 = 1 & 3 + 2 = 5\\
+{MRW + HCDP} & 15 + 1 = 16 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 1 = 3\\
+{WD + HMRCP} & 7 + 8 = 15 & 2 & 0 + 1 = 1 & 1 + 0 = 1 & 1 + 5 = 6\\
+{HC + MRWDP} & 12 + 1 = 13 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{\bf WP + HMRCD} & 7 + 4 = 11 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 2 = 3\\
+{HCP + MRWD} & 8 + 3 = 11 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 1 = 3\\
+{\bf CD + HMRWP} & 7 + 3 = 10 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{CW + HMRDP} & 3 + 5 = 8 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 2 = 2\\
+{HWP + MRCD} & 6 + 1 = 7 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 4 + 0 = 4\\
+{\bf HMR + CWDP} & 4 + 2 = 6 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{HCW + MRDP} & 4 + 2 = 6 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{DP + HMRCW} & 2 + 3 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 0 = 1\\
+{MRP + HCWD} & 3 + 2 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{MRC + HWDP} & 4 + 1 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{CDP + HMRW} & 1 + 3 = 4 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{CWP + HMRD} & 1 + 3 = 4 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{\ensuremath{\emptyset} + HMRCWDP} & 0 + 4 = 4 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 2 = 2\\
+{CP + HMRWD} & 0 + 3 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{MD + HRCWP} & 1 + 2 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 2 = 3\\
+{RD + HMCWP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{RWD + HMCP} & 1 + 1 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{HWD + MRCP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{RW + HMCDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MWD + HRCP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MC + HRWDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Stage 0 & H & M & R & C & W & D & P \\
+\hline
+H &  & 145 & 141 & 59 & 113 & 103 & 75\\
+M &  &  & 53 & 162 & 202 & 179 & 164\\
+R &  &  &  & 158 & 196 & 174 & 162\\
+C &  &  &  &  & 130 & 111 & 84\\
+W &  &  &  &  &  & 149 & 134\\
+D &  &  &  &  &  &  & 121\\
+P &  &  &  &  &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+ & ${\bf H+}$ & ${\bf MR+}$ & ${MRD+}$ & ${\bf M+}$ & ${\bf R+}$ & ${MRW+}$ & ${\bf W+}$ & ${\bf D+}$ & ${\bf P+}$ & ${\bf C+}$ & ${\bf CD+}$ & ${CW+}$ & ${WD+}$ & ${\bf WP+}$\\
+\hline \hline
+${\bf H+}$ & $\star$ &  {\cellcolor[gray]{.9}}2  &  1  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf MR+}$ &  {\cellcolor[gray]{.9}}2  & $\star$ &  &  &  {\cellcolor[gray]{.9}}3  &  1  &  6  &  3  &  2  &  &  &  &  &  \\
+\hline
+${MRD+}$ &  1  &  & $\star$ &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf M+}$ &  &  &  & $\star$ &  {\cellcolor[gray]{.9}}3  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf R+}$ &  &  {\cellcolor[gray]{.9}}3  &  &  {\cellcolor[gray]{.9}}3  & $\star$ &  &  &  &  1  &  1  &  &  &  &  \\
+\hline
+${MRW+}$ &  &  1  &  &  &  & $\star$ &  1  &  &  &  &  &  &  &  \\
+\hline
+${\bf W+}$ &  &  6  &  &  &  &  1  & $\star$ &  4  &  {\cellcolor[gray]{.9}}6  &  3  &  &  1  &  1  &  {\cellcolor[gray]{.9}}2  \\
+\hline
+${\bf D+}$ &  &  3  &  &  &  &  &  4  & $\star$ &  1  &  {\cellcolor[gray]{.9}}6  &  &  &  &  \\
+\hline
+${\bf P+}$ &  &  2  &  &  &  1  &  &  {\cellcolor[gray]{.9}}6  &  1  & $\star$ &  &  &  &  &  \\
+\hline
+${\bf C+}$ &  &  &  &  &  1  &  &  3  &  {\cellcolor[gray]{.9}}6  &  & $\star$ &  {\cellcolor[gray]{.9}}2  &  &  &  \\
+\hline
+${\bf CD+}$ &  &  &  &  &  &  &  &  &  &  {\cellcolor[gray]{.9}}2  & $\star$ &  &  &  \\
+\hline
+${CW+}$ &  &  &  &  &  &  &  1  &  &  &  &  & $\star$ &  &  \\
+\hline
+${WD+}$ &  &  &  &  &  &  &  1  &  &  &  &  &  & $\star$ &  \\
+\hline
+${\bf WP+}$ &  &  &  &  &  &  &  {\cellcolor[gray]{.9}}2  &  &  &  &  &  &  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+After Stage 1 graph:
+... complete multiedges: 100h~101t 100t~99h 101h~102t 103h~104t 105h~106t 108h~109t 109h~110t 10h~11t 111h~112t 114h~115t 116h~117t 117h~118t 118h~119t 119h~120t 11h~12t 121h~122t 123h~124t 131h~132t 132h~133t 134h~135t 135h~136t 136h~137t 139h~140t 13h~14t 141h~142t 145t~148t 146h~147t 14h~15t 150h~151t 154h~155t 156h~157t 157h~158t 158h~159t 15h~16t 160h~161t 162h~163t 164h~165t 165h~166t 166h~167t 167h~168t 169h~170t 171h~172t 172h~173t 175h~176t 176h~177t 177h~178t 178h~179t 180h~181t 183h~184t 184h~185t 185h~186t 186h~187t 188h~189t 188t~197t 189h~190t 190h~191t 192h~193t 193h~194t 195h~196t 197h~198t 198h~199t 199h~200t 19h~20t 1h~2t 203h~204t 205h~206t 207h~208t 211h~212t 215h~216t 218h~219t 21h~22t 222h~223t 223h~224t 225h~226t 226h~227t 227h~228t 228h~229t 229h~oo 230h~243h 231h~232t 232h~233t 233h~234t 234h~235t 235h~236t 236h~237t 237h~238t 239h~240t 241h~242t 244h~245t 248h~249t 249h~250t 251h~252t 255h~256t 262h~263t 264h~265t 265h~266t 266h~267t 269h~270t 272h~273t 273h~274t 275h~276t 279h~280t 27h~28t 280h~281t 287h~288t 288h~oo 289h~290t 289t~67t 294h~295t 295h~296t 298h~299t 299h~300t 29h~30t 2h~3t 303h~304t 304h~305t 306h~307t 30h~31t 31h~32t 32h~33t 36h~37t 38h~39t 3h~4t 40h~41t 42h~43t 43h~44t 48h~49t 50h~51t 51h~52t 52h~53t 54h~55t 55h~56t 58h~59t 5h~6t 60h~61t 62h~63t 63h~64t 65h~66t 68h~80h 69h~70t 6h~7t 71h~72t 72h~73t 73h~74t 74h~75t 75h~76t 78h~79t 79h~80t 7h~8t 84h~85t 85h~86t 86h~87t 87h~88t 88h~89t 89h~90t 90h~91t 91h~92t 92h~93t	(total: 158)
+... connected components: 1^2 2^156 3^1 12^1 285^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\ensuremath{\emptyset} + HMRCWDP} & 0 + 158 = 158 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 2 = 2\\
+{\bf MR + HCWDP} & 23 + 68 = 91 & 19 & 0 + 2 = 2 & 2 + 0 = 2 & 1 + 6 = 7\\
+{\bf D + HMRCWP} & 2 + 73 = 75 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 30 = 32\\
+{\bf W + HMRCDP} & 0 + 64 = 64 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 17 = 17\\
+{\bf C + HMRWDP} & 0 + 48 = 48 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 11 = 11\\
+{\bf P + HMRCWD} & 0 + 44 = 44 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 6 = 6\\
+{\bf R + HMCWDP} & 1 + 40 = 41 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 16 = 17\\
+{\bf M + HRCWDP} & 0 + 31 = 31 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 8 = 8\\
+{MRD + HCWP} & 12 + 7 = 19 & 2 & 1 + 0 = 1 & 1 + 0 = 1 & 3 + 3 = 6\\
+{WD + HMRCP} & 6 + 11 = 17 & 2 & 0 + 1 = 1 & 1 + 0 = 1 & 0 + 8 = 8\\
+{\bf CD + HMRWP} & 10 + 2 = 12 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{HC + MRWDP} & 11 + 1 = 12 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 0 = 1\\
+{MRW + HCDP} & 11 + 1 = 12 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 1 = 3\\
+{HCP + MRWD} & 7 + 3 = 10 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 1 = 3\\
+{\bf WP + HMRCD} & 4 + 5 = 9 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 2 = 3\\
+{DP + HMRCW} & 2 + 6 = 8 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 3 = 4\\
+{CW + HMRDP} & 2 + 5 = 7 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 2 = 2\\
+{HCW + MRDP} & 4 + 2 = 6 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{HCD + MRWP} & 5 + 1 = 6 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 3 + 1 = 4\\
+{HW + MRCDP} & 5 + 1 = 6 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{\bf HMR + CWDP} & 4 + 1 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{MRP + HCWD} & 3 + 2 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{HWP + MRCD} & 4 + 1 = 5 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{MRC + HWDP} & 4 + 1 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{CDP + HMRW} & 0 + 3 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{CWP + HMRD} & 1 + 2 = 3 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{CWD + HMRP} & 2 + 1 = 3 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{RD + HMCWP} & 2 + 1 = 3 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{MD + HRCWP} & 1 + 2 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 2 = 3\\
+{WDP + HMRC} & 1 + 1 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{CP + HMRWD} & 0 + 2 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{RWD + HMCP} & 1 + 1 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{HWD + MRCP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{RW + HMCDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MWD + HRCP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MC + HRWDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Stage 1 & H & M & R & C & W & D & P \\
+\hline
+H &  & 95 & 96 & 48 & 65 & 74 & 54\\
+M &  &  & 28 & 110 & 114 & 110 & 102\\
+R &  &  &  & 112 & 113 & 110 & 106\\
+C &  &  &  &  & 81 & 81 & 62\\
+W &  &  &  &  &  & 83 & 75\\
+D &  &  &  &  &  &  & 81\\
+P &  &  &  &  &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+ & ${\bf H+}$ & ${\bf MR+}$ & ${MRD+}$ & ${\bf W+}$ & ${\bf M+}$ & ${\bf R+}$ & ${MRW+}$ & ${\bf D+}$ & ${\bf P+}$ & ${\bf C+}$ & ${\bf CD+}$ & ${CW+}$ & ${WD+}$\\
+\hline \hline
+${\bf H+}$ & $\star$ &  {\cellcolor[gray]{.9}}1  &  1  &  1  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf MR+}$ &  {\cellcolor[gray]{.9}}1  & $\star$ &  &  4  &  {\cellcolor[gray]{.9}}2  &  {\cellcolor[gray]{.9}}4  &  1  &  6  &  2  &  &  &  &  \\
+\hline
+${MRD+}$ &  1  &  & $\star$ &  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf W+}$ &  1  &  4  &  & $\star$ &  &  &  &  4  &  {\cellcolor[gray]{.9}}2  &  2  &  &  1  &  1  \\
+\hline
+${\bf M+}$ &  &  {\cellcolor[gray]{.9}}2  &  &  & $\star$ &  {\cellcolor[gray]{.9}}3  &  &  &  &  &  &  &  \\
+\hline
+${\bf R+}$ &  &  {\cellcolor[gray]{.9}}4  &  &  &  {\cellcolor[gray]{.9}}3  & $\star$ &  &  &  1  &  1  &  &  &  \\
+\hline
+${MRW+}$ &  &  1  &  &  &  &  & $\star$ &  &  &  &  &  &  \\
+\hline
+${\bf D+}$ &  &  6  &  &  4  &  &  &  & $\star$ &  &  {\cellcolor[gray]{.9}}8  &  {\cellcolor[gray]{.9}}2  &  &  1  \\
+\hline
+${\bf P+}$ &  &  2  &  &  {\cellcolor[gray]{.9}}2  &  &  1  &  &  & $\star$ &  &  &  &  \\
+\hline
+${\bf C+}$ &  &  &  &  2  &  &  1  &  &  {\cellcolor[gray]{.9}}8  &  & $\star$ &  {\cellcolor[gray]{.9}}3  &  &  \\
+\hline
+${\bf CD+}$ &  &  &  &  &  &  &  &  {\cellcolor[gray]{.9}}2  &  &  {\cellcolor[gray]{.9}}3  & $\star$ &  &  \\
+\hline
+${CW+}$ &  &  &  &  1  &  &  &  &  &  &  &  & $\star$ &  \\
+\hline
+${WD+}$ &  &  &  &  1  &  &  &  &  1  &  &  &  &  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+After Stage 2 graph:
+... complete multiedges: 100h~101t 100t~99h 101h~102t 102h~103t 103h~104t 105h~106t 108h~109t 109h~110t 10h~11t 111h~112t 114h~115t 114t~oo 115h~116t 116h~117t 117h~118t 118h~119t 119h~120t 11h~12t 121h~122t 122h~123t 123h~124t 125h~126t 126h~127t 128h~129t 129h~130t 130h~131t 131h~132t 132h~133t 134h~135t 135h~136t 136h~137t 138h~144h 139h~140t 139t~147h 13h~14t 141h~142t 145h~146t 145t~148t 146h~147t 149h~150t 14h~15t 150h~151t 152h~oo 154h~155t 156h~157t 157h~158t 158h~159t 15h~16t 160h~161t 161h~162t 162h~163t 164h~165t 165h~166t 166h~167t 167h~168t 168h~oo 169h~170t 16h~17t 170h~171t 171h~172t 172h~173t 175h~176t 176h~177t 177h~178t 178h~179t 17h~18t 180h~181t 183h~184t 184h~185t 185h~186t 186h~187t 188h~189t 188t~197t 189h~190t 18h~19t 190h~191t 191h~192t 192h~193t 193h~194t 194h~195t 195h~196t 197h~198t 198h~199t 199h~200t 19h~20t 1h~2t 200h~201t 201h~202t 203h~204t 205h~206t 206h~207t 207h~208t 209h~210t 211h~212t 215h~216t 218h~219t 21h~22t 222h~223t 223h~224t 225h~226t 226h~227t 227h~228t 228h~229t 229h~oo 230h~243h 231h~232t 232h~233t 233h~234t 234h~235t 235h~236t 236h~237t 237h~238t 238h~239t 239h~240t 241h~242t 244h~245t 247h~248t 247t~283t 248h~249t 249h~250t 251h~252t 255h~256t 258h~263h 259h~260t 261h~262t 262h~263t 264h~265t 265h~266t 266h~267t 269h~270t 271h~272t 272h~273t 273h~274t 275h~276t 277h~278t 279h~280t 27h~28t 280h~281t 287h~288t 288h~oo 289h~290t 289t~67t 294h~295t 295h~296t 298h~299t 299h~300t 29h~30t 2h~3t 301h~302t 303h~304t 304h~305t 306h~307t 30h~31t 31h~32t 32h~33t 34h~35t 36h~37t 37h~38t 38h~39t 39h~40t 3h~4t 40h~41t 42h~43t 43h~44t 45h~46t 47h~48t 48h~49t 4h~5t 50h~51t 51h~52t 52h~53t 53h~54t 54h~55t 55h~56t 58h~59t 5h~6t 60h~61t 62h~63t 63h~64t 65h~66t 68h~80h 69h~70t 6h~7t 70h~71t 71h~72t 72h~73t 73h~74t 74h~75t 75h~76t 76h~77t 78h~79t 79h~80t 7h~8t 81h~82t 83h~84t 84h~85t 85h~86t 86h~87t 87h~88t 88h~89t 89h~90t 8h~9t 90h~91t 91h~92t 92h~93t 94h~95t	(total: 206)
+... connected components: 1^5 2^203 4^3 6^1 10^1 175^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\ensuremath{\emptyset} + HMRCWDP} & 0 + 206 = 206 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 5 = 5\\
+{\bf MR + HCWDP} & 22 + 32 = 54 & 21 & 0 + 4 = 4 & 4 + 0 = 4 & 1 + 6 = 7\\
+{\bf R + HMCWDP} & 3 + 28 = 31 & 3 & 0 + 0 = 0 & 0 + 0 = 0 & 3 + 14 = 17\\
+{\bf D + HMRCWP} & 2 + 28 = 30 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 10 = 12\\
+{\bf W + HMRCDP} & 0 + 26 = 26 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 9 = 9\\
+{\bf P + HMRCWD} & 2 + 20 = 22 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{\bf M + HRCWDP} & 2 + 20 = 22 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 3 = 5\\
+{\bf C + HMRWDP} & 0 + 19 = 19 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 3 = 3\\
+{WD + HMRCP} & 6 + 12 = 18 & 7 & 1 + 1 = 2 & 2 + 0 = 2 & 0 + 9 = 9\\
+{MRD + HCWP} & 8 + 6 = 14 & 6 & 2 + 2 = 4 & 0 + 1 = 1 & 3 + 4 = 7\\
+{\bf WP + HMRCD} & 4 + 7 = 11 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 3 = 4\\
+{HC + MRWDP} & 8 + 3 = 11 & 5 & 2 + 2 = 4 & 0 + 1 = 1 & 1 + 0 = 1\\
+{HCP + MRWD} & 6 + 4 = 10 & 6 & 2 + 3 = 5 & 1 + 1 = 2 & 1 + 1 = 2\\
+{DP + HMRCW} & 4 + 5 = 9 & 4 & 0 + 1 = 1 & 1 + 0 = 1 & 0 + 4 = 4\\
+{\bf CD + HMRWP} & 6 + 3 = 9 & 4 & 0 + 1 = 1 & 1 + 0 = 1 & 2 + 1 = 3\\
+{\bf HMR + CWDP} & 4 + 2 = 6 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{CW + HMRDP} & 3 + 3 = 6 & 3 & 0 + 1 = 1 & 1 + 0 = 1 & 0 + 2 = 2\\
+{HCW + MRDP} & 3 + 2 = 5 & 3 & 0 + 1 = 1 & 1 + 0 = 1 & 1 + 0 = 1\\
+{HCD + MRWP} & 4 + 1 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 4 + 1 = 5\\
+{MRW + HCDP} & 4 + 1 = 5 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 1 = 3\\
+{HD + MRCWP} & 4 + 1 = 5 & 2 & 0 + 1 = 1 & 1 + 0 = 1 & 3 + 0 = 3\\
+{HWD + MRCP} & 3 + 1 = 4 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 0 = 2\\
+{CDP + HMRW} & 1 + 2 = 3 & 2 & 1 + 0 = 1 & 1 + 0 = 1 & 0 + 0 = 0\\
+{HWP + MRCD} & 2 + 1 = 3 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 0 = 1\\
+{MRC + HWDP} & 2 + 1 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 0 = 1\\
+{WDP + HMRC} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{CWP + HMRD} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{CWD + HMRP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{RD + HMCWP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MD + HRCWP} & 0 + 2 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 2 = 2\\
+{MRP + HCWD} & 1 + 1 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{HW + MRCDP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 0 = 1\\
+{CP + HMRWD} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{RWD + HMCP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{RW + HMCDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MWD + HRCP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MCD + HRWP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MC + HRWDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Stage 2 & H & M & R & C & W & D & P \\
+\hline
+H &  & 54 & 51 & 27 & 38 & 44 & 34\\
+M &  &  & 18 & 62 & 68 & 65 & 61\\
+R &  &  &  & 63 & 65 & 61 & 62\\
+C &  &  &  &  & 43 & 47 & 35\\
+W &  &  &  &  &  & 40 & 41\\
+D &  &  &  &  &  &  & 47\\
+P &  &  &  &  &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+ & ${\bf M+}$ & ${\bf MR+}$ & ${\bf R+}$ & ${\bf C+}$ & ${\bf CD+}$ & ${CW+}$ & ${\bf W+}$ & ${CDP+}$ & ${\bf P+}$ & ${WD+}$ & ${\bf D+}$ & ${DP+}$\\
+\hline \hline
+${\bf M+}$ & $\star$ &  {\cellcolor[gray]{.9}}1  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf MR+}$ &  {\cellcolor[gray]{.9}}1  & $\star$ &  {\cellcolor[gray]{.9}}5  &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf R+}$ &  &  {\cellcolor[gray]{.9}}5  & $\star$ &  &  &  &  &  &  &  &  &  \\
+\hline
+${\bf C+}$ &  &  &  & $\star$ &  {\cellcolor[gray]{.9}}1  &  &  &  &  &  &  &  \\
+\hline
+${\bf CD+}$ &  &  &  &  {\cellcolor[gray]{.9}}1  & $\star$ &  &  &  &  &  &  &  \\
+\hline
+${CW+}$ &  &  &  &  &  & $\star$ &  1  &  &  &  &  &  \\
+\hline
+${\bf W+}$ &  &  &  &  &  &  1  & $\star$ &  1  &  {\cellcolor[gray]{.9}}2  &  &  &  \\
+\hline
+${CDP+}$ &  &  &  &  &  &  &  1  & $\star$ &  &  &  &  \\
+\hline
+${\bf P+}$ &  &  &  &  &  &  &  {\cellcolor[gray]{.9}}2  &  & $\star$ &  &  &  \\
+\hline
+${WD+}$ &  &  &  &  &  &  &  &  &  & $\star$ &  1  &  \\
+\hline
+${\bf D+}$ &  &  &  &  &  &  &  &  &  &  1  & $\star$ &  1  \\
+\hline
+${DP+}$ &  &  &  &  &  &  &  &  &  &  &  1  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+After Stage 3 graph:
+... complete multiedges: 100h~101t 100t~99h 101h~102t 102h~103t 103h~104t 104h~105t 105h~106t 108h~109t 109h~110t 10h~11t 110h~111t 111h~112t 112h~113t 114h~115t 114t~oo 115h~116t 116h~117t 117h~118t 118h~119t 119h~120t 11h~12t 121h~122t 122h~123t 123h~124t 124h~125t 125h~126t 126h~127t 127h~128t 128h~129t 129h~130t 12h~13t 130h~131t 131h~132t 132h~133t 133h~134t 134h~135t 135h~136t 136h~137t 137h~oo 138h~144h 138t~oo 139h~140t 139t~147h 13h~14t 141h~142t 145h~146t 145t~148t 146h~147t 149h~150t 14h~15t 150h~151t 152h~oo 153t~oo 154h~155t 156h~157t 157h~158t 158h~159t 159h~160t 15h~16t 160h~161t 161h~162t 162h~163t 164h~165t 165h~166t 166h~167t 167h~168t 168h~oo 169h~170t 16h~17t 170h~171t 171h~172t 172h~173t 175h~176t 176h~177t 177h~178t 178h~179t 179h~oo 17h~18t 180h~181t 183h~184t 184h~185t 185h~186t 186h~187t 187h~oo 188h~189t 188t~197t 189h~190t 18h~19t 190h~191t 191h~192t 192h~193t 193h~194t 194h~195t 195h~196t 196h~oo 197h~198t 198h~199t 199h~200t 19h~20t 1h~2t 1t~oo 200h~201t 201h~202t 203h~204t 205h~206t 206h~207t 207h~208t 209h~210t 20h~21t 211h~212t 212h~oo 214h~oo 215h~216t 216h~217t 218h~219t 21h~22t 220h~221t 222h~223t 223h~224t 225h~226t 226h~227t 227h~228t 228h~229t 229h~oo 230h~243h 231h~232t 232h~233t 233h~234t 234h~235t 235h~236t 236h~237t 237h~238t 238h~239t 239h~240t 241h~242t 244h~245t 247h~248t 247t~283t 248h~249t 249h~250t 251h~252t 253h~oo 254h~255t 255h~256t 258h~263h 259h~260t 261h~262t 262h~263t 264h~265t 265h~266t 266h~267t 267h~oo 269h~270t 271h~272t 272h~273t 273h~274t 274h~275t 275h~276t 276h~oo 277h~278t 277t~oo 278h~279t 279h~280t 27h~28t 280h~281t 287h~288t 288h~oo 289h~290t 289t~67t 28h~oo 293h~294t 294h~295t 295h~296t 297h~298t 297t~oo 298h~299t 299h~300t 29h~30t 29t~oo 2h~3t 300h~301t 301h~302t 302h~303t 303h~304t 304h~305t 305h~306t 306h~307t 307h~oo 30h~31t 31h~32t 32h~33t 34h~35t 35h~36t 36h~37t 37h~38t 38h~39t 39h~40t 3h~4t 40h~41t 42h~43t 43h~44t 45h~46t 47h~48t 48h~49t 4h~5t 50h~51t 51h~52t 52h~53t 53h~54t 54h~55t 55h~56t 58h~59t 59h~oo 5h~6t 60h~61t 62h~63t 63h~64t 64h~65t 65h~66t 68h~80h 69h~70t 6h~7t 70h~71t 71h~72t 72h~73t 73h~74t 74h~75t 75h~76t 76h~77t 77h~78t 78h~79t 79h~80t 7h~8t 81h~82t 83h~84t 84h~85t 85h~86t 86h~87t 87h~88t 88h~89t 89h~90t 8h~9t 90h~91t 91h~92t 92h~93t 94h~95t 95h~96t 96h~oo 97t~oo 99t~oo	(total: 250)
+... connected components: 1^26 2^236 3^2 4^9 5^2 15^1 49^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\ensuremath{\emptyset} + HMRCWDP} & 0 + 250 = 250 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 26 = 26\\
+{WD + HMRCP} & 7 + 16 = 23 & 12 & 5 + 2 = 7 & 3 + 1 = 4 & 1 + 11 = 12\\
+{HCP + MRWD} & 7 + 8 = 15 & 10 & 4 + 3 = 7 & 3 + 1 = 4 & 1 + 5 = 6\\
+{\bf MR + HCWDP} & 4 + 11 = 15 & 4 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 2 = 2\\
+{MRD + HCWP} & 6 + 8 = 14 & 10 & 4 + 3 = 7 & 2 + 1 = 3 & 1 + 5 = 6\\
+{DP + HMRCW} & 4 + 6 = 10 & 7 & 3 + 2 = 5 & 1 + 1 = 2 & 0 + 4 = 4\\
+{CW + HMRDP} & 3 + 7 = 10 & 6 & 3 + 2 = 5 & 1 + 1 = 2 & 0 + 5 = 5\\
+{HC + MRWDP} & 7 + 3 = 10 & 5 & 2 + 2 = 4 & 0 + 1 = 1 & 0 + 0 = 0\\
+{\bf D + HMRCWP} & 0 + 9 = 9 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{\bf C + HMRWDP} & 0 + 7 = 7 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{\bf R + HMCWDP} & 0 + 7 = 7 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 3 = 3\\
+{MRP + HCWD} & 3 + 4 = 7 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 3 + 1 = 4\\
+{\bf M + HRCWDP} & 0 + 7 = 7 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{\bf W + HMRCDP} & 0 + 6 = 6 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 3 = 3\\
+{\bf P + HMRCWD} & 0 + 5 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{\bf WP + HMRCD} & 0 + 5 = 5 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 3 = 3\\
+{CDP + HMRW} & 3 + 2 = 5 & 4 & 2 + 2 = 4 & 0 + 1 = 1 & 1 + 0 = 1\\
+{\bf HMR + CWDP} & 2 + 3 = 5 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{HCW + MRDP} & 3 + 2 = 5 & 3 & 0 + 1 = 1 & 1 + 0 = 1 & 1 + 0 = 1\\
+{HCD + MRWP} & 3 + 2 = 5 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 2 = 4\\
+{MRW + HCDP} & 2 + 3 = 5 & 2 & 1 + 0 = 1 & 1 + 0 = 1 & 0 + 3 = 3\\
+{HD + MRCWP} & 4 + 1 = 5 & 2 & 0 + 1 = 1 & 1 + 0 = 1 & 3 + 0 = 3\\
+{CWD + HMRP} & 3 + 1 = 4 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{\bf CD + HMRWP} & 1 + 2 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{RD + HMCWP} & 1 + 2 = 3 & 2 & 1 + 0 = 1 & 1 + 0 = 1 & 0 + 2 = 2\\
+{HW + MRCDP} & 2 + 1 = 3 & 2 & 0 + 1 = 1 & 1 + 0 = 1 & 2 + 0 = 2\\
+{HWP + MRCD} & 2 + 1 = 3 & 2 & 0 + 1 = 1 & 1 + 0 = 1 & 0 + 0 = 0\\
+{MRC + HWDP} & 2 + 1 = 3 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 0 = 1\\
+{WDP + HMRC} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{CWP + HMRD} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{MC + HRWDP} & 1 + 1 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 1 + 1 = 2\\
+{HWD + MRCP} & 1 + 1 = 2 & 1 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+{CP + HMRWD} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{RDP + HMCW} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{RWP + HMCD} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{RW + HMCDP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{MWD + HRCP} & 0 + 1 = 1 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Stage 3 & H & M & R & C & W & D & P \\
+\hline
+H &  & 30 & 31 & 18 & 33 & 38 & 22\\
+M &  &  & 8 & 37 & 41 & 36 & 30\\
+R &  &  &  & 38 & 38 & 33 & 31\\
+C &  &  &  &  & 32 & 38 & 23\\
+W &  &  &  &  &  & 23 & 31\\
+D &  &  &  &  &  &  & 32\\
+P &  &  &  &  &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${HCP+}$ & ${WD+}$ & ${MRP+}$\\
+\hline \hline
+${HCP+}$ & $\star$ &  1  &  \\
+\hline
+${WD+}$ &  1  & $\star$ &  1  \\
+\hline
+${MRP+}$ &  &  1  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${HCP+}$ & ${WD+}$ & ${MRP+}$\\
+\hline \hline
+${HCP+}$ & $\star$ &  1  &  \\
+\hline
+${WD+}$ &  1  & $\star$ &  1  \\
+\hline
+${MRP+}$ &  &  1  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+Total number of 2-breaks: 386
+H	14
+HMR	1
+HMRCD	1
+M	32
+MR	90
+R	32
+C	27
+CD	3
+W	83
+WP	3
+D	59
+P	41
+

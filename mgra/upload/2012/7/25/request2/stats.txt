@@ -1,0 +1,223 @@
+Initial graph:
+... complete multiedges: 455h~457t 464h~465t	(total: 2)
+... connected components: 2^2 4^30 5^1 6^8 12^1 14^1 755^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\bf V + PS} & 175 + 310 = 485 & 350 & 175 + 106 = 281 & 69 + 19 = 88 & 0 + 36 = 36\\
+{\bf S + PV} & 160 + 283 = 443 & 318 & 158 + 95 = 253 & 64 + 10 = 74 & 2 + 14 = 16\\
+{\bf P + SV} & 150 + 26 = 176 & 52 & 6 + 26 = 32 & 20 + 2 = 22 & 14 + 0 = 14\\
+{\ensuremath{\emptyset} + PSV} & 0 + 2 = 2 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 0 = 0\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|}
+\hline
+Stage 0 & P & S & V \\
+\hline
+P &  & 268 & 255\\
+S &  &  & 409\\
+V &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${\bf P+}$ & ${\bf S+}$ & ${\bf V+}$\\
+\hline \hline
+${\bf P+}$ & $\star$ &  {\cellcolor[gray]{.9}}49  &  {\cellcolor[gray]{.9}}52  \\
+\hline
+${\bf S+}$ &  {\cellcolor[gray]{.9}}49  & $\star$ &  {\cellcolor[gray]{.9}}94  \\
+\hline
+${\bf V+}$ &  {\cellcolor[gray]{.9}}52  &  {\cellcolor[gray]{.9}}94  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+After Stage 1 graph:
+... complete multiedges: 100h~101t 100t~99h 101h~116h 106t~107h 10h~11t 10t~9h 110h~111t 111h~112t 113t~114t 114h~115t 115h~116t 117h~118t 11h~12t 121h~510h 121t~511t 124h~125t 125h~126t 126h~127h 127t~128t 128h~129t 129h~132t 12h~13t 132h~133t 133h~134t 136h~137t 137h~138t 139h~140t 13h~14t 140h~141t 141h~142t 147h~148t 148h~149t 149h~150t 14h~15t 150h~151t 151h~152t 152h~153t 153h~154t 154h~155t 155h~156t 156h~159t 157h~367h 160h~161t 168h~182t 168t~172t 169h~170t 169t~181h 16h~17t 170h~171t 172h~173t 173h~174t 174h~175t 175h~176t 176h~177t 17h~18t 182h~183t 183h~184t 184h~185t 185h~186t 186h~187t 187h~188t 189h~190t 190h~191t 191h~192t 192h~193t 193h~194t 194h~195t 196t~197t 197h~198t 198h~199h 199t~200t 19h~20t 202h~203t 203h~204t 204h~205t 205h~206t 206h~317t 207h~208h 207t~316h 208t~209t 209h~210t 20h~21t 210h~211t 211h~212h 212t~213t 213h~214t 214h~215t 215h~216t 216h~217t 217h~218t 218h~219t 219h~220t 21h~22t 220h~221t 221h~222t 222h~223t 224h~225t 225h~226t 226h~227t 230h~231t 230t~236t 231h~232t 232h~233t 236h~237t 237h~238t 238h~239t 23h~24t 240h~241t 244h~245t 245h~246t 247h~303t 248h~249t 248t~303h 249h~250t 24h~43h 250h~251t 251h~252t 256h~257t 257h~258t 258h~259t 259h~434h 25h~26t 25t~44t 260h~261t 260t~434t 261h~262t 262h~263t 263h~264h 264t~265t 265h~266t 266h~267t 267h~268h 268t~269t 269h~270t 26h~27t 270h~271t 271h~272t 273h~274t 274h~275t 275h~276t 276h~277t 277h~278t 278h~279t 27h~28t 280h~281t 281h~282t 282h~283t 284h~285t 288h~392t 28h~29t 291h~292t 292h~293t 293h~294t 294h~295t 295h~296t 296h~297t 297h~298t 298h~299t 29h~30h 300h~301t 301h~302t 302h~304t 304h~305t 305h~306h 306t~307t 307h~308t 308h~309t 309h~310t 30t~31t 310h~311t 311h~312h 312t~313t 313h~314t 314h~315t 315h~316t 317h~318t 318h~319t 31h~32t 320h~321t 321h~322t 322h~323t 323h~324t 324h~325t 325h~326t 326h~327t 327h~328t 328h~329t 329h~330t 32h~3t 330h~331t 331h~332t 332h~333t 333h~334t 334h~335h 335t~336t 339h~340t 33h~34t 340h~341t 341h~342t 342h~343t 348h~349t 349h~351t 351h~352t 352h~353t 353h~354t 354h~355t 355h~356t 356h~357t 357h~358t 358h~359t 359h~360h 360t~361t 361h~362t 362h~363t 363h~364t 364h~365t 365h~366t 366h~367t 368h~369t 374h~375t 376h~377t 377h~378t 378h~379t 379h~380t 37h~38t 380h~381t 381h~382t 382h~383t 383h~384t 384h~385t 385h~386t 386h~387t 387h~388t 388h~389t 389h~390t 38h~39t 390h~391t 392h~393h 393t~394t 394h~395t 395h~396h 396t~397t 397h~398t 398h~399h 399t~400t 39h~40t 3h~4t 400h~401t 401h~402t 402h~403t 403h~404t 404h~405t 405h~406t 406h~407t 407h~408t 408h~409t 409h~410t 40h~41t 410h~411t 411h~412t 412h~413t 413h~oo 414h~415t 415h~416t 416h~417t 418h~419t 419h~420t 41h~42t 420h~421t 421h~422t 422h~423t 423h~424t 424h~425t 425h~426t 426h~427h 427t~428t 428h~429t 429h~430t 42h~43t 430h~431t 431h~432t 432h~433t 433h~435t 435h~436t 436h~437t 437h~438t 438h~439t 439h~440t 440h~441t 441h~442t 442h~443t 443h~444t 444h~445t 446h~447h 447t~448t 448h~449t 449h~450t 44h~45t 450h~451t 451h~452t 452h~453t 453h~454t 454h~455t 455h~457t 457h~458h 458t~459t 459h~460t 45h~46t 460h~463h 461h~462t 462h~463t 464h~465t 465h~467t 468h~470t 46h~47t 470h~471t 471h~472t 472h~473t 474h~475t 475h~476t 476h~477t 47h~48t 480h~481h 481t~482t 482h~483t 483h~484t 484h~485t 485h~486t 486h~487t 487h~488t 488h~489t 489h~490t 48h~49t 490h~491h 491t~492t 492h~493t 494h~496t 496h~497t 497h~498t 498h~499h 499t~500t 49h~50h 4h~5t 500h~501t 501h~502h 502t~503t 505h~506t 506h~507h 507t~511h 508h~509t 508t~512t 509h~510t 50t~51t 512h~513t 513h~514t 514h~515t 515h~516t 516h~517t 51h~52t 52h~53t 53h~54t 54h~58t 5h~6t 60h~61t 61h~62t 62h~63h 63t~64t 64h~65t 65h~66t 67h~68t 68h~69t 69h~70t 6h~7t 70h~71t 71h~72t 72h~73t 73h~74t 74h~75t 76h~77t 77h~78t 78h~79t 79h~80t 7h~8t 80h~81t 81h~82t 82h~83t 83h~84t 84h~85t 85h~86t 86h~87t 87h~88t 88h~89t 89h~90t 8h~9t 90h~91t 91h~92t 92h~93t 93h~94t 94h~95t 95h~96t 96h~97t 97h~98t 98h~99t	(total: 403)
+... connected components: 1^1 2^402 153^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\ensuremath{\emptyset} + PSV} & 0 + 403 = 403 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{\bf V + PS} & 3 + 86 = 89 & 3 & 0 + 0 = 0 & 0 + 0 = 0 & 3 + 23 = 26\\
+{\bf P + SV} & 79 + 2 = 81 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 10 + 2 = 12\\
+{\bf S + PV} & 2 + 78 = 80 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 8 = 10\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|}
+\hline
+Stage 1 & P & S & V \\
+\hline
+P &  & 68 & 64\\
+S &  &  & 70\\
+V &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${\bf P+}$ & ${\bf S+}$ & ${\bf V+}$\\
+\hline \hline
+${\bf P+}$ & $\star$ &  {\cellcolor[gray]{.9}}60  &  {\cellcolor[gray]{.9}}68  \\
+\hline
+${\bf S+}$ &  {\cellcolor[gray]{.9}}60  & $\star$ &  {\cellcolor[gray]{.9}}67  \\
+\hline
+${\bf V+}$ &  {\cellcolor[gray]{.9}}68  &  {\cellcolor[gray]{.9}}67  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+After Stage 2 graph:
+... complete multiedges: 100h~101t 100t~99h 101h~116h 106t~107h 10h~11t 10t~9h 110h~111t 111h~112t 113t~114t 114h~115t 115h~116t 117h~118t 11h~12t 121h~510h 121t~511t 124h~125t 125h~126t 126h~127h 127t~128t 128h~129t 129h~132t 12h~13t 132h~133t 133h~134t 136h~137t 137h~138t 139h~140t 13h~14t 140h~141t 141h~142t 147h~148t 148h~149t 149h~150t 14h~15t 150h~151t 151h~152t 152h~153t 153h~154t 154h~155t 155h~156t 156h~159t 157h~367h 160h~161t 168h~182t 168t~172t 169h~170t 169t~181h 16h~17t 170h~171t 172h~173t 173h~174t 174h~175t 175h~176t 176h~177t 17h~18t 182h~183t 183h~184t 184h~185t 185h~186t 186h~187t 187h~188t 189h~190t 190h~191t 191h~192t 192h~193t 193h~194t 194h~195t 196t~197t 197h~198t 198h~199h 199t~200t 19h~20t 202h~203t 203h~204t 204h~205t 205h~206t 206h~317t 207h~208h 207t~316h 208t~209t 209h~210t 20h~21t 210h~211t 211h~212h 212t~213t 213h~214t 214h~215t 215h~216t 216h~217t 217h~218t 218h~219t 219h~220t 21h~22t 220h~221t 221h~222t 222h~223t 224h~225t 225h~226t 226h~227t 230h~231t 230t~236t 231h~232t 232h~233t 236h~237t 237h~238t 238h~239t 23h~24t 240h~241t 244h~245t 245h~246t 247h~303t 248h~249t 248t~303h 249h~250t 24h~43h 250h~251t 251h~252t 256h~257t 257h~258t 258h~259t 259h~434h 25h~26t 25t~44t 260h~261t 260t~434t 261h~262t 262h~263t 263h~264h 264t~265t 265h~266t 266h~267t 267h~268h 268t~269t 269h~270t 26h~27t 270h~271t 271h~272t 273h~274t 274h~275t 275h~276t 276h~277t 277h~278t 278h~279t 27h~28t 280h~281t 281h~282t 282h~283t 284h~285t 288h~392t 28h~29t 291h~292t 292h~293t 293h~294t 294h~295t 295h~296t 296h~297t 297h~298t 298h~299t 29h~30h 300h~301t 301h~302t 302h~304t 304h~305t 305h~306h 306t~307t 307h~308t 308h~309t 309h~310t 30t~31t 310h~311t 311h~312h 312t~313t 313h~314t 314h~315t 315h~316t 317h~318t 318h~319t 31h~32t 320h~321t 321h~322t 322h~323t 323h~324t 324h~325t 325h~326t 326h~327t 327h~328t 328h~329t 329h~330t 32h~3t 330h~331t 331h~332t 332h~333t 333h~334t 334h~335h 335t~336t 339h~340t 33h~34t 340h~341t 341h~342t 342h~343t 348h~349t 349h~351t 351h~352t 352h~353t 353h~354t 354h~355t 355h~356t 356h~357t 357h~358t 358h~359t 359h~360h 360t~361t 361h~362t 362h~363t 363h~364t 364h~365t 365h~366t 366h~367t 368h~369t 374h~375t 376h~377t 377h~378t 378h~379t 379h~380t 37h~38t 380h~381t 381h~382t 382h~383t 383h~384t 384h~385t 385h~386t 386h~387t 387h~388t 388h~389t 389h~390t 38h~39t 390h~391t 392h~393h 393t~394t 394h~395t 395h~396h 396t~397t 397h~398t 398h~399h 399t~400t 39h~40t 3h~4t 400h~401t 401h~402t 402h~403t 403h~404t 404h~405t 405h~406t 406h~407t 407h~408t 408h~409t 409h~410t 40h~41t 410h~411t 411h~412t 412h~413t 413h~oo 414h~415t 415h~416t 416h~417t 418h~419t 419h~420t 41h~42t 420h~421t 421h~422t 422h~423t 423h~424t 424h~425t 425h~426t 426h~427h 427t~428t 428h~429t 429h~430t 42h~43t 430h~431t 431h~432t 432h~433t 433h~435t 435h~436t 436h~437t 437h~438t 438h~439t 439h~440t 440h~441t 441h~442t 442h~443t 443h~444t 444h~445t 446h~447h 447t~448t 448h~449t 449h~450t 44h~45t 450h~451t 451h~452t 452h~453t 453h~454t 454h~455t 455h~457t 457h~458h 458t~459t 459h~460t 45h~46t 460h~463h 461h~462t 462h~463t 464h~465t 465h~467t 468h~470t 46h~47t 470h~471t 471h~472t 472h~473t 474h~475t 475h~476t 476h~477t 47h~48t 480h~481h 481t~482t 482h~483t 483h~484t 484h~485t 485h~486t 486h~487t 487h~488t 488h~489t 489h~490t 48h~49t 490h~491h 491t~492t 492h~493t 494h~496t 496h~497t 497h~498t 498h~499h 499t~500t 49h~50h 4h~5t 500h~501t 501h~502h 502t~503t 505h~506t 506h~507h 507t~511h 508h~509t 508t~512t 509h~510t 50t~51t 512h~513t 513h~514t 514h~515t 515h~516t 516h~517t 51h~52t 52h~53t 53h~54t 54h~58t 5h~6t 60h~61t 61h~62t 62h~63h 63t~64t 64h~65t 65h~66t 67h~68t 68h~69t 69h~70t 6h~7t 70h~71t 71h~72t 72h~73t 73h~74t 74h~75t 76h~77t 77h~78t 78h~79t 79h~80t 7h~8t 80h~81t 81h~82t 82h~83t 83h~84t 84h~85t 85h~86t 86h~87t 87h~88t 88h~89t 89h~90t 8h~9t 90h~91t 91h~92t 92h~93t 93h~94t 94h~95t 95h~96t 96h~97t 97h~98t 98h~99t	(total: 403)
+... connected components: 1^1 2^402 153^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\ensuremath{\emptyset} + PSV} & 0 + 403 = 403 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 1 = 1\\
+{\bf V + PS} & 3 + 86 = 89 & 3 & 0 + 0 = 0 & 0 + 0 = 0 & 3 + 23 = 26\\
+{\bf P + SV} & 79 + 2 = 81 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 10 + 2 = 12\\
+{\bf S + PV} & 2 + 78 = 80 & 2 & 0 + 0 = 0 & 0 + 0 = 0 & 2 + 8 = 10\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|}
+\hline
+Stage 2 & P & S & V \\
+\hline
+P &  & 68 & 64\\
+S &  &  & 70\\
+V &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${\bf P+}$ & ${\bf S+}$ & ${\bf V+}$\\
+\hline \hline
+${\bf P+}$ & $\star$ &  {\cellcolor[gray]{.9}}60  &  {\cellcolor[gray]{.9}}68  \\
+\hline
+${\bf S+}$ &  {\cellcolor[gray]{.9}}60  & $\star$ &  {\cellcolor[gray]{.9}}67  \\
+\hline
+${\bf V+}$ &  {\cellcolor[gray]{.9}}68  &  {\cellcolor[gray]{.9}}67  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+After Stage 3 graph:
+... complete multiedges: 100h~101t 100t~99h 101h~116h 104t~oo 106t~107h 10h~11t 10t~9h 110h~111t 110t~oo 111h~112t 112h~oo 113h~461t 113t~114t 114h~115t 115h~116t 117h~118t 117t~233h 118h~oo 11h~12t 121h~510h 121t~511t 123t~319h 124h~125t 125h~126t 126h~127h 127t~128t 128h~129t 129h~132t 12h~13t 132h~133t 133h~134t 136h~137t 137h~138t 139h~140t 13h~14t 140h~141t 141h~142t 144h~147t 147h~148t 148h~149t 149h~150t 14h~15t 150h~151t 151h~152t 152h~153t 153h~154t 154h~155t 155h~156t 156h~159t 157h~367h 159h~160t 15h~369h 160h~161t 164t~372t 167h~oo 168h~182t 168t~172t 169h~170t 169t~181h 16h~17t 16t~oo 170h~171t 172h~173t 173h~174t 174h~175t 175h~176t 176h~177t 177h~180h 17h~18t 180t~181t 182h~183t 183h~184t 184h~185t 185h~186t 186h~187t 187h~188t 189h~190t 18h~oo 190h~191t 191h~192t 192h~193t 193h~194t 194h~195t 196t~197t 197h~198t 198h~199h 199t~200t 19h~20t 19t~23t 201h~oo 202h~203t 203h~204t 204h~205t 205h~206t 206h~317t 207h~208h 207t~316h 208t~209t 209h~210t 20h~21t 210h~211t 211h~212h 212t~213t 213h~214t 214h~215t 215h~216t 216h~217t 217h~218t 218h~219t 219h~220t 21h~22t 220h~221t 221h~222t 222h~223t 223h~oo 224h~225t 224t~283h 225h~226t 226h~227t 227h~oo 229h~280t 229t~oo 22h~oo 230h~231t 230t~236t 231h~232t 232h~233t 234h~oo 234t~240t 236h~237t 237h~238t 238h~239t 239h~oo 23h~24t 240h~241t 244h~245t 245h~246t 246h~480t 247h~303t 247t~477h 248h~249t 248t~303h 249h~250t 24h~43h 250h~251t 251h~252t 254h~273t 256h~257t 256t~oo 257h~258t 258h~259t 259h~434h 25h~26t 25t~44t 260h~261t 260t~434t 261h~262t 262h~263t 263h~264h 264t~265t 265h~266t 266h~267t 267h~268h 268t~269t 269h~270t 26h~27t 270h~271t 271h~272t 272h~oo 273h~274t 274h~275t 275h~276t 276h~277t 277h~278t 278h~279t 279h~oo 27h~28t 280h~281t 281h~282t 282h~283t 284h~285t 284t~372h 288h~392t 28h~29t 291h~292t 292h~293t 293h~294t 294h~295t 295h~296t 296h~297t 297h~298t 298h~299t 29h~30h 2h~33t 300h~301t 300t~oo 301h~302t 302h~304t 304h~305t 305h~306h 306t~307t 307h~308t 308h~309t 309h~310t 30t~31t 310h~311t 311h~312h 312t~313t 313h~314t 314h~315t 315h~316t 317h~318t 318h~319t 31h~32t 320h~321t 320t~oo 321h~322t 322h~323t 323h~324t 324h~325t 325h~326t 326h~327t 327h~328t 328h~329t 329h~330t 32h~3t 330h~331t 331h~332t 332h~333t 333h~334t 334h~335h 335t~336t 336h~339t 338h~338t 339h~340t 33h~34t 340h~341t 341h~342t 342h~343t 343h~oo 347h~oo 347t~oo 348h~349t 348t~oo 349h~351t 34h~35t 351h~352t 352h~353t 353h~354t 354h~355t 355h~356t 356h~357t 357h~358t 358h~359t 359h~360h 35h~36t 360t~361t 361h~362t 362h~363t 363h~364t 364h~365t 365h~366t 366h~367t 368h~369t 370h~60t 370t~417h 374h~375t 374t~oo 375h~376t 376h~377t 377h~378t 378h~379t 379h~380t 37h~38t 380h~381t 381h~382t 382h~383t 383h~384t 384h~385t 385h~386t 386h~387t 387h~388t 388h~389t 389h~390t 38h~39t 390h~391t 392h~393h 393t~394t 394h~395t 395h~396h 396t~397t 397h~398t 398h~399h 399t~400t 39h~40t 3h~4t 400h~401t 401h~402t 402h~403t 403h~404t 404h~405t 405h~406t 406h~407t 407h~408t 408h~409t 409h~410t 40h~41t 410h~411t 411h~412t 412h~413t 413h~oo 414h~415t 414t~oo 415h~416t 416h~417t 418h~419t 418t~oo 419h~420t 41h~42t 420h~421t 421h~422t 422h~423t 423h~424t 424h~425t 425h~426t 426h~427h 427t~428t 428h~429t 429h~430t 42h~43t 430h~431t 431h~432t 432h~433t 433h~435t 435h~436t 436h~437t 437h~438t 438h~439t 439h~440t 440h~441t 441h~442t 442h~443t 443h~444t 444h~445t 446h~447h 447t~448t 448h~449t 449h~450t 44h~45t 450h~451t 451h~452t 452h~453t 453h~454t 454h~455t 455h~457t 457h~458h 458t~459t 459h~460t 45h~46t 460h~463h 461h~462t 462h~463t 464h~465t 464t~oo 465h~467t 467h~oo 468h~470t 468t~oo 46h~47t 470h~471t 471h~472t 472h~473t 474h~475t 475h~476t 476h~477t 47h~48t 480h~481h 481t~482t 482h~483t 483h~484t 484h~485t 485h~486t 486h~487t 487h~488t 488h~489t 489h~490t 48h~49t 490h~491h 491t~492t 492h~493t 494h~496t 494t~oo 496h~497t 497h~498t 498h~499h 499t~500t 49h~50h 4h~5t 500h~501t 501h~502h 502t~503t 503h~505t 504h~504t 505h~506t 506h~507h 507t~511h 508h~509t 508t~512t 509h~510t 50t~51t 512h~513t 513h~514t 514h~515t 515h~516t 516h~517t 517h~oo 51h~52t 52h~53t 53h~54t 54h~58t 5h~6t 60h~61t 61h~62t 62h~63h 63t~64t 64h~65t 65h~66t 66h~67t 67h~68t 68h~69t 69h~70t 6h~7t 70h~71t 71h~72t 72h~73t 73h~74t 74h~75t 75h~76t 76h~77t 77h~78t 78h~79t 79h~80t 7h~8t 80h~81t 81h~82t 82h~83t 83h~84t 84h~85t 85h~86t 86h~87t 87h~88t 88h~89t 89h~90t 8h~9t 90h~91t 91h~92t 92h~93t 93h~94t 94h~95t 95h~96t 96h~97t 97h~98t 98h~99t	(total: 463)
+... connected components: 1^32 2^431 64^1
+
+% Rearrangement characters:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Multicolors & multiedges & simple vertices & simple multiedges & simple paths+cycles & irreg. multiedges\\
+\hline
+{\ensuremath{\emptyset} + PSV} & 0 + 463 = 463 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 32 = 32\\
+{\bf V + PS} & 0 + 37 = 37 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 10 = 10\\
+{\bf S + PV} & 0 + 34 = 34 & 0 & 0 + 0 = 0 & 0 + 0 = 0 & 0 + 4 = 4\\
+\hline
+\end{tabular}
+\end{table}
+
+% Estimated distances:
+
+\begin{table}[h]
+\centering \begin{tabular}{|c|c|c|c|}
+\hline
+Stage 3 & P & S & V \\
+\hline
+P &  & 30 & 28\\
+S &  &  & 30\\
+V &  &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${\bf P+}$ & ${\bf S+}$ & ${\bf V+}$\\
+\hline \hline
+${\bf P+}$ & $\star$ &  {\cellcolor[gray]{.9}}27  &  {\cellcolor[gray]{.9}}30  \\
+\hline
+${\bf S+}$ &  {\cellcolor[gray]{.9}}27  & $\star$ &  {\cellcolor[gray]{.9}}29  \\
+\hline
+${\bf V+}$ &  {\cellcolor[gray]{.9}}30  &  {\cellcolor[gray]{.9}}29  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% Fair multi-edges count: 
+
+\begin{table}[h]
+\centering \begin{tabular}{|c||c|c|c|}
+\hline
+ & ${\bf P+}$ & ${\bf S+}$ & ${\bf V+}$\\
+\hline \hline
+${\bf P+}$ & $\star$ &  {\cellcolor[gray]{.9}}27  &  {\cellcolor[gray]{.9}}30  \\
+\hline
+${\bf S+}$ &  {\cellcolor[gray]{.9}}27  & $\star$ &  {\cellcolor[gray]{.9}}29  \\
+\hline
+${\bf V+}$ &  {\cellcolor[gray]{.9}}30  &  {\cellcolor[gray]{.9}}29  & $\star$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+Total number of 2-breaks: 447
+P	52
+PS	22
+S	205
+V	168
+

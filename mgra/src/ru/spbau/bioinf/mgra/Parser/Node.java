@@ -1,7 +1,9 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.apache.log4j.Logger;
+import org.jdom.Document;
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.Server.JettyServer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.io.BufferedReader;
@@ -97,17 +99,22 @@ public class Node {
         XmlUtil.addElement(cell, "text", this.root);
         Genome genome = new Genome();
         try {
+           Document doc = new Document();
            BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".gen"));
            String s;
            int count = 0;
            while ((s = input.readLine())!=null) {
                 s = s.trim();
                 if (!s.startsWith("#") && s.length() > 0) {
-                      count++;
                       genome.addChromosome(new Chromosome(count, s));
                 }
            }
-           cell.addContent(genome.toXml());
+
+           genome.toPng(root, JettyServer.getFormat());
+
+           //doc.addContent(genome.toXml());
+           //XmlUtil.saveXml(doc, new File(dateDir, root + ".xml"));
+           //Drawer picture = new Drawer(JettyServer.getFormat(), count, maxCountGene);
         } catch (Exception e) {
            log.error("Problems with " + root + ".gen file.", e);
         }

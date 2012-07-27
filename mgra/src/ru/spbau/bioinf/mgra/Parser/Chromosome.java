@@ -10,7 +10,6 @@ import java.util.List;
 public class Chromosome {
 
     private int id;
-
     private List<Gene> genes = new LinkedList<Gene>();
 
     public List<Gene> getGenes() {
@@ -34,6 +33,15 @@ public class Chromosome {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getCountGene() {
+        return genes.size();
+    }
+
+    public long getLength() {
+        long length = 0;
+        return length;
     }
 
     public boolean contains(End end) {

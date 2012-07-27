@@ -10,6 +10,7 @@ public class Gene {
 
     private String id;
     private Direction direction;
+    private long lengths;
     private List<End> ends = new LinkedList<End>();
 
     public Gene(String id, Direction direction) {

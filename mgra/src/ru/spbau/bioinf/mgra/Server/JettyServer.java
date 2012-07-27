@@ -68,6 +68,7 @@ public class JettyServer {
     private static AtomicInteger requestId;
 
     private static int currentDay = -1;
+    private static String inputFormat = null;
 
     static {
         try {
@@ -368,9 +369,13 @@ public class JettyServer {
     }
 
     private static String getFormat(Properties proporties) {
-        String ans = (String) proporties.get("useFormat");
-        log.debug("Genome format detection: " + ans);
-        return ans;
+        inputFormat = (String) proporties.get("useFormat");
+        log.debug("Genome format detection: " + inputFormat);
+        return inputFormat;
+    }
+
+    public static String getFormat() {
+        return inputFormat;
     }
 
     private static Thread listenOutput(InputStream inputStream, final PrintWriter out, final String type) {

@@ -25,13 +25,9 @@ public class Genome {
         return genome;
     }
 
-    public void toPng(String nameFile, String inputFormat) {
-        if (inputFormat.equals("grimm")) {
-            Drawer picture = new Drawer(inputFormat, chromosomes.size(), getMaxCountGeneInChromosome());
-            picture.writeInPng(nameFile);
-        } else {
-            Drawer picture = new Drawer(inputFormat, chromosomes.size(), getMaxLengthChromosome());
-            picture.writeInPng(nameFile);
+    public void setLengthInBlock(String name) {
+        for(Chromosome chromosome: chromosomes) {
+            chromosome.setLengthInGene(name);
         }
     }
 
@@ -39,7 +35,7 @@ public class Genome {
         return chromosomes.size();
     }
 
-    private int getMaxCountGeneInChromosome() {
+    public int getMaxCountGeneInChromosome() {
         int maxCountGen = 0;
         for(Chromosome i: chromosomes) {
             if (maxCountGen < i.getCountGene()) maxCountGen = i.getCountGene();
@@ -47,10 +43,10 @@ public class Genome {
         return maxCountGen;
     }
 
-    private long getMaxLengthChromosome() {
+    public long getMaxLengthChromosome() {
         long maxLengthGen = 0;
-        for(Chromosome i: chromosomes) {
-            if (maxLengthGen < i.getLength()) maxLengthGen = i.getLength();
+        for(Chromosome chromosome: chromosomes) {
+            if (maxLengthGen < chromosome.getLength()) maxLengthGen = chromosome.getLength();
         }
         return maxLengthGen;
     }

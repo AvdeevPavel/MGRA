@@ -1,6 +1,7 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.DataFile.GenomeInInferCar;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
@@ -29,6 +30,13 @@ public class Chromosome {
                genes.add(gene);
            }
         }
+
+    }
+
+    public void setLengthInGene(String name) {
+        for(Gene gene: genes) {
+            gene.setLength(GenomeInInferCar.getLength(gene.getId(), name));
+        }
     }
 
     public void setId(int id) {
@@ -41,6 +49,11 @@ public class Chromosome {
 
     public long getLength() {
         long length = 0;
+
+        for(Gene gene: genes) {
+            length += gene.getLength();
+        }
+
         return length;
     }
 

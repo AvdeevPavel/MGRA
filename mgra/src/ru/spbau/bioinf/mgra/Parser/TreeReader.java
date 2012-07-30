@@ -3,6 +3,7 @@ package ru.spbau.bioinf.mgra.Parser;
 import net.sf.saxon.s9api.*;
 import org.jdom.Document;
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.io.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class TreeReader {
 
     public static void main(String[] args) throws Exception {
-       String fileName = "data/mam6/mam6.cfg";
+       String fileName = "data/toy/toy.cfg";
        if (args.length > 0) {
           fileName = args[0];
        }

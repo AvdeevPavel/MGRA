@@ -3,6 +3,8 @@ package ru.spbau.bioinf.mgra.Parser;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.DataFile.Config;
+import ru.spbau.bioinf.mgra.Drawer.Drawer;
 import ru.spbau.bioinf.mgra.Server.JettyServer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
@@ -98,8 +100,8 @@ public class Node {
 
         XmlUtil.addElement(cell, "text", this.root);
         Genome genome = new Genome();
+
         try {
-           Document doc = new Document();
            BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".gen"));
            String s;
            int count = 0;
@@ -110,11 +112,14 @@ public class Node {
                 }
            }
 
-           genome.toPng(root, JettyServer.getFormat());
-
-           //doc.addContent(genome.toXml());
-           //XmlUtil.saveXml(doc, new File(dateDir, root + ".xml"));
-           //Drawer picture = new Drawer(JettyServer.getFormat(), count, maxCountGene);
+           if (Config.getInputFormat().equals("grimm")) {
+               Drawer picture = new Drawer(Config.getInputFormat(), genome);
+               picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
+           } else {
+               genome.setLengthInBlock(root);
+               Drawer picture = new Drawer(Config.getInputFormat(), genome);
+               picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
+           }
         } catch (Exception e) {
            log.error("Problems with " + root + ".gen file.", e);
         }

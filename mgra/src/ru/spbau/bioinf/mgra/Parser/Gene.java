@@ -10,12 +10,20 @@ public class Gene {
 
     private String id;
     private Direction direction;
-    private long lengths;
+    private long length;
     private List<End> ends = new LinkedList<End>();
 
     public Gene(String id, Direction direction) {
         this.id = id;
         this.direction = direction;
+    }
+
+    public void setLength(long length_) {
+        length = length_;
+    }
+
+    public long getLength() {
+        return length;
     }
 
     public String getId() {
@@ -49,6 +57,14 @@ public class Gene {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public char getCharDirection() {
+        if (direction.toString().equals("minus"))
+            return '-';
+        else if (direction.toString().equals("plus"))
+            return '+';
+        return '0';
     }
 
     public void reverse() {

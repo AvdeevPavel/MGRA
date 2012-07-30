@@ -8,12 +8,12 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.servlets.MultiPartFilter;
+import ru.spbau.bioinf.mgra.DataFile.Config;
+import ru.spbau.bioinf.mgra.DataFile.GenomeInInferCar;
 import ru.spbau.bioinf.mgra.Parser.TreeReader;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -33,12 +33,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class JettyServer {
@@ -309,7 +304,6 @@ public class JettyServer {
                 String s = (String) properties.get(key);
                 genomeFile.println(s);
             }
-
             genomeFile.close();
         }
     }
@@ -322,13 +316,22 @@ public class JettyServer {
         int aliasId = 1;
         String key = "alias" + aliasId;
         do {
-            cfgFile.println(properties.get("name" + aliasId) + " " +  properties.get(key));
-            aliasId++;
+            String alias = properties.getProperty(key);
+            String name = properties.getProperty("name" + aliasId);
+            String[] tmp = alias.split(" ");
+
+            for(String data: tmp) {
+                Config.putAlias(data, name);
+            }
+
+            cfgFile.println(name + " " +  alias);
+            ++aliasId;
             key = "alias" + aliasId;
         } while (properties.containsKey(key));
 
         cfgFile.println("[Blocks]");
         cfgFile.println("format " + getFormat(properties));
+        Config.putInputFormat(getFormat(properties));
         cfgFile.println("file genome.txt");
 
         cfgFile.println();
@@ -341,6 +344,7 @@ public class JettyServer {
         cfgFile.println();
 
         cfgFile.println("stages " + properties.getProperty("stages"));
+        Config.putStage(new Integer(properties.getProperty("stages")));
         cfgFile.println();
 
         boolean useTarget = "1".equals(properties.getProperty("useTarget"));
@@ -366,15 +370,47 @@ public class JettyServer {
         }
 
         cfgFile.close();
+
+        Config.putWidthMonitor(new Integer(properties.getProperty("widthMonitor")));
+        Config.putHeightMonitor(new Integer(properties.getProperty("heigthMonitor")));
+
+        if (Config.getInputFormat().equals("infercars")) {
+            createGenomeInInferCar(new File(datasetDir.getAbsolutePath() + "/genome.txt"));
+        }
+    }
+
+    private static void createGenomeInInferCar(File file) throws IOException {
+        BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        String s;
+        String nameBlock = "";
+        HashMap<String, Long> map = new HashMap<String, Long>();
+
+        while((s = input.readLine()) != null) {
+            s = s.trim();
+            if (s.isEmpty()) {
+                if (nameBlock != null && !nameBlock.isEmpty())  {
+                    GenomeInInferCar.putHashMap(nameBlock, map);
+                    map = new HashMap<String, Long>();
+                    nameBlock = "";
+               }
+            } else if (s.startsWith(">")) {
+                nameBlock = s.substring(1);
+            } else if (s.startsWith("#")) {
+                continue;
+            } else {
+                int index = s.indexOf(".");
+                String key = Config.getAliasName(s.substring(0, index));
+                Long left = new Long(s.substring(s.indexOf(":") + 1, s.indexOf("-")));
+                Long right = new Long(s.substring(s.indexOf("-") + 1, s.indexOf(" ")));
+                map.put(key, right - left);
+            }
+        }
+        input.close();
     }
 
     private static String getFormat(Properties proporties) {
         inputFormat = (String) proporties.get("useFormat");
         log.debug("Genome format detection: " + inputFormat);
-        return inputFormat;
-    }
-
-    public static String getFormat() {
         return inputFormat;
     }
 

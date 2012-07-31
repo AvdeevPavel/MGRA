@@ -1,6 +1,6 @@
 package ru.spbau.bioinf.mgra.Drawer;
 
-import ru.spbau.bioinf.mgra.DataFile.Config;
+
 import ru.spbau.bioinf.mgra.Parser.Chromosome;
 import ru.spbau.bioinf.mgra.Parser.Gene;
 import ru.spbau.bioinf.mgra.Parser.Genome;
@@ -9,12 +9,10 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
-
 
 public class Drawer {
     private Graphics2D graphics;
@@ -22,7 +20,7 @@ public class Drawer {
 
     private final static int heigthBlock = 60;
 
-    private static int widthPolygone = 80;
+    private static int widthPolygone = 90;
 
     private final static int indent = 10;
 
@@ -31,7 +29,9 @@ public class Drawer {
 
     private final static int nPointsPol = 5;
 
-    private static long maxLengthChromosome = 0;
+    private static double step = 0;
+
+    private static double threshold = 0.0085;      //configure for server
 
     /*color RGB*/
     private int red = 0;
@@ -45,29 +45,35 @@ public class Drawer {
         graphics.fillRect(0, 0, widthImage, heigthImage);
     }
 
-
-    public Drawer(String inputFormat, Genome genome) {
-        if (inputFormat.equals("grimm")) {
-            int widthImage = Config.getWidthMonitor();
-            int countLine = 0;
-            maxLengthChromosome = genome.getMaxCountGeneInChromosome();
-            if ((widthImage - 30) / (int) maxLengthChromosome > widthPolygone) {
-                widthPolygone = (widthImage - 30) / (int) maxLengthChromosome;
-                countLine = genome.countOfChromosomes();
+    private int calculateWidth(List<Gene> genes) {
+        step = (double) widthPolygone / threshold;
+        int length = 100;
+        for(Gene gene: genes) {
+            if (gene.getPercent() > threshold) {
+                length += new Double(step * gene.getPercent()).intValue() + 1;
             } else {
-                countLine = 0;
-                List<Chromosome>genome.getChromosomes()
+                length += widthPolygone;
             }
-            int heigthImage = (heigthBlock + indent) * countLine;
+            ++length;
+        }
+        return length;
+    }
+
+    public Drawer (int widthImage, int heigthImage) {
+        init(widthImage, heigthImage);
+    }
+
+    public Drawer(String inputFormat, String nameGenome, Genome genome){
+        if (inputFormat.equals("grimm")) {
+            int widthImage = widthPolygone * genome.getMaxCountGeneInChromosome() + 50;
+            int heigthImage = (heigthBlock + indent) * genome.countOfChromosomes();
             init(widthImage, heigthImage);
             drawGenomeInGrimmFormat(genome.getChromosomes());
         } else {
-            int widthImage = Config.getWidthMonitor();
-            int countLine = 0;
-            maxLengthChromosome = genome.getMaxLengthChromosome(); //to do change
-
-            int heigthImage = (heigthBlock + indent) * countLine;
-
+            genome.setLengthInBlock(nameGenome);
+            genome.setPercentInBlocks(genome.getMaxLengthChromosome());
+            int widthImage = calculateWidth(genome.getMaxChromosome().getGenes());
+            int heigthImage = (heigthBlock + indent) * genome.countOfChromosomes();
             init(widthImage, heigthImage);
             drawGenomeInInferCarsFormat(genome.getChromosomes());
         }
@@ -93,12 +99,12 @@ public class Drawer {
             for(Gene gene: genes) {
                 if (map.get(gene.getId()) == null) {
                     Color color = nextColor();
-                    drawGene(gene.getId(), color, startX, topStartY, widthPolygone, gene.getCharDirection());
+                    drawGene(gene.getId(), null, color, startX, topStartY, widthPolygone, gene.getCharDirection());
                     map.put(gene.getId(), color);
                 } else {
-                    drawGene(gene.getId(), map.get(gene.getId()), startX, topStartY, widthPolygone, gene.getCharDirection());
+                    drawGene(gene.getId(), null, map.get(gene.getId()), startX, topStartY, widthPolygone, gene.getCharDirection());
                 }
-                startX += widthPolygone;
+                startX += (widthPolygone + 1);
             }
 
             topStartY += (heigthBlock + indent);
@@ -116,27 +122,33 @@ public class Drawer {
         graphics.setFont(font);
         FontMetrics fontMetrics = graphics.getFontMetrics();
 
-        int bottomStartY = heigthBlock /2 + fontMetrics.getHeight() / 4;
-
+        int bottomStartY = heigthBlock /2 + fontMetrics.getHeight() / 2;
         for(Chromosome chromosome: chromosomes) {
-            drawString(numberOfChromosome.toString() + ".", font, 0, bottomStartY);
+            drawString(numberOfChromosome.toString() + ".", font, 5, bottomStartY);
             List<Gene> genes = chromosome.getGenes();
 
             int startX = fontMetrics.stringWidth(numberOfChromosome.toString() + ".") + 5;
-
             for(Gene gene: genes) {
-                int poly = (int) ((double) (Config.getWidthMonitor() - 30) / (double) (maxLengthChromosome) * gene.getLength()) + 1;
+                int poly = 0;
+                if (gene.getPercent() > threshold) {
+                    poly = new Double(step * gene.getPercent()).intValue() + 1;
+                } else {
+                    poly = widthPolygone;
+                }
 
+                Color color;
                 if (map.get(gene.getId()) == null) {
-                    Color color = nextColor();
-                    drawGene(gene.getId(), color, startX, topStartY, poly, gene.getCharDirection());
+                    color = nextColor();
                     map.put(gene.getId(), color);
                 } else {
-                    drawGene(gene.getId(), map.get(gene.getId()), startX, topStartY, poly, gene.getCharDirection());
+                    color = map.get(gene.getId());
                 }
-                startX += poly;
-            }
 
+                drawGene(gene.getId(), parseLength(gene.getLength()), color, startX, topStartY, poly, gene.getCharDirection());
+
+
+                startX += (poly + 1);
+            }
             topStartY += (heigthBlock + indent);
             bottomStartY += (heigthBlock + indent);
             ++numberOfChromosome;
@@ -147,9 +159,33 @@ public class Drawer {
         try {
             ImageIO.write(image, "png", new File(nameFile + ".png"));
         } catch (IOException e) {
-            e.printStackTrace(); //loggin addd
+            e.printStackTrace();   //add loger
         }
 
+    }
+
+    private String parseLength(long length) {
+        String output = "";
+        if (Long.toString(length).length() >= 6) {
+            int res = (int) ((length / 10000) % 10);
+            int residue = (int) ((length / 100000) % 10);
+            length /= 1000000;
+            if (res > 4) {
+                ++residue;
+            }
+            output = Long.toString(length) + "." + Integer.toString(residue) + "M";
+        } else if (Long.toString(length).length() >= 3) {
+            int res = (int) ((length / 10) % 10);
+            int residue = (int) ((length / 100) % 10);
+            length /= 1000;
+            if (res > 4) {
+                ++residue;
+            }
+            output = Long.toString(length) + "." + Integer.toString(residue) + "K";
+        } else {
+            output = Long.toString(length);
+        }
+        return output;
     }
 
     private Color nextColor() {
@@ -169,20 +205,32 @@ public class Drawer {
         return new Color(red, green, blue);
     }
 
-    private void drawGene(String input, Color color, int  startX, int startY, int widthPoly, char direction) {
+    private void drawGene(String id, String length, Color color, int startX, int startY, int widthPoly, char direction) {
+        int del = 0;
+
         if (direction == '+') {
             drawPlusDirPolygon(color, startX, startY, widthPoly);
-            Font font = new Font("Calibri", Font.BOLD, sizeFontInBlock);
-            graphics.setFont(font);
-            FontMetrics fontMetrics = graphics.getFontMetrics();
-            drawStringInBlog(input, font, startX + 3 * widthPoly / 8 - fontMetrics.stringWidth(input) / 2, startY + heigthBlock / 2 + fontMetrics.getHeight() / 3);
+            del = 3;
         } else if (direction == '-') {
             drawMinusDirPolygon(color, startX, startY, widthPoly);
-            Font font = new Font("Calibri", Font.BOLD, sizeFontInBlock);
-            graphics.setFont(font);
-            FontMetrics fontMetrics = graphics.getFontMetrics();
-            drawStringInBlog(input, font, startX + 5 * widthPoly / 8 - fontMetrics.stringWidth(input) / 2, startY + heigthBlock / 2 + fontMetrics.getHeight() / 3);
+            del = 5;
         }
+
+        Font font = new Font("Calibri", Font.BOLD, sizeFontInBlock);
+        graphics.setFont(font);
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+
+        int startXText = startX + del * widthPoly / 8 - fontMetrics.stringWidth(id) / 2;;
+        int startYText = 0;
+
+        if (length != null) {
+            startYText = startY + heigthBlock / 2 - fontMetrics.getHeight() / 3;
+            drawStringInBlog(length, font, startX + del * widthPoly / 8 - fontMetrics.stringWidth(length) / 2, startYText + fontMetrics.getHeight());
+        } else {
+            startYText = startY + heigthBlock / 2 + fontMetrics.getHeight() / 3;
+        }
+
+        drawStringInBlog(id, font, startXText, startYText);
     }
 
     private void drawString(String input, Font font, int startX, int startY) {
@@ -211,5 +259,9 @@ public class Drawer {
         int[] xLine = {startX, startX + boundPoly / 4, startX + boundPoly, startX + boundPoly, startX + boundPoly / 4};
         int[] yLine = {startY + heigthBlock / 2, startY, startY, startY + heigthBlock, startY + heigthBlock};
         graphics.fillPolygon(xLine, yLine, nPointsPol);
+    }
+
+    public static void main(String[] args) {
+        Drawer apr = new Drawer(2000, 500);
     }
 }

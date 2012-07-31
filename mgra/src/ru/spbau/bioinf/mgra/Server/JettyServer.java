@@ -258,7 +258,7 @@ public class JettyServer {
         outputThread.join();
         errorThread.join();
 
-        response(out, "Generating results XML...");
+        response(out, "Generating results XML and image PNG with chromosome...");
         new TreeReader(new File(datasetDir, CFG_FILE_NAME));
 
         response(out, "Applying XSLT...");
@@ -271,6 +271,9 @@ public class JettyServer {
         xslt.setInitialContextNode(source);
         xslt.setDestination(serializer);
         xslt.transform();
+
+        Config.clear();
+        GenomeInInferCar.clear();
 
         synchronized (out) {
             out.println("Done.");

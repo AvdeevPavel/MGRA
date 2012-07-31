@@ -34,4 +34,8 @@ public class GenomeInInferCar {
         }
     }
 
+
+    public static void clear() {
+        genome.clear();
+    }
 }

@@ -57,6 +57,21 @@ public class Chromosome {
         return length;
     }
 
+    public void setPercentInBlocks(long hundredPercent) {
+        for(Gene gene: genes) {
+            double curPercent = (double) gene.getLength() / (double) hundredPercent;
+            gene.setPercent(curPercent);
+        }
+    }
+
+    public double getMinPercentBlock() {
+       double minPercentGene = genes.get(0).getPercent();
+       for(Gene gene: genes) {
+            if (minPercentGene > gene.getPercent())  minPercentGene = gene.getPercent();
+       }
+       return minPercentGene;
+    }
+
     public boolean contains(End end) {
         for (Gene gene : genes) {
             if (gene.getId().equals(end.getId())) {

@@ -43,11 +43,33 @@ public class Genome {
         return maxCountGen;
     }
 
-    public long getMaxLengthChromosome() {
-        long maxLengthGen = 0;
+    public void setPercentInBlocks(long hundredPercent) {
         for(Chromosome chromosome: chromosomes) {
-            if (maxLengthGen < chromosome.getLength()) maxLengthGen = chromosome.getLength();
+            chromosome.setPercentInBlocks(hundredPercent);
         }
-        return maxLengthGen;
+    }
+
+    public double getMinPercentBlock() {
+        double minSizePercentBlock = chromosomes.get(0).getMinPercentBlock();
+        for(Chromosome chromosome: chromosomes) {
+            if (minSizePercentBlock > chromosome.getMinPercentBlock()) minSizePercentBlock = chromosome.getMinPercentBlock();
+        }
+        return minSizePercentBlock;
+    }
+
+    public Chromosome getMaxChromosome() {
+        Chromosome maxChromosome = chromosomes.get(0);
+        for(Chromosome chromosome: chromosomes) {
+            if (maxChromosome.getLength() < chromosome.getLength()) maxChromosome = chromosome;
+        }
+        return maxChromosome;
+    }
+
+    public long getMaxLengthChromosome() {
+        long maxChromosome = chromosomes.get(0).getLength();
+        for(Chromosome chromosome: chromosomes) {
+            if (maxChromosome < chromosome.getLength()) maxChromosome = chromosome.getLength();
+        }
+        return maxChromosome;
     }
 }

@@ -11,11 +11,20 @@ public class Gene {
     private String id;
     private Direction direction;
     private long length;
+    private double percent = 0;
     private List<End> ends = new LinkedList<End>();
 
     public Gene(String id, Direction direction) {
         this.id = id;
         this.direction = direction;
+    }
+
+    public void setPercent(double percent_) {
+        percent = percent_;
+    }
+
+    public double getPercent() {
+        return percent;
     }
 
     public void setLength(long length_) {

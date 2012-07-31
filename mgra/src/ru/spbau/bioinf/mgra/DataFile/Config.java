@@ -12,6 +12,10 @@ public class Config {
     Config() {
     }
 
+    public static void clear() {
+        alias.clear();
+    }
+
     public static void putHeightMonitor(int heightMonitor_) {
         heightMonitor = heightMonitor_;
     }

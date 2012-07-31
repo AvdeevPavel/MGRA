@@ -112,14 +112,10 @@ public class Node {
                 }
            }
 
-           if (Config.getInputFormat().equals("grimm")) {
-               Drawer picture = new Drawer(Config.getInputFormat(), genome);
-               picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
-           } else {
-               genome.setLengthInBlock(root);
-               Drawer picture = new Drawer(Config.getInputFormat(), genome);
-               picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
-           }
+           Drawer picture = new Drawer(Config.getInputFormat(), root, genome);
+           picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
+           Element gen = new Element("genome");
+           cell.addContent(gen);
         } catch (Exception e) {
            log.error("Problems with " + root + ".gen file.", e);
         }

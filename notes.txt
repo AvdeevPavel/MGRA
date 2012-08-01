@@ -1,8 +1,11 @@
 Run local
-	change variable REQUEST_FILE in JettyServer
-	change path to library kinetic.js in tree.xsl
-	change adress form in index.html
-	change threshold - in server big memory. threshold reduse. bound 0.0005
-	future: if programm in server is very late, change big image on href. It's help us. 
+	in code: 
+		change variable REQUEST_FILE in JettyServer
+		change threshold - in server big memory. threshold reduse. bound 0.0005
+	in html
+		change path to library kinetic.js in tree.xsl
+		change adress form in index.html
+	future: 
+		if html out in server is very late, change big image on href. It's help us download first str faster. 
 
 change id in chromosome xml, not needed

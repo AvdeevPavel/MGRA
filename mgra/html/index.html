@@ -49,11 +49,6 @@
 		function getClientWidth() {
 			return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
 		}	
-		
-		function getClientHeight() {
-			return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientHeight:document.body.clientHeight;
-		}
-
 
 		/*Grimm format functions*/
         function addGenomeGrm() {
@@ -111,7 +106,6 @@
 		function setGrimmFormat() { 
 			clearGrimmFormat();
 			document.getElementById('grm_widthMonitor').value = getClientWidth(); 
-			document.getElementById('grm_heigthMonitor').value = getClientHeight(); 
 			document.getElementById('showInferCarsForm').style.display = 'none'; 
 			document.getElementById('showGrimmForm').style.display = '';
 			document.getElementById('showHelp').style.display = 'none';
@@ -173,7 +167,6 @@
 		function setInferCarsFormat() { 
 			clearInferCarsFormat();
 			document.getElementById('inf_widthMonitor').value = getClientWidth(); 
-			document.getElementById('inf_heigthMonitor').value = getClientHeight(); 
 			document.getElementById('showInferCarsForm').style.display = ''; 
 			document.getElementById('showGrimmForm').style.display = 'none';	
 			document.getElementById('showHelp').style.display = 'none'; 
@@ -422,7 +415,6 @@
 
 		<input type="hidden" name="useFormat" id="inf_useFormat" value="infercars"/>
 		<input type="hidden" name="widthMonitor" id="inf_widthMonitor" value=""/>
-		<input type="hidden" name="heigthMonitor" id="inf_heigthMonitor" value=""/>
 		
 		<h2><p align="center">Genome in infercars format</p></h2>		
 
@@ -503,9 +495,7 @@
 	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="grimmMgraForm" >
 		<input type="hidden" name="useFormat" id="grm_useFormat" value="grimm"/>
 		<input type="hidden" name="widthMonitor" id="grm_widthMonitor" value=""/>
-		<input type="hidden" name="heigthMonitor" id="grm_heigthMonitor" value=""/>
-		
-
+	
 		<h2><p align="center">Genome in grimm format</p></h2>		
     	<table id="grm_genomes">
 	    </table>
@@ -624,6 +614,8 @@
 			</li>
 		</li>
 		<ol>
+
+		Name genome is one symbol
 	</div>
 	</div>	
 

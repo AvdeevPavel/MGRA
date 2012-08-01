@@ -18,11 +18,9 @@ public class Node {
     private static final Logger log = Logger.getLogger(Node.class);
 
     private Node parent;
-
-    private String root = "";
-
     private List<Node> children = new ArrayList<Node>();
 
+    private String root = "";
     private int height = 0;
     private int numberOnLevel = 0;
 
@@ -99,27 +97,24 @@ public class Node {
         }
 
         XmlUtil.addElement(cell, "text", this.root);
-        Genome genome = new Genome();
 
+        Genome genome = new Genome(root);
         try {
-           BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".gen"));
-           String s;
-           int count = 0;
-           while ((s = input.readLine())!=null) {
-                s = s.trim();
-                if (!s.startsWith("#") && s.length() > 0) {
-                      genome.addChromosome(new Chromosome(count, s));
-                }
-           }
-
-           Drawer picture = new Drawer(Config.getInputFormat(), root, genome);
-           picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
            Element gen = new Element("genome");
+
+           BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".gen"));
+
+           genome.addChromosomes(input,Config.getInputFormat());
+
+           Drawer picture = new Drawer(Config.getInputFormat(), genome);
+           picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
            XmlUtil.addElement(gen, "resize", picture.isBigImage());
+
            cell.addContent(gen);
         } catch (Exception e) {
            log.error("Problems with " + root + ".gen file.", e);
         }
+
         try {
            BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".trs"));
            List<Transformation> transformations = new ArrayList<Transformation>();
@@ -148,12 +143,12 @@ public class Node {
     }
 
     public void addCells(ArrayList<Element> elementsOfLevel, File dateDir) {
-            if (!children.isEmpty()) {
-                for(Node child: children) {
-                    child.addCell(elementsOfLevel.get(child.height), dateDir);
-                    child.addCells(elementsOfLevel, dateDir);
-                }
+        if (!children.isEmpty()) {
+            for(Node child: children) {
+                child.addCell(elementsOfLevel.get(child.height), dateDir);
+                child.addCells(elementsOfLevel, dateDir);
             }
+        }
     }
 
     public void evaluateHeight() {

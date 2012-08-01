@@ -9,19 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Chromosome {
-
     private int id;
+    private long length = 0;
     private List<Gene> genes = new LinkedList<Gene>();
 
-    public List<Gene> getGenes() {
-        return genes;
-    }
 
     public Chromosome(List<Gene> genes) {
         this.genes = genes;
     }
 
-    public Chromosome(int id, String s) {
+    public Chromosome(int id, String s, String inputFormat, String name) {
         this.id = id;
         String[] data = s.split(" ");
         for (String v : data) {
@@ -31,11 +28,8 @@ public class Chromosome {
            }
         }
 
-    }
-
-    public void setLengthInGene(String name) {
-        for(Gene gene: genes) {
-            gene.setLength(GenomeInInferCar.getLength(gene.getId(), name));
+        if (inputFormat.equals("infercars")) {
+            setLengthInGene(name);
         }
     }
 
@@ -43,33 +37,23 @@ public class Chromosome {
         this.id = id;
     }
 
+    public List<Gene> getGenes() {
+        return genes;
+    }
+
     public int getCountGene() {
         return genes.size();
     }
 
     public long getLength() {
-        long length = 0;
-
-        for(Gene gene: genes) {
-            length += gene.getLength();
-        }
-
         return length;
     }
 
-    public void setPercentInBlocks(long hundredPercent) {
+    protected void setPercentInBlocks(long hundredPercent) {
         for(Gene gene: genes) {
             double curPercent = (double) gene.getLength() / (double) hundredPercent;
             gene.setPercent(curPercent);
         }
-    }
-
-    public double getMinPercentBlock() {
-       double minPercentGene = genes.get(0).getPercent();
-       for(Gene gene: genes) {
-            if (minPercentGene > gene.getPercent())  minPercentGene = gene.getPercent();
-       }
-       return minPercentGene;
     }
 
     public boolean contains(End end) {
@@ -94,6 +78,16 @@ public class Chromosome {
             gene.clearEnds();
         }
     }
+
+    public Element toXml() {
+        Element chr = new Element("chromosome");
+        XmlUtil.addElement(chr, "id", id);
+        for (Gene gene : genes) {
+            chr.addContent(gene.toXml());
+        }
+        return chr;
+    }
+
 
     public void split(List<Chromosome> parts) {
         List<Gene> cur = new ArrayList<Gene>();
@@ -169,14 +163,11 @@ public class Chromosome {
         return genes.get(genes.size() - 1).getEnd(1);
     }
 
-
-
-    public Element toXml() {
-        Element chr = new Element("chromosome");
-        XmlUtil.addElement(chr, "id", id);
-        for (Gene gene : genes) {
-            chr.addContent(gene.toXml());
+    private void setLengthInGene(String name) {
+        length = 0;
+        for(Gene gene: genes) {
+            gene.setLength(GenomeInInferCar.getLength(gene.getId(), name));
+            length += gene.getLength();
         }
-        return chr;
     }
 }

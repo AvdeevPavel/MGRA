@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.servlets.MultiPartFilter;
 import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.DataFile.GenomeInInferCar;
+import ru.spbau.bioinf.mgra.Drawer.Drawer;
 import ru.spbau.bioinf.mgra.Parser.TreeReader;
 
 import javax.servlet.FilterChain;
@@ -63,12 +64,10 @@ public class JettyServer {
     private static AtomicInteger requestId;
 
     private static int currentDay = -1;
-    private static String inputFormat = null;
 
     static {
         try {
-            xslt = comp.compile(new StreamSource(
-                    new InputStreamReader(new FileInputStream(new File(xslDir, "tree.xsl")), "UTF-8"))).load();
+            xslt = comp.compile(new StreamSource(new InputStreamReader(new FileInputStream(new File(xslDir, "tree.xsl")), "UTF-8"))).load();
         } catch (Throwable e) {
             log.error("Error initializing xslt", e);
         }
@@ -100,8 +99,13 @@ public class JettyServer {
             uploadDir = new File(args[0]);
         }
 
-        if (args.length > 1)
+        if (args.length > 1) {
             port = Integer.parseInt(args[1]);
+        }
+
+        if (args.length > 2) {
+            Drawer.setThreshold(Double.parseDouble(args[2]));
+        }
 
         updateDateDir();
 
@@ -230,15 +234,22 @@ public class JettyServer {
         out.println("<html><title>MGRA processing information</title><body>");
         response(out, "<pre>");
 
+        //add exception
+        response(out, "Generating CFG...");
+        createCFG_FILE(datasetDir, properties);
+
+        //add esception
         response(out, "Create genome file...");
         createGENOME_FILE(genomeFileUpload, properties, datasetDir);
 
-        response(out, "Generating CFG...");
-        createCFG_FILE(datasetDir, properties);
+        if (Config.getInputFormat().equals("infercars")) {
+            createGenomeInInferCar(new File(datasetDir.getAbsolutePath() + "/genome.txt"));
+        }
 
         response(out, "Start MGRA algorithm...");
         String[] command = new String[]{exeFile.getAbsolutePath(), CFG_FILE_NAME};
 
+        //all global exception
         Process process = Runtime.getRuntime().exec(
                 command,
                 new String[]{}, datasetDir);
@@ -259,10 +270,13 @@ public class JettyServer {
         outputThread.join();
         errorThread.join();
 
-        response(out, "Generating results XML and image PNG with chromosome...");
+        response(out, "Generating results XML, image PNG with chromosome...");
+        //add exception
         new TreeReader(new File(datasetDir, CFG_FILE_NAME));
 
-        response(out, "Applying XSLT...");
+        response(out, "Applying XSLT to XML...");
+
+        //add exception
         XdmNode source = getSource(processor, new File(datasetDir, "tree.xml"));
         Serializer serializer = new Serializer();
         serializer.setOutputProperty(Serializer.Property.METHOD, "html");
@@ -271,6 +285,7 @@ public class JettyServer {
 
         xslt.setInitialContextNode(source);
         xslt.setDestination(serializer);
+        //add exception
         xslt.transform();
 
         Config.clear();
@@ -286,34 +301,7 @@ public class JettyServer {
         }
     }
 
-    private static void createGENOME_FILE(File genomeFileUpload, Properties properties, File datasetDir)
-                throws FileNotFoundException, UnsupportedEncodingException {
-        if (genomeFileUpload != null) {
-            genomeFileUpload.renameTo(new File(datasetDir, GENOME_FILE));
-        } else {
-            PrintWriter genomeFile = createOutput(datasetDir, GENOME_FILE);
-
-            if (getFormat(properties).equals("grimm")) {
-                int genomeId = 1;
-                String key = "genome" + genomeId;
-                do {
-                    String s = (String) properties.get(key);
-                    genomeFile.println(s);
-                    genomeId++;
-                    genomeFile.println();
-                    key = "genome" + genomeId;
-                } while (properties.containsKey(key));
-            } else {
-                String key = "genome";
-                String s = (String) properties.get(key);
-                genomeFile.println(s);
-            }
-            genomeFile.close();
-        }
-    }
-
-    private static void createCFG_FILE(File datasetDir, Properties properties)
-               throws IOException {
+    private static void createCFG_FILE(File datasetDir, Properties properties) throws IOException {
         PrintWriter cfgFile = createOutput(datasetDir, CFG_FILE_NAME);
         cfgFile.println("[Genomes]");
 
@@ -334,8 +322,8 @@ public class JettyServer {
         } while (properties.containsKey(key));
 
         cfgFile.println("[Blocks]");
-        cfgFile.println("format " + getFormat(properties));
-        Config.putInputFormat(getFormat(properties));
+        Config.putInputFormat((String) properties.get("useFormat"));
+        cfgFile.println("format " + Config.getInputFormat());
         cfgFile.println("file genome.txt");
 
         cfgFile.println();
@@ -376,10 +364,31 @@ public class JettyServer {
         cfgFile.close();
 
         Config.putWidthMonitor(new Integer(properties.getProperty("widthMonitor")));
-        Config.putHeightMonitor(new Integer(properties.getProperty("heigthMonitor")));
+    }
 
-        if (Config.getInputFormat().equals("infercars")) {
-            createGenomeInInferCar(new File(datasetDir.getAbsolutePath() + "/genome.txt"));
+    private static void createGENOME_FILE(File genomeFileUpload, Properties properties, File datasetDir) throws FileNotFoundException, UnsupportedEncodingException {
+        if (genomeFileUpload != null) {
+            genomeFileUpload.renameTo(new File(datasetDir, GENOME_FILE));
+        } else {
+            PrintWriter genomeFile = createOutput(datasetDir, GENOME_FILE);
+
+            if (Config.getInputFormat().equals("grimm")) {
+                int genomeId = 1;
+                String key = "genome" + genomeId;
+                do {
+                    String s = (String) properties.get(key);
+                    genomeFile.println(s);
+                    genomeId++;
+                    genomeFile.println();
+                    key = "genome" + genomeId;
+                } while (properties.containsKey(key));
+            } else {
+                String key = "genome";
+                String s = (String) properties.get(key);
+                genomeFile.println(s);
+            }
+
+            genomeFile.close();
         }
     }
 
@@ -412,17 +421,8 @@ public class JettyServer {
         input.close();
     }
 
-    private static String getFormat(Properties proporties) {
-        inputFormat = (String) proporties.get("useFormat");
-        log.debug("Genome format detection: " + inputFormat);
-        return inputFormat;
-    }
-
     private static Thread listenOutput(InputStream inputStream, final PrintWriter out, final String type) {
-        final BufferedReader input =
-                new BufferedReader
-                        (new InputStreamReader(inputStream));
-
+        final BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
 
         Thread outputThread = new Thread(new Runnable() {
             public void run() {
@@ -467,7 +467,6 @@ public class JettyServer {
     }
 
     private static XdmNode getSource(Processor processor, File xmlFile) throws SaxonApiException {
-        return processor.newDocumentBuilder().build(new StreamSource(
-                xmlFile));
+        return processor.newDocumentBuilder().build(new StreamSource(xmlFile));
     }
 }

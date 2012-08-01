@@ -1,10 +1,12 @@
 package ru.spbau.bioinf.mgra.Drawer;
 
 
+import org.apache.log4j.Logger;
 import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.Parser.Chromosome;
 import ru.spbau.bioinf.mgra.Parser.Gene;
 import ru.spbau.bioinf.mgra.Parser.Genome;
+import ru.spbau.bioinf.mgra.Server.JettyServer;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,11 +18,12 @@ import java.util.*;
 import java.util.List;
 
 public class Drawer {
+    private static final Logger log = Logger.getLogger(JettyServer.class);
+
     private Graphics2D graphics;
     private BufferedImage image;
 
     private final static int heigthBlock = 60;
-
     private static int widthPolygone = 90;
 
     private final static int indent = 10;
@@ -32,7 +35,7 @@ public class Drawer {
 
     private static double step = 0;
 
-    private static double threshold = 0.0085;      //configure for server. reduse - bigger memory(RAM), increase - lower memory(RAM)
+    private static double threshold = 0.0085; //configure for server: reduse - bigger memory(RAM), increase - lower memory(RAM)
 
     /*color RGB*/
     private int red = 45;
@@ -40,10 +43,43 @@ public class Drawer {
     private int blue = 0;
 
     private void init(int widthImage, int heigthImage) {
+        log.debug("Posted buffered image width = " + widthImage + " height = " + heigthImage);
         image = new BufferedImage(widthImage, heigthImage, BufferedImage.TYPE_INT_RGB);
         graphics = image.createGraphics();
         graphics.setColor( Color.WHITE );
         graphics.fillRect(0, 0, widthImage, heigthImage);
+    }
+
+    public Drawer(String inputFormat, Genome genome){
+        if (inputFormat.equals("grimm")) {
+            log.debug("Create image in grimm format");
+            int widthImage = (widthPolygone + 1) * genome.getMaxCountGeneInChromosome() + 50;
+            int heigthImage = (heigthBlock + indent) * genome.getCountOfChromosomes();
+            init(widthImage, heigthImage);
+        } else {
+            log.debug("Create image in infercars format");
+            int widthImage = calculateWidth(genome.getLenghestChromosome().getGenes());
+            int heigthImage = (heigthBlock + indent) * genome.getCountOfChromosomes();
+            init(widthImage, heigthImage);
+        }
+        drawGenome(genome.getChromosomes(), genome.getFormat());
+    }
+
+    public void writeInPng(String nameFile) {
+        try {
+            ImageIO.write(image, "png", new File(nameFile + ".png"));
+            log.debug("Create image with genome " + nameFile);
+        } catch (IOException e) {
+            log.error("Problem to save image with genome " + nameFile + ".png", e);
+        }
+    }
+
+    public boolean isBigImage() {
+        return (image.getWidth() > Config.getWidthMonitor());
+    }
+
+    public static void setThreshold(double coef) {
+        threshold = coef;
     }
 
     private int calculateWidth(List<Gene> genes) {
@@ -60,27 +96,7 @@ public class Drawer {
         return length;
     }
 
-    public Drawer (int widthImage, int heigthImage) {
-        init(widthImage, heigthImage);
-    }
-
-    public Drawer(String inputFormat, String nameGenome, Genome genome){
-        if (inputFormat.equals("grimm")) {
-            int widthImage = (widthPolygone + 1) * genome.getMaxCountGeneInChromosome() + 50;
-            int heigthImage = (heigthBlock + indent) * genome.countOfChromosomes();
-            init(widthImage, heigthImage);
-            drawGenomeInGrimmFormat(genome.getChromosomes());
-        } else {
-            genome.setLengthInBlock(nameGenome);
-            genome.setPercentInBlocks(genome.getMaxLengthChromosome());
-            int widthImage = calculateWidth(genome.getMaxChromosome().getGenes());
-            int heigthImage = (heigthBlock + indent) * genome.countOfChromosomes();
-            init(widthImage, heigthImage);
-            drawGenomeInInferCarsFormat(genome.getChromosomes());
-        }
-    }
-
-    private void drawGenomeInGrimmFormat(List<Chromosome> chromosomes) {
+    private void drawGenome(List<Chromosome> chromosomes, String inputFormat) {
         Integer numberOfChromosome = 1;
         HashMap<String, Color> map = new HashMap<String, Color>();
         int topStartY = 0;
@@ -98,43 +114,19 @@ public class Drawer {
             int startX = fontMetrics.stringWidth(numberOfChromosome.toString() + ".") + 5;
 
             for(Gene gene: genes) {
-                if (map.get(gene.getId()) == null) {
-                    Color color = nextColor();
-                    drawGene(gene.getId(), null, color, startX, topStartY, widthPolygone, gene.getCharDirection());
-                    map.put(gene.getId(), color);
-                } else {
-                    drawGene(gene.getId(), null, map.get(gene.getId()), startX, topStartY, widthPolygone, gene.getCharDirection());
-                }
-                startX += (widthPolygone + 1);
-            }
+                int poly;
+                String strLength;
 
-            topStartY += (heigthBlock + indent);
-            bottomStartY += (heigthBlock + indent);
-            ++numberOfChromosome;
-        }
-    }
-
-    private void drawGenomeInInferCarsFormat(List<Chromosome> chromosomes) {
-        Integer numberOfChromosome = 1;
-        HashMap<String, Color> map = new HashMap<String, Color>();
-        int topStartY = 0;
-
-        Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
-        graphics.setFont(font);
-        FontMetrics fontMetrics = graphics.getFontMetrics();
-
-        int bottomStartY = heigthBlock /2 + fontMetrics.getHeight() / 2;
-        for(Chromosome chromosome: chromosomes) {
-            drawString(numberOfChromosome.toString() + ".", font, 5, bottomStartY);
-            List<Gene> genes = chromosome.getGenes();
-
-            int startX = fontMetrics.stringWidth(numberOfChromosome.toString() + ".") + 5;
-            for(Gene gene: genes) {
-                int poly = 0;
-                if (gene.getPercent() > threshold) {
-                    poly = new Double(step * gene.getPercent()).intValue() + 1;
-                } else {
+                if (inputFormat.equals("grimm")) {
                     poly = widthPolygone;
+                    strLength = null;
+                } else {
+                    if (gene.getPercent() > threshold) {
+                        poly = new Double(step * gene.getPercent()).intValue() + 1;
+                    } else {
+                        poly = widthPolygone;
+                    }
+                    strLength = parseLength(gene.getLength());
                 }
 
                 Color color;
@@ -145,27 +137,14 @@ public class Drawer {
                     color = map.get(gene.getId());
                 }
 
-                drawGene(gene.getId(), parseLength(gene.getLength()), color, startX, topStartY, poly, gene.getCharDirection());
-
-
+                drawGene(gene.getId(), strLength, color, startX, topStartY, poly, gene.getCharDirection());
                 startX += (poly + 1);
             }
+
             topStartY += (heigthBlock + indent);
             bottomStartY += (heigthBlock + indent);
             ++numberOfChromosome;
         }
-    }
-
-    public void writeInPng(String nameFile) {
-        try {
-            ImageIO.write(image, "png", new File(nameFile + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace();   //add loger
-        }
-    }
-
-    public boolean isBigImage() {
-        return (image.getWidth() > Config.getWidthMonitor());
     }
 
     private String parseLength(long length) {
@@ -225,7 +204,7 @@ public class Drawer {
         FontMetrics fontMetrics = graphics.getFontMetrics();
 
         int startXText = startX + del * widthPoly / 8 - fontMetrics.stringWidth(id) / 2;;
-        int startYText = 0;
+        int startYText;
 
         if (length != null) {
             startYText = startY + heigthBlock / 2 - fontMetrics.getHeight() / 3;
@@ -264,8 +243,83 @@ public class Drawer {
         int[] yLine = {startY + heigthBlock / 2, startY, startY, startY + heigthBlock, startY + heigthBlock};
         graphics.fillPolygon(xLine, yLine, nPointsPol);
     }
+}
 
-    public static void main(String[] args) {
-        Drawer apr = new Drawer(2000, 500);
+
+/*private void drawGenomeInGrimmFormat(List<Chromosome> chromosomes) {
+    Integer numberOfChromosome = 1;
+    HashMap<String, Color> map = new HashMap<String, Color>();
+    int topStartY = 0;
+
+    Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
+    graphics.setFont(font);
+    FontMetrics fontMetrics = graphics.getFontMetrics();
+
+    int bottomStartY = heigthBlock /2 + fontMetrics.getHeight() / 4;
+
+    for(Chromosome chromosome: chromosomes) {
+        drawString(numberOfChromosome.toString() + ".", font, 0, bottomStartY);
+        List<Gene> genes = chromosome.getGenes();
+
+        int startX = fontMetrics.stringWidth(numberOfChromosome.toString() + ".") + 5;
+
+        for(Gene gene: genes) {
+            Color color;
+            if (map.get(gene.getId()) == null) {
+                color = nextColor();
+                map.put(gene.getId(), color);
+            } else {
+                color = map.get(gene.getId());
+            }
+
+            drawGene(gene.getId(), null, color, startX, topStartY, widthPolygone, gene.getCharDirection());
+            startX += (widthPolygone + 1);
+        }
+
+        topStartY += (heigthBlock + indent);
+        bottomStartY += (heigthBlock + indent);
+        ++numberOfChromosome;
     }
 }
+
+private void drawGenomeInInferCarsFormat(List<Chromosome> chromosomes) {
+    Integer numberOfChromosome = 1;
+    HashMap<String, Color> map = new HashMap<String, Color>();
+    int topStartY = 0;
+
+    Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
+    graphics.setFont(font);
+    FontMetrics fontMetrics = graphics.getFontMetrics();
+
+    int bottomStartY = heigthBlock /2 + fontMetrics.getHeight() / 2;
+    for(Chromosome chromosome: chromosomes) {
+        drawString(numberOfChromosome.toString() + ".", font, 5, bottomStartY);
+        List<Gene> genes = chromosome.getGenes();
+
+        int startX = fontMetrics.stringWidth(numberOfChromosome.toString() + ".") + 5;
+        for(Gene gene: genes) {
+            int poly = 0;
+            if (gene.getPercent() > threshold) {
+                poly = new Double(step * gene.getPercent()).intValue() + 1;
+            } else {
+                poly = widthPolygone;
+            }
+
+            Color color;
+            if (map.get(gene.getId()) == null) {
+                color = nextColor();
+                map.put(gene.getId(), color);
+            } else {
+                color = map.get(gene.getId());
+            }
+
+            drawGene(gene.getId(), parseLength(gene.getLength()), color, startX, topStartY, poly, gene.getCharDirection());
+
+
+            startX += (poly + 1);
+        }
+        topStartY += (heigthBlock + indent);
+        bottomStartY += (heigthBlock + indent);
+        ++numberOfChromosome;
+    }
+}*/

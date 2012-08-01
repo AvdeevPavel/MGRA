@@ -15,7 +15,7 @@
 	.end3{color:maroon}
 </style>
 
-<!--<script src="/home/Desktop/MGRA/kinetic-v3.10.4.js"></script>-->
+<!--<script src="/home/Desktop/MGRA/mgra/html/lib/kinetic-v3.10.4.js"></script>-->
 <script src="http://www.kineticjs.com/download/kinetic-v3.10.4.js"></script>
 <script>
 	var values =  [
@@ -349,9 +349,9 @@
 </xsl:template>
 
 <xsl:template match="tree" mode = "code">
-	var stage = createStage("tree<xsl:value-of select="number"/>", getClientWidth(),  getClientHeight() / 2);
-	var layer = new Kinetic.Layer();
-	main(<xsl:value-of select="number"/>, stage, layer);
+	var stage<xsl:value-of select="number"/> = createStage("tree<xsl:value-of select="number"/>", getClientWidth(),  getClientHeight() / 2);
+	var layer<xsl:value-of select="number"/> = new Kinetic.Layer();
+	main(<xsl:value-of select="number"/>, stage<xsl:value-of select="number"/>, layer<xsl:value-of select="number"/>);
 </xsl:template>
 
 <xsl:template match="tree" mode = "createForm">
@@ -374,6 +374,18 @@
 		text: "<xsl:value-of select="text"/>"
 	},
 </xsl:template>
+
+<xsl:template match="genome">
+	<div id="gen{../text}" style="display:none;">
+    	<h3>Chromosomes for <xsl:value-of select="../text"/></h3>
+		<xsl:if test= "resize = 'true'"> <img src="{../text}.png" width="100%"></img> </xsl:if>
+		<xsl:if test= "resize = 'false'"> <img src="{../text}.png"></img> </xsl:if>
+ 	</div>
+ </xsl:template>
+
+<xsl:template match="resize">
+	'<xsl:value-of select="."/>',
+</xsl:template>
 	
 <xsl:template match="transformations">
 	<div id="trs{../text}" style="display:none;">
@@ -392,13 +404,6 @@
             <xsl:sort select="id" data-type="number"/>
         </xsl:apply-templates>
         <br/>
-    </xsl:template>
-
-    <xsl:template match="genome">
-        <div id="gen{../text}" style="display:none;">
-            <h3>Chromosomes for <xsl:value-of select="../text"/></h3>
-            <xsl:apply-templates select="chromosome"/>
-        </div>
     </xsl:template>
 
     <xsl:template match="chromosome">

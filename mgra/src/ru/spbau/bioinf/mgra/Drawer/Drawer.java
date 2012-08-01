@@ -1,6 +1,7 @@
 package ru.spbau.bioinf.mgra.Drawer;
 
 
+import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.Parser.Chromosome;
 import ru.spbau.bioinf.mgra.Parser.Gene;
 import ru.spbau.bioinf.mgra.Parser.Genome;
@@ -31,10 +32,10 @@ public class Drawer {
 
     private static double step = 0;
 
-    private static double threshold = 0.0085;      //configure for server
+    private static double threshold = 0.0085;      //configure for server. reduse - bigger memory(RAM), increase - lower memory(RAM)
 
     /*color RGB*/
-    private int red = 0;
+    private int red = 45;
     private int green = 0;
     private int blue = 0;
 
@@ -65,7 +66,7 @@ public class Drawer {
 
     public Drawer(String inputFormat, String nameGenome, Genome genome){
         if (inputFormat.equals("grimm")) {
-            int widthImage = widthPolygone * genome.getMaxCountGeneInChromosome() + 50;
+            int widthImage = (widthPolygone + 1) * genome.getMaxCountGeneInChromosome() + 50;
             int heigthImage = (heigthBlock + indent) * genome.countOfChromosomes();
             init(widthImage, heigthImage);
             drawGenomeInGrimmFormat(genome.getChromosomes());
@@ -161,7 +162,10 @@ public class Drawer {
         } catch (IOException e) {
             e.printStackTrace();   //add loger
         }
+    }
 
+    public boolean isBigImage() {
+        return (image.getWidth() > Config.getWidthMonitor());
     }
 
     private String parseLength(long length) {
@@ -189,16 +193,16 @@ public class Drawer {
     }
 
     private Color nextColor() {
-        blue += 10;
+        blue += 12;
+
         if (blue > 255) {
             blue = 0;
-            green += 10;
+            green += 12;
             if (green > 255) {
                 green = 0;
-                red += 10;
-                if (red > 255) {
-                    red = 0;
-                }
+                red += 12;
+                if (red > 255)
+                    red = 20;
             }
         }
 

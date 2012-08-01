@@ -134,6 +134,7 @@ public class JettyServer {
             public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                     throws IOException, ServletException {
                    String path = request.getPathInfo();
+
                    if (path.startsWith(REQUEST_START) ) { //"/file/")) {
                        log.debug("Handling request " + path);
                        File file = new File(uploadDir.getAbsolutePath(), path);

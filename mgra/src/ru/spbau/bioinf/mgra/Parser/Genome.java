@@ -1,5 +1,7 @@
 package ru.spbau.bioinf.mgra.Parser;
 
+import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,91 +9,65 @@ import java.util.List;
 
 public class Genome {
     private String name;
-    private String format = "";
-    private int maxCountGene = 0;
-    private long maxLengthChromosome = 0; 
-    private Chromosome lenghestChromosome = null;
+    private long maxLengthChromosome = 0;
+    private Chromosome longChromosome = null;
+    private String inputFormat = "";
     private List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
     public Genome(String nameGenome) {
         name = nameGenome;
     }
 
-    public void addChromosomes(BufferedReader input, String inputFormat) throws IOException {
+    public void addChromosomes(BufferedReader input, BlocksInformation blocksInformation, String inputFormat_) throws IOException {
         String s;
         int count = 0;
+        inputFormat = inputFormat_;
         while ((s = input.readLine())!=null) {
             s = s.trim();
             if (!s.startsWith("#") && s.length() > 0) {
-                chromosomes.add(new Chromosome(count, s, inputFormat, name));
+                chromosomes.add(new Chromosome(count, s, blocksInformation, name));
             }
         }
-        format = inputFormat;
 
-        if (inputFormat.equals("grimm")) {
-            setMaxCountGene();
-        } else {
-            setMaxLength();
-            setPercentInBlocks(getMaxLengthChromosome());
-        }
+        setMaxLength();
+        if (inputFormat.equals("infercars"))
+            setPercentInBlocks();
+    }
+
+    public String getFormat() {
+        return inputFormat;
     }
 
     public List<Chromosome> getChromosomes() {
         return chromosomes;
     }
 
-    public String getFormat() {
-        return format;
-    }
-
-    public int getCountOfChromosomes() {
+    public int getNumberOfChromosomes() {
         return chromosomes.size();
     }
 
-    public int getMaxCountGeneInChromosome() {
-        return maxCountGene;
-    }
-
-    public long getMaxLengthChromosome() {
+    public long getLengthMaxLengthOfChromosomes() {
         return maxLengthChromosome;
     }
 
-    public Chromosome getLenghestChromosome() {
-        return lenghestChromosome;
+    public Chromosome getMaxLengthOfChromosome() {
+        return longChromosome;
     }
 
-    private void setPercentInBlocks(long hundredPercent) {
+    protected void setMaxLength() {
+        longChromosome  = chromosomes.get(0);
+        maxLengthChromosome = chromosomes.get(0).getLength();
         for(Chromosome chromosome: chromosomes) {
-            chromosome.setPercentInBlocks(hundredPercent);
-        }
-    }
-    
-    private void setMaxCountGene() {
-        int gen = 0;
-        for(Chromosome i: chromosomes) {
-            if (gen < i.getCountGene()) gen = i.getCountGene();
-        }
-        maxCountGene = gen;
-    }
-
-    private void setMaxLength() {
-        Chromosome maxChromosome = chromosomes.get(0);
-        long maxLength = chromosomes.get(0).getLength();
-        for(Chromosome chromosome: chromosomes) {
-            if (maxLength < chromosome.getLength()) {
-                maxLength = chromosome.getLength();
-                maxChromosome = chromosome;
+            if (maxLengthChromosome < chromosome.getLength()) {
+                maxLengthChromosome = chromosome.getLength();
+                longChromosome  = chromosome;
             }
         }
-        maxLengthChromosome = maxLength;
-        lenghestChromosome = maxChromosome;
+    }
+
+    private void setPercentInBlocks() {
+        for(Chromosome chromosome: chromosomes) {
+            chromosome.setPercentInBlocks(maxLengthChromosome);
+        }
     }
 }
-
-/*public Element toXml() {
-    Element genome = new Element("genome");
-    for (Chromosome chromosome : chromosomes) {
-        genome.addContent(chromosome.toXml());
-    }
-    return genome;
-}*/

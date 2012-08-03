@@ -1,7 +1,7 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
-import ru.spbau.bioinf.mgra.DataFile.GenomeInInferCar;
+import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class Chromosome {
         this.genes = genes;
     }
 
-    public Chromosome(int id, String s, String inputFormat, String name) {
+    public Chromosome(int id, String s, BlocksInformation blocksInformation, String name) {
         this.id = id;
         String[] data = s.split(" ");
         for (String v : data) {
@@ -28,28 +28,14 @@ public class Chromosome {
            }
         }
 
-        if (inputFormat.equals("infercars")) {
-            setLengthInGene(name);
-        }
+        setLengthInGene(name, blocksInformation);
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public List<Gene> getGenes() {
-        return genes;
-    }
-
-    public int getCountGene() {
-        return genes.size();
-    }
-
-    public long getLength() {
-        return length;
-    }
-
-    protected void setPercentInBlocks(long hundredPercent) {
+    public void setPercentInBlocks(long hundredPercent) {
         for(Gene gene: genes) {
             double curPercent = (double) gene.getLength() / (double) hundredPercent;
             gene.setPercent(curPercent);
@@ -155,6 +141,14 @@ public class Chromosome {
         return false;
     }
 
+    public List<Gene> getGenes() {
+        return genes;
+    }
+
+    public long getLength() {
+        return length;
+    }
+
     private End getLeftEnd() {
         return genes.get(0).getEnd(-1);
     }
@@ -163,11 +157,15 @@ public class Chromosome {
         return genes.get(genes.size() - 1).getEnd(1);
     }
 
-    private void setLengthInGene(String name) {
-        length = 0;
-        for(Gene gene: genes) {
-            gene.setLength(GenomeInInferCar.getLength(gene.getId(), name));
-            length += gene.getLength();
+    private void setLengthInGene(String name, BlocksInformation blocksInformation) {
+        if (blocksInformation == null) {
+            length = genes.size();
+        } else {
+            length = 0;
+            for(Gene gene: genes) {
+                gene.setLength(blocksInformation.getLength(gene.getId(), name));
+                length += gene.getLength();
+            }
         }
     }
 }

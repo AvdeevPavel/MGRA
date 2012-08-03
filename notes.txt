@@ -9,3 +9,7 @@ Run local
 		if html out in server is very late, change big image on href. It's help us download first str faster. 
 
 change id in chromosome xml, not needed
+
+
+
+

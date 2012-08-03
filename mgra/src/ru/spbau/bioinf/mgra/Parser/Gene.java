@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Gene {
-
     private String id;
     private Direction direction;
     private long length;
@@ -23,12 +22,35 @@ public class Gene {
         percent = percent_;
     }
 
-    public double getPercent() {
-        return percent;
-    }
-
     public void setLength(long length_) {
         length = length_;
+    }
+
+    public void addEnd(End end) {
+        ends.add(end);
+    }
+
+    public void reverse() {
+        direction = direction.reverse();
+    }
+
+    public Element toXml() {
+        Element gene = new Element("gene");
+        XmlUtil.addElement(gene, "id", id);
+        XmlUtil.addElement(gene, "direction", direction.toString());
+        for (End end : ends) {
+            gene.addContent(end.toXml());
+        }
+
+        return gene;
+    }
+
+    public void clearEnds() {
+        ends.clear();
+    }
+
+    public double getPercent() {
+        return percent;
     }
 
     public long getLength() {
@@ -37,14 +59,6 @@ public class Gene {
 
     public String getId() {
         return id;
-    }
-
-    public void addEnd(End end) {
-        ends.add(end);
-    }
-
-    public void clearEnds() {
-        ends.clear();
     }
 
     public int getSide(End end) {
@@ -76,18 +90,4 @@ public class Gene {
         return '0';
     }
 
-    public void reverse() {
-        direction = direction.reverse();
-    }
-    
-    public Element toXml() {
-        Element gene = new Element("gene");
-        XmlUtil.addElement(gene, "id", id);
-        XmlUtil.addElement(gene, "direction", direction.toString());
-        for (End end : ends) {
-            gene.addContent(end.toXml());
-        }
-
-        return gene;
-    }
 }

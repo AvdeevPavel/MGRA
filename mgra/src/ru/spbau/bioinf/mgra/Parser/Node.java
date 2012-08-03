@@ -1,11 +1,10 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.apache.log4j.Logger;
-import org.jdom.Document;
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.Drawer.Drawer;
-import ru.spbau.bioinf.mgra.Server.JettyServer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.io.BufferedReader;
@@ -26,7 +25,11 @@ public class Node {
 
     @Override
     public String toString() {
-        return root;
+        if (children.isEmpty()) {
+            return root;
+        } else {
+            return "(" + children.get(0).toString() + "," + children.get(1).toString() + ")";
+        }
     }
 
     public Node(Node parent, String s) {
@@ -65,17 +68,99 @@ public class Node {
                 }
             }
 
-            if (cur.length() > 0 || ch != ',') {
+           if (cur.length() > 0 || ch != ',') {
                 cur += ch;
             }
         }
-        
         if (cur.length() > 0) {
             children.add(new Node(this, cur));
         }
     }
 
-    private void addCell(Element parent, File dateDir) {
+    public void addCells(ArrayList<Element> elementsOfLevel, String path, Config config, BlocksInformation blocksInformation) {
+        for(Node child: children) {
+            child.addCell(elementsOfLevel.get(child.height), path, config, blocksInformation);
+            child.addCells(elementsOfLevel, path, config, blocksInformation);
+        }
+    }
+
+    public boolean isCompleteTransformation(String path) {
+        if (parent != null) {
+            File gen = new File(path, root + ".gen");
+            if (!gen.exists()) {
+                return false;
+            }
+        }
+
+        for(Node child: children) {
+            if (!child.isCompleteTransformation(path)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean merge(Node mergeTreeRoot) {
+        for(int i = 0; i < children.size(); ++i) {
+            if (children.get(i).root.equals(mergeTreeRoot.root)) {
+                if (children.get(i).children.isEmpty()) {
+                    mergeTreeRoot.parent = this;
+                    children.remove(i);
+                    children.add(i, mergeTreeRoot);
+                    return true;
+                }
+            } else {
+                if (children.get(i).merge(mergeTreeRoot)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int calculateBranch() {
+        int count = 0;
+        for(Node child: children) {
+            count += child.calculateBranch();
+        }
+
+        if (parent == null)
+            return count;
+        else
+            return count + 1;
+    }
+
+
+    public void evaluateHeight() {
+        if (parent == null) {
+            this.height = 0;
+        } else {
+            this.height = parent.height + 1;
+        }
+
+        for (Node child : children) {
+            child.evaluateHeight();
+        }
+    }
+
+    public void evaluateNumberNodeOnLevel(int[] countNodesInLevel) {
+        this.numberOnLevel = countNodesInLevel[this.height]++;
+        for(Node child: children) {
+           child.evaluateNumberNodeOnLevel(countNodesInLevel);
+        }
+    }
+
+    public int getCurrentMaxHeight() {
+        int max = this.height;
+        for (Node child : children) {
+            if (max < child.getCurrentMaxHeight())
+                max = child.getCurrentMaxHeight();
+        }
+        return max;
+    }
+
+    private void addCell(Element parent, String path, Config config, BlocksInformation blocksInformation) {
         Element cell = new Element("cell");
         XmlUtil.addElement(cell, "level", this.height);
         XmlUtil.addElement(cell, "numberNode", this.numberOnLevel);
@@ -96,93 +181,8 @@ public class Node {
             XmlUtil.addElement(cell, "rightChildNumber", -1);
         }
 
-        XmlUtil.addElement(cell, "text", this.root);
-
-        Genome genome = new Genome(root);
-        try {
-           Element gen = new Element("genome");
-
-           BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".gen"));
-
-           genome.addChromosomes(input,Config.getInputFormat());
-
-           Drawer picture = new Drawer(Config.getInputFormat(), genome);
-           picture.writeInPng(dateDir.getAbsolutePath() + "/" + root);
-           XmlUtil.addElement(gen, "resize", picture.isBigImage());
-
-           cell.addContent(gen);
-        } catch (Exception e) {
-           log.error("Problems with " + root + ".gen file.", e);
-        }
-
-        try {
-           BufferedReader input = TreeReader.getBufferedInputReader(new File(dateDir, root + ".trs"));
-           List<Transformation> transformations = new ArrayList<Transformation>();
-           String s;
-         
-           while ((s = input.readLine())!=null) {
-               transformations.add(new Transformation(s));
-           }
-
-           for (Transformation transformation : transformations) {
-              transformation.update(genome);
-           }
-                
-           XmlUtil.addElement(cell, "length", transformations.size());
-           Element trs = new Element("transformations");
-                
-           for (Transformation transformation : transformations) {
-               trs.addContent(transformation.toXml());
-           }
-                
-           cell.addContent(trs);
-        } catch (Exception e) {
-           log.error("Problems with " + root + ".trs file.", e);
-        }
+        Genome genome = Transformer.createChromosomesToPNG(cell, root, path, config, blocksInformation);
+        Transformer.createTransformationToPNG(cell, genome, root, path);
         parent.addContent(cell);
-    }
-
-    public void addCells(ArrayList<Element> elementsOfLevel, File dateDir) {
-        if (!children.isEmpty()) {
-            for(Node child: children) {
-                child.addCell(elementsOfLevel.get(child.height), dateDir);
-                child.addCells(elementsOfLevel, dateDir);
-            }
-        }
-    }
-
-    public void evaluateHeight() {
-        if (parent == null) {
-            this.height = 0;
-        } else {
-            this.height = parent.height + 1;
-        }
-        if (!children.isEmpty()) {
-            for (Node child : children) {
-                child.evaluateHeight();
-            }
-        }
-    }
-
-    public void evaluateNumberNodeOnLevel(int[] countNodesInLevel) {
-        this.numberOnLevel = countNodesInLevel[this.height]++;
-        if (!children.isEmpty()) {
-           for(Node child: children) {
-              child.evaluateNumberNodeOnLevel(countNodesInLevel);
-           }
-        }
-    }
-
-    public int getCurrentMaxHeight() {
-        if (!children.isEmpty()) {
-            int max = this.height;
-            for (Node child : children) {
-                if (max < child.getCurrentMaxHeight())
-                        max = child.getCurrentMaxHeight();
-            }
-            return max;
-        } else {
-            return this.height;
-        }
     }
 }

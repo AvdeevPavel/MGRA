@@ -119,6 +119,16 @@ public class Node {
         return false;
     }
 
+    public void createBranches(String fullName, ArrayList<Branch> branches) {
+        if (parent != null && parent.parent != null) {
+            branches.add(new Branch(root, fullName));
+        }
+
+        for(Node child: children) {
+            child.createBranches(fullName, branches);
+        }
+    }
+
     public int calculateBranch() {
         int count = 0;
         for(Node child: children) {
@@ -158,6 +168,18 @@ public class Node {
                 max = child.getCurrentMaxHeight();
         }
         return max;
+    }
+
+    public String getData() {
+        return root;
+    }
+
+    public Node getChild() {
+        if (!children.isEmpty()) {
+            if (children.get(0) != null)
+                return children.get(0);
+        }
+        return null;
     }
 
     private void addCell(Element parent, String path, Config config, BlocksInformation blocksInformation) {

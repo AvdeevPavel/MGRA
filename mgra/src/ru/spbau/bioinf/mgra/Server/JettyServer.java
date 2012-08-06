@@ -50,13 +50,12 @@ public class JettyServer {
 
     private static String REQUEST_START = "/2012/";
     private static final String GENOME_FILE = "genome.txt";
-    private static final String CFG_FILE_NAME = "mgra.cfg";
 
     private static final File execDir = new File("exec");
     private static final File xslDir = new File("xsl");
 
     public static File uploadDir = new File("upload");
-    private static File exeFile;
+    public static File exeFile;
     private static File dateDir;
 
     private static int port = 8080;
@@ -241,7 +240,7 @@ public class JettyServer {
         Config config;
         try {
             config = new Config(datasetDir.getAbsolutePath(), properties);
-            config.createFile();
+            config.createFile(true);
         } catch (IOException e) {
             response(out, "Problem to create CFG file");
             log.error("Problem to create CFG file ", e);
@@ -259,7 +258,7 @@ public class JettyServer {
         }
 
         response(out, "Start MGRA algorithm...");
-        String[] command = new String[]{exeFile.getAbsolutePath(), CFG_FILE_NAME};
+        String[] command = new String[]{exeFile.getAbsolutePath(), config.getNameFile()};
 
         Process process = Runtime.getRuntime().exec(command, new String[]{}, datasetDir);
 
@@ -281,7 +280,7 @@ public class JettyServer {
 
         response(out, "Generating results information: html with tree, imag.PNG with chromosome...");
         try {
-            new Transformer(config, blocksInformation);
+            new Transformer(config, blocksInformation, out);
         } catch (IOException e) {
             response(out, "Problem to create results inforamtion(xml file).");
             log.error("Problem to create results inforamtion ", e);
@@ -378,7 +377,7 @@ public class JettyServer {
         return output;
     }
 
-    private static Thread listenOutput(InputStream inputStream, final PrintWriter out, final String type) {
+    public static Thread listenOutput(InputStream inputStream, final PrintWriter out, final String type) {
         final BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
 
         Thread outputThread = new Thread(new Runnable() {
@@ -404,18 +403,18 @@ public class JettyServer {
         return outputThread;
     }
 
+    public static void response(PrintWriter out, String message) {
+        synchronized (out) {
+            out.println(message);
+            out.flush();
+        }
+    }
+
     private static void logError(IOException e, PrintWriter out, String message) {
         log.error(message, e);
         response(out, message);
         synchronized (out) {
             e.printStackTrace(out);
-        }
-    }
-
-    private static void response(PrintWriter out, String message) {
-        synchronized (out) {
-            out.println(message);
-            out.flush();
         }
     }
 

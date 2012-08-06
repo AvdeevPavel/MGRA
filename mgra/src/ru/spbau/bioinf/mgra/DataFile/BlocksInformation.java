@@ -9,6 +9,7 @@ public class BlocksInformation {
         genome.put(key, value);
     }
 
+    //peredelat
     public Long getLength(String numberBlock, String key) {
         HashMap<String, Long> blockSize = genome.get(numberBlock);
         if (blockSize != null) {

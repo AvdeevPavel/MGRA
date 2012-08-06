@@ -10,6 +10,17 @@ Run local
 
 change id in chromosome xml, not needed
 
+Сделать отображение newick trees, единственное что есть 
+http://cgi-www.cs.au.dk/cgi-chili/phyfi/go
+http://www.biomedcentral.com/1471-2105/7/315
+
+жонглироварние
+в обратную сторону тяжело, чем то что показывают
+колонна тоже тяжала. 
+
+
+
+
 
 
 

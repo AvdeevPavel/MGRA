@@ -84,6 +84,10 @@ public class Config {
         return alias.get(name);
     }
 
+    public static String getNameFile() {
+        return CFG_FILE_NAME;
+    }
+
     public ArrayList<String> getNameGenomes() {
         ArrayList<String> st = new ArrayList<String>();
         for(InformationGenome genome: nameGenome) {
@@ -124,7 +128,7 @@ public class Config {
         return nameGenome.size();
     }
 
-    public void createFile() throws IOException {
+    public void createFile(boolean isShowTree) throws IOException {
         PrintWriter cfgFile = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(pathParentFile, CFG_FILE_NAME)), "UTF-8"));
 
         cfgFile.println("[Genomes]");
@@ -139,8 +143,10 @@ public class Config {
         cfgFile.println();
 
         cfgFile.println("[Trees]");
-        for(String tree: trees) {
-            cfgFile.println(tree);
+        if (isShowTree) {
+            for(String tree: trees) {
+                cfgFile.println(tree);
+            }
         }
         cfgFile.println();
 

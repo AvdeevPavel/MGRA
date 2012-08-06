@@ -36,6 +36,13 @@ public class Tree {
         return root.isCompleteTransformation(path);
     }
 
+    public void createBranches(ArrayList<Branch> branches) {
+        root.createBranches(root.getData(), branches);
+        if (root.getChild() != null) {
+            branches.add(new Branch(root.getChild().getData(), root.getData()));
+        }
+    }
+
     public Element toXml(String path, Config config, BlocksInformation blocksInformation) {
         int height = root.getCurrentMaxHeight();
         elementOfLevel = new ArrayList<Element>(height + 1);

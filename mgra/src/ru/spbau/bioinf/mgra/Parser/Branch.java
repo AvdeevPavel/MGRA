@@ -1,16 +1,19 @@
 package ru.spbau.bioinf.mgra.Parser;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class Branch {
+public class Branch implements Comparable<Branch>{
     private HashSet<Character> firstSet = new HashSet<Character>();
     private HashSet<Character> secondSet = new HashSet<Character>();
     private int weight = 0;
 
     private void init(String first, String second)  {
+        if (first.length() > second.length()) {
+            String temp = first;
+            first = second;
+            second = temp;
+        }
+
         for(int i = 0; i < first.length(); ++i) {
             firstSet.add(first.charAt(i));
         }
@@ -62,6 +65,21 @@ public class Branch {
         return true;
     }
 
+    public static Tree createTree(ArrayList<Branch> inputSet) {
+        Tree tree = null;
+
+        if (inputSet != null || !inputSet.isEmpty()) {
+            Collections.sort(inputSet, Collections.reverseOrder());
+            HashSet<Character> tmp = new HashSet<Character>(inputSet.get(0).firstSet);
+            tmp.addAll(inputSet.get(0).secondSet);
+            NodeSet root = new NodeSet(tmp, null);
+            for(Branch branch: inputSet) {
+                root.addChild(new NodeSet(branch.firstSet, null));
+            }
+        }
+        return tree;
+    }
+
     public static ArrayList<ArrayList<Branch>> screeningOfBranches(ArrayList<Branch> data, ArrayList<Branch> input) {
         if (input == null) {
             return null;
@@ -109,6 +127,17 @@ public class Branch {
         }
     }
 
+    private String toMyString() {
+        String ans = "";
+        for(Character element: firstSet) {
+            ans += element;
+        }
+        for(Character element: secondSet) {
+            ans += element;
+        }
+        return ans;
+    }
+
     static class InformationForBranch {
         int weight = 0;
         ArrayList<Branch> branches;
@@ -121,6 +150,12 @@ public class Branch {
         }
     }
 
+    @Override
+    public int compareTo(Branch branch) {
+        return  new Integer(firstSet.size()).compareTo(branch.firstSet.size());
+    }
+
+    @Override
     public String toString() {
         String ans = weight + " ";
 

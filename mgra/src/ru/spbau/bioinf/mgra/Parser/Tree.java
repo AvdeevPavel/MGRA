@@ -19,6 +19,14 @@ public class Tree {
          calculateInformation();
     }
 
+    public Tree(String s) {
+
+    }
+
+    public void setIdTree(int id) {
+        idTree = id;
+    }
+
     public void calculateInformation() {
         root.evaluateHeight();
         evaluateNumberNodeOnLevel(root.getCurrentMaxHeight());
@@ -67,6 +75,7 @@ public class Tree {
         root.evaluateNumberNodeOnLevel(countNodesOnLevel);
     }
 
+    @Override
     public String toString() {
         return root.toString();
     }

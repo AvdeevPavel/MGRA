@@ -151,16 +151,21 @@ public class Transformer {
                 isCompleate = isCompleate && tree.isCompleteTransformation(config.getPathParentFile());
             }
 
-
+            ArrayList<Tree> newTrees = null;
             if (!isFull || !isCompleate) {
                 JettyServer.response(out, "Start reconstructed tree");
                 JettyServer.response(out, "Create branch for input tree");
                 ArrayList<Branch> dataBranch = createBranchOfInputTree(trees);
+                //delete
+                for (Branch branch: dataBranch) {
+                    System.out.println(branch.toString());
+                }
+
                 JettyServer.response(out, "Read branch for stats.txt");
 
                 ArrayList<Branch> inputBranch = null;
                 try {
-                    inputBranch = readBranchInStats(config);
+                    inputBranch = readBranchInStats(config, true);
                     for(Branch st: inputBranch) {
                         System.out.println(st.toString());
                     }
@@ -195,12 +200,12 @@ public class Transformer {
                     outputThread.join();
                     errorThread.join();
 
-                    //add check if inputBranch != dataBranch
+                    //add check if inputBranch != dataBranch view is error?
                     JettyServer.response(out, "Read branch in stats.txt and screening this");
                     dataBranch = new ArrayList<Branch>();
-                    inputBranch = readBranchInStats(config);
+                    inputBranch = readBranchInStats(config, false);
                     currentSet = Branch.screeningOfBranches(dataBranch, inputBranch);
-
+                    //delete
                     for(ArrayList<Branch> branches: currentSet) {
                         System.out.println("is a new set branch");
                         for (Branch branch: branches) {
@@ -210,13 +215,29 @@ public class Transformer {
                 }
 
                 JettyServer.response(out, "Create trees with new correct branches");
+                newTrees = new ArrayList<Tree>();
+                for(ArrayList<Branch> branches: currentSet) {
+                    branches.addAll(dataBranch);
+                    newTrees.add(Branch.createTree(branches));
+                    branches.removeAll(dataBranch); //delete if not use
+                }
             }
 
             JettyServer.response(out, "Convert input tree to xml");
             for(Tree tree: trees) {
                 rootXml.addContent(tree.toXml(config.getPathParentFile(), config, blocksInformation));
             }
+
+            /*if (newTrees != null || !newTrees.isEmpty()) {
+                JettyServer.response(out, "Convert reconstructed tree to xml");
+                for(Tree tree: newTrees) {
+                    if (tree != null) { //delete when create algorithm build in branch
+                        rootXml.addContent(tree.toXml(config.getPathParentFile(), config, blocksInformation));
+                    }
+                }
+            } */
         }
+
         XmlUtil.saveXml(doc, new File(config.getPathParentFile(), "tree.xml"));
     }
 
@@ -310,7 +331,7 @@ public class Transformer {
         return ans;
     }
 
-    private ArrayList<Branch> readBranchInStats(Config config) throws IOException {
+    private ArrayList<Branch> readBranchInStats(Config config, boolean isDropBf) throws IOException {
         BufferedReader input = getBufferedInputReader(new File(config.getPathParentFile(), "stats.txt"));
         int stage = 0;
         String s = "";
@@ -331,10 +352,20 @@ public class Transformer {
 
         ArrayList<Branch> ans = new ArrayList<Branch>();
         while(!((s = input.readLine()).contains("\\hline"))) {
-            if (s.contains("\\emptyset"))
+            if (s.contains("\\emptyset")) {
                 continue;
-            if (s.contains("\\bf"))
-                continue;
+            }
+            if (s.contains("\\bf")) {
+                if (isDropBf) {
+                    continue;
+                } else {
+                    String st = s.substring(s.indexOf('{') + 4, s.lastIndexOf('}'));
+                    String first = st.substring(0, st.indexOf('+')).trim();
+                    String second = st.substring(st.indexOf('+') + 1).trim();
+                    String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
+                    ans.add(new Branch(first, second, Integer.valueOf(weight)));
+                }
+            }
             String st = s.substring(s.indexOf('{') + 1, s.lastIndexOf('}'));
             String first = st.substring(0, st.indexOf('+')).trim();
             String second = st.substring(st.indexOf('+') + 1).trim();

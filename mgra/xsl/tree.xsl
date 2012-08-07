@@ -95,16 +95,16 @@
 
 		text.on("mouseover", function() { 
 			this.setDraggable(true);
-			this.setFill("blue");
+			this.setFill("#8DB6CD");
 			layer.draw();
 		});	
 
 		text.on("mouseout", function() { 
 			this.setDraggable(false);
 			if (document.getElementById('gen'+str) != null) {
-				this.setFill("yellow");
+				this.setFill("#0000CD");
        		} else {
-				this.setFill("#00dddd");
+				this.setFill("#87CEFA");
 			}
 			layer.draw();
 		});	
@@ -180,9 +180,9 @@
 			var stepWidth = 1; 
 			for(var j = 0; j &lt; trees[k][i].length; ++j) { 
 	     		if (document.getElementById('gen'+trees[k][i][j].text) != null) {
-					trees[k][i][j].viewRect = createText(trees[k][i][j].text, "yellow", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
+					trees[k][i][j].viewRect = createText(trees[k][i][j].text, "#0000CD", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
 				} else { 
-					trees[k][i][j].viewRect = createText(trees[k][i][j].text, "#00dddd", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
+					trees[k][i][j].viewRect = createText(trees[k][i][j].text, "#87CEFA", stepWidth * stage.getWidth() / countInLevel, stepHeight + i * stepHeight, layer);
 				} 
 				stepWidth += 2;								
 			}
@@ -205,9 +205,9 @@
 			
 		var rootArray = null;
 		if (document.getElementById('trs' + trees[k][0][0].text) != null) {
-			rootArrow = createRootArrow((trees[k][0][0].viewRect.getX() + trees[k][0][0].viewRect.getBoxWidth()), trees[k][0][0].viewRect.getY(), trees[k][0][1].viewRect.getX(), trees[k][0][1].viewRect.getY(), trees[k][0][0].text, stage, "red");
-		} else { 
 			rootArrow = createRootArrow((trees[k][0][0].viewRect.getX() + trees[k][0][0].viewRect.getBoxWidth()), trees[k][0][0].viewRect.getY(), trees[k][0][1].viewRect.getX(), trees[k][0][1].viewRect.getY(), trees[k][0][0].text, stage, "black");
+		} else { 
+			rootArrow = createRootArrow((trees[k][0][0].viewRect.getX() + trees[k][0][0].viewRect.getBoxWidth()), trees[k][0][0].viewRect.getY(), trees[k][0][1].viewRect.getX(), trees[k][0][1].viewRect.getY(), trees[k][0][0].text, stage, "#878787");
 		} 
 		trees[k][0][0].arrows[0] = rootArrow; 
 		trees[k][0][1].arrows[0] = rootArrow;
@@ -220,9 +220,9 @@
 					var x2 = trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getX() + trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getBoxWidth() / 2; 
 					var y2 = trees[k][i + 1][trees[k][i][j].leftChildNumber].viewRect.getY(); 
 					if (document.getElementById('trs' + trees[k][i + 1][trees[k][i][j].leftChildNumber].text) != null) { 
-						trees[k][i][j].arrows[1] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].leftChildNumber].text, "red");								
+						trees[k][i][j].arrows[1] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].leftChildNumber].text, "black");								
 					} else { 
-						trees[k][i][j].arrows[1] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].leftChildNumber].text, "black");							
+						trees[k][i][j].arrows[1] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].leftChildNumber].text, "#878787");							
 					} 
 					trees[k][i + 1][trees[k][i][j].leftChildNumber].arrows[0] = trees[k][i][j].arrows[1]; 
 				} 
@@ -233,9 +233,9 @@
 					var x2 = trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getX() + trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getBoxWidth() / 2; 
 					var y2 = trees[k][i + 1][trees[k][i][j].rightChildNumber].viewRect.getY(); 												
 					if (document.getElementById('trs' + trees[k][i + 1][trees[k][i][j].rightChildNumber].text) != null) { 
-						trees[k][i][j].arrows[2] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].rightChildNumber].text, "red");								
+						trees[k][i][j].arrows[2] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].rightChildNumber].text, "black");								
 					} else {
-						trees[k][i][j].arrows[2] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].rightChildNumber].text, "black");							
+						trees[k][i][j].arrows[2] = createArrow(x1, y1, x2, y2, trees[k][i + 1][trees[k][i][j].rightChildNumber].text, "#878787");							
 					}	
 					trees[k][i + 1][trees[k][i][j].rightChildNumber].arrows[0] = trees[k][i][j].arrows[2]; 
 				}

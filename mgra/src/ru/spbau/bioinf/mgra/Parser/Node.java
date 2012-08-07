@@ -1,21 +1,15 @@
 package ru.spbau.bioinf.mgra.Parser;
 
-import org.apache.log4j.Logger;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
-import ru.spbau.bioinf.mgra.Drawer.Drawer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-
-    private static final Logger log = Logger.getLogger(Node.class);
-
     private Node parent;
     private List<Node> children = new ArrayList<Node>();
 

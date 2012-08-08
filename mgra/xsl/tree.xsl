@@ -53,7 +53,7 @@
 	function changeStyle(id, show){
 		var element = document.getElementById(id);
 		if (element != null) {
-			element.style.display= id == show ? "" : "none";;
+			element.style.display= id == show ? "" : "none";
 		}
 	}
 

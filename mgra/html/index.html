@@ -66,7 +66,8 @@
 
             c[0].innerHTML =
                 "<div id = \"right_text\"><strong>Genome " + genomeCountGrm + ":</strong></div>" +
-                "<div id = \"content\"> <div>Name <input id='grm_alias" + genomeCountGrm + "'size='40' name='alias" + genomeCountGrm + "'></div>" +
+                "<div id = \"content\"> <div>Name: <input size='1' id='grm_name" + genomeCountGrm + "' name='name" + genomeCountGrm +
+				"'> Aliases <input id='grm_alias" + genomeCountGrm + "'size='28' name='alias" + genomeCountGrm + "'></div>" +
                 "<textarea id='grm_genome" + genomeCountGrm + "' name='genome" + genomeCountGrm + "' rows='6' cols='60'></textarea></div>";
         }
 
@@ -88,6 +89,7 @@
             document.getElementById("grm_stages").value = '3';
             document.getElementById("grm_target").value = '';
             document.getElementById("grm_completion").value = ''	
+			viewInformForGrimmExample("");
 			showTargetGrm(false);
 		} 
 
@@ -109,6 +111,12 @@
 			document.getElementById('showGrimmForm').style.display = '';
 			document.getElementById('showHelp').style.display = 'none';
 		}
+		
+		function viewInformForGrimmExample(showStr) {
+			document.getElementById("grm_murphy_information").style.display = "murphy" == showStr ? "" : "none";
+			document.getElementById("grm_toy_information").style.display = "toy" == showStr ? "" : "none";
+			document.getElementById("grm_shigella_information").style.display = "shigella" == showStr ? "" : "none";
+		} 
 
 		/*InferCARs format functions*/
 		function addGenomeInf() {
@@ -126,7 +134,8 @@
 
             c[0].innerHTML =
                 "<div id = \"content_text1\"><strong>Genome " + genomeCountInf + ":</strong></div>" +
-                "<div id = \"content\"> <div>Name <input id='inf_alias" + genomeCountInf + "'size='40' name='alias" + genomeCountInf + "'></div></div>"
+                "<div id = \"content\"> <div>Name: <input size='1' id='inf_name" + genomeCountInf + "' name='name" + genomeCountInf +
+				"'> Aliases <input id='inf_alias" + genomeCountInf + "'size='28' name='alias" + genomeCountInf + "'></div></div>"
         }
 
 		function initGenomesInf(n) {
@@ -164,6 +173,7 @@
 
 		function setInferCarsFormat() { 
 			clearInferCarsFormat();
+			viewInformForInferCarsExample("");
 			document.getElementById('inf_widthMonitor').value = getClientWidth(); 
 			document.getElementById('showInferCarsForm').style.display = ''; 
 			document.getElementById('showGrimmForm').style.display = 'none';	
@@ -178,10 +188,23 @@
             return X.responseText;
         }
 
+		function viewInformForInferCarsExample(showStr) {
+			document.getElementById("inf_mam6_information").style.display = "mam6" == showStr ? "" : "none";
+			document.getElementById("inf_mam7_information").style.display = "mam7" == showStr ? "" : "none";
+			document.getElementById("inf_rosaceae_information").style.display = "rosaceae" == showStr ? "" : "none";
+		} 
+
 		/*Set example in file*/
 	    function setMam6() {
             setInferCarsFormat(); 
 			initGenomesInf(6); 
+			viewInformForInferCarsExample("mam6");
+			document.getElementById("inf_name1").value = 'M';
+	        document.getElementById("inf_name2").value = 'R';
+            document.getElementById("inf_name3").value = 'D';
+            document.getElementById("inf_name4").value = 'Q';
+            document.getElementById("inf_name5").value = 'H';
+            document.getElementById("inf_name6").value = 'C';
 
             document.getElementById("inf_alias1").value = 'mouse mm9';
             document.getElementById("inf_alias2").value = 'rat rn4';
@@ -208,6 +231,14 @@
         function setMam7() {
             setInferCarsFormat();
 			initGenomesInf(7); 
+			viewInformForInferCarsExample("mam7");
+			document.getElementById("inf_name1").value = 'M';
+            document.getElementById("inf_name2").value = 'R';
+            document.getElementById("inf_name3").value = 'D';
+            document.getElementById("inf_name4").value = 'Q';
+            document.getElementById("inf_name5").value = 'H';
+            document.getElementById("inf_name6").value = 'C';
+            document.getElementById("inf_name7").value = 'O';
 
             document.getElementById("inf_alias1").value = 'mouse mm9';
             document.getElementById("inf_alias2").value = 'rat rn4';
@@ -229,6 +260,10 @@
 		function setRosaceae() { 
 			setInferCarsFormat(); 
 			initGenomesInf(3); 
+			viewInformForInferCarsExample("rosaceae");
+			document.getElementById("inf_name1").value = 'P';
+            document.getElementById("inf_name2").value = 'S';
+            document.getElementById("inf_name3").value = 'V';
 
             document.getElementById("inf_alias1").value = 'pp prunus';
             document.getElementById("inf_alias2").value = 'fv fragaria';
@@ -243,28 +278,36 @@
 		} 
 
 
-        function setMurphy05() {
+        function setMurphy() {
 			setGrimmFormat();
             initGenomesGrm(7);
+			viewInformForGrimmExample("murphy");
 
+			document.getElementById("grm_name1").value = 'H';
          	document.getElementById("grm_alias1").value = 'human';
 			document.getElementById("grm_genome1").value = loadFile('murphy05/murphy05_1.txt');
 
+            document.getElementById("grm_name2").value = 'M';
             document.getElementById("grm_alias2").value = 'mouse';
-			document.getElementById("grm_genome2").value = loadFile('murphy05/murphy05_2.txt');           
+			document.getElementById("grm_genome2").value = loadFile('murphy05/murphy05_2.txt');
 
-		   document.getElementById("grm_alias3").value = 'rat';
-			document.getElementById("grm_genome3").value = loadFile('murphy05/murphy05_3.txt');           
+			document.getElementById("grm_name3").value = 'R';
+            document.getElementById("grm_alias3").value = 'rat';
+			document.getElementById("grm_genome3").value = loadFile('murphy05/murphy05_3.txt');
 
+            document.getElementById("grm_name4").value = 'C';
             document.getElementById("grm_alias4").value = 'cat';
-			document.getElementById("grm_genome4").value = loadFile('murphy05/murphy05_4.txt');     	      
+			document.getElementById("grm_genome4").value = loadFile('murphy05/murphy05_4.txt');
 
+            document.getElementById("grm_name5").value = 'W';
             document.getElementById("grm_alias5").value = 'cattle';
-			document.getElementById("grm_genome5").value = loadFile('murphy05/murphy05_5.txt');           
+			document.getElementById("grm_genome5").value = loadFile('murphy05/murphy05_5.txt');
 
+            document.getElementById("grm_name6").value = 'D';
             document.getElementById("grm_alias6").value = 'dog';
-			document.getElementById("grm_genome6").value = loadFile('murphy05/murphy05_6.txt');           
+			document.getElementById("grm_genome6").value = loadFile('murphy05/murphy05_6.txt');
 
+            document.getElementById("grm_name7").value = 'P';
             document.getElementById("grm_alias7").value = 'pig';
 			document.getElementById("grm_genome7").value = loadFile('murphy05/murphy05_7.txt');           
 
@@ -278,19 +321,24 @@
             showTargetGrm(true);
         }
 
-        function setToy05() {
+        function setToy() {
 			setGrimmFormat();
             initGenomesGrm(4);
-
-     		document.getElementById("grm_alias1").value = 'P1';
+			viewInformForGrimmExample("toy");
+	
+     		document.getElementById("grm_name1").value = '1';
+			document.getElementById("grm_alias1").value = 'P1';
             document.getElementById("grm_genome1").value = loadFile('toy/toyblks_1.txt');
-		
-	        document.getElementById("grm_alias2").value = 'P2';
-		    document.getElementById("grm_genome2").value = loadFile('toy/toyblks_2.txt');
-		        
-		    document.getElementById("grm_alias3").value = 'P3';
-		    document.getElementById("grm_genome3").value = loadFile('toy/toyblks_3.txt');
-		
+
+			document.getElementById("grm_name2").value = '2';
+            document.getElementById("grm_alias2").value = 'P2';
+			document.getElementById("grm_genome2").value = loadFile('toy/toyblks_2.txt');
+
+			document.getElementById("grm_name3").value = '3';
+            document.getElementById("grm_alias3").value = 'P3';
+			document.getElementById("grm_genome3").value = loadFile('toy/toyblks_3.txt');
+
+            document.getElementById("grm_name4").value = '4';
             document.getElementById("grm_alias4").value = 'P4';
     		document.getElementById("grm_genome4").value = loadFile('toy/toyblks_4.txt');
 			
@@ -305,23 +353,30 @@
 
 		function setShigella() { 
 			setGrimmFormat(); 
-			 initGenomesGrm(6);
+			initGenomesGrm(6);
+			viewInformForGrimmExample("shigella");
 
-      		document.getElementById("grm_alias1").value = 'Shi1 S1';
+      		document.getElementById("grm_name1").value = 'A';
+			document.getElementById("grm_alias1").value = 'Shi1 S1';
 			document.getElementById("grm_genome1").value = loadFile('shigella/shigella_1.txt');
 
+            document.getElementById("grm_name2").value = 'B';
             document.getElementById("grm_alias2").value = 'Shi2 S2';
-			document.getElementById("grm_genome2").value = loadFile('shigella/shigella_2.txt');           
+			document.getElementById("grm_genome2").value = loadFile('shigella/shigella_2.txt');
 
-		    document.getElementById("grm_alias3").value = 'Shi3 S3';
-			document.getElementById("grm_genome3").value = loadFile('shigella/shigella_3.txt');           
+			document.getElementById("grm_name3").value = 'C';
+            document.getElementById("grm_alias3").value = 'Shi3 S3';
+			document.getElementById("grm_genome3").value = loadFile('shigella/shigella_3.txt');
 
+            document.getElementById("grm_name4").value = 'D';
             document.getElementById("grm_alias4").value = 'Shi4 S4';
-			document.getElementById("grm_genome4").value = loadFile('shigella/shigella_4.txt');     	      
+			document.getElementById("grm_genome4").value = loadFile('shigella/shigella_4.txt');
 
+            document.getElementById("grm_name5").value = 'E';
             document.getElementById("grm_alias5").value = 'Shi5 S5';
-			document.getElementById("grm_genome5").value = loadFile('shigella/shigella_5.txt');           
+			document.getElementById("grm_genome5").value = loadFile('shigella/shigella_5.txt');
 
+            document.getElementById("grm_name6").value = 'F';
             document.getElementById("grm_alias6").value = 'Shi6 S6';
 			document.getElementById("grm_genome6").value = loadFile('shigella/shigella_6.txt');           
 
@@ -362,8 +417,8 @@
 				<a href="#" onclick="setMam6(); return false;">mam6</a> <br>
 				<a href="#" onclick="setMam7(); return false;">mam7</a> <br>
 				<a href="#" onclick="setRosaceae(); return false;">rosaceae</a> <br>			
-		        <a href="#" onclick="setMurphy05(); return false;">murphy05</a> <br>
-				<a href="#" onclick="setToy05(); return false;">toy</a> <br>
+		        <a href="#" onclick="setMurphy(); return false;">murphy05</a> <br>
+				<a href="#" onclick="setToy(); return false;">toy</a> <br>
 				<a href="#" onclick="setShigella(); return false;">shigella</a> <br>					        
 			</blockquote>
 			<a href="#" onclick="viewHelp(); return false;">How to work</a> <br>			
@@ -378,7 +433,34 @@
 		<input type="hidden" name="useFormat" id="inf_useFormat" value="infercars"/>
 		<input type="hidden" name="widthMonitor" id="inf_widthMonitor" value=""/>
 		
-		<h2><p align="center">Genome in infercars format</p></h2>		
+		<h2><p align="center">Genome in infercars format</p></h2>	
+
+		<div id="inf_mam6_information" style="display:none;">
+			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
+			<p>
+			<p> Synteny blocks for 6 mammalian species, constructed by Jian Ma from the following builds: 
+			hg18 (Mar 2006), panTro2 (Mar 2006), rheMac2 (Jan 2006), mm9 (Jul 2007), rn4 (Nov 2004), canFam2 (May 2005). 
+			Blocks 1268, 1353, and 1360 (representing intermixed segments of the chromosome X and other chromosomes)
+			are deliberately commented out to simplify analysis of the chromosome X reconstruction.	
+			</p>
+		</div>
+
+		<div id="inf_mam7_information" style="display:none;">
+			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
+			<p>
+			Synteny blocks for 7 mammalian species, constructed by Jian Ma from the following builds: 
+			hg18 (Mar 2006), panTro2 (Mar 2006), rheMac2 (Jan 2006), mm9 (Jul 2007), rn4 (Nov 2004), canFam2 (May 2005), monDom4 (Jan 2006)
+			</p>
+		</div>
+
+		<div id="inf_rosaceae_information"	style="display:none;">
+			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
+			<p>
+				Synteny blocks for 3 genomes in rosaceous subfamilies: Prunus, Fragaria, Vitis. 
+				as constructed in <a href = "http://www.biomedcentral.com/1471-2164/13/129">paper</a>
+			</p>
+		</div>
+		
 
 		<table id="inf_genomes">
 	    </table>
@@ -455,10 +537,36 @@
 	<!--Form for grimm format-->
 	<div id = "showGrimmForm" style="display:none;"> 
 	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="grimmMgraForm" >
+		
 		<input type="hidden" name="useFormat" id="grm_useFormat" value="grimm"/>
 		<input type="hidden" name="widthMonitor" id="grm_widthMonitor" value=""/>
 	
-		<h2><p align="center">Genome in grimm format</p></h2>		
+		<h2><p align="center">Genome in grimm format</p></h2>	
+
+		<div id="grm_murphy_information" style="display:none;">
+			<p style="text-indent: 25px;"><strong>Information on the example:</strong></p>
+			<p>
+			Synteny blocks for 7 mammalian genomes:
+			human, rat, mouse, dog, cat, pig, and cow
+			as constructed in Murphy et al. (2005) Science 309(5734), 613-617.
+			</p>
+		</div>	
+
+		<div id="grm_toy_information" style="display:none;">
+			<p style="text-indent: 25px;"> <strong>Information on the example:</strong> </p>
+			<p>
+			Synteny blocks for a set of 4 toy genomes shown in Fig.3 in the paper:
+			Max Alekseyev, Pavel Pevzner "Breakpoint Graphs and Ancestral Genome Reconstructions."
+			Genome Research, special issue "Genomics and Darwinism", 2009.
+			</p>
+		</div>	
+
+		<div id="grm_shigella_information" style="display:none;">
+			<p style="text-indent: 25px;"> <strong>Information on the example:</strong> </p>
+			<p>
+			</p>
+		</div>	
+
     	<table id="grm_genomes">
 	    </table>
 

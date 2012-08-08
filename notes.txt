@@ -14,6 +14,8 @@ change id in chromosome xml, not needed
 http://cgi-www.cs.au.dk/cgi-chili/phyfi/go
 http://www.biomedcentral.com/1471-2105/7/315
 
+Если номера блоков всегда цифры оптимизровать под инт. 
+
 жонглироварние
 в обратную сторону тяжело, чем то что показывают
 колонна тоже тяжала. 

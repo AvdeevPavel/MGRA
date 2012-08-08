@@ -1,5 +1,7 @@
 package ru.spbau.bioinf.mgra.DataFile;
 
+import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,23 +29,25 @@ public class Config {
     private int widthMonitor = 0;
     private String pathParentFile = "";
 
-    private HashMap<Character, String> alias = new HashMap<Character, String>();
+    private HashMap<String, Character> alias = new HashMap<String, Character>();
 
-    private char shortName[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
-            'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-
-    public Config(String path, Properties properties) {
+    public Config(String path, Properties properties) throws LongUniqueName {
         /*[Genomes]*/
         int aliasId = 1;
         String key = "alias" + aliasId;
         do {
             String aliasName = properties.getProperty(key);
-            String name = properties.getProperty("name" + aliasId);
+            String name = properties.getProperty("name" + aliasId).trim();
 
-            nameGenome.add(new InformationGenome(name, aliasName));
+            if (name.length() > 1) {
+                throw new LongUniqueName("problem for name");
+            }
+
+            nameGenome.add(new InformationGenome(name.charAt(0), aliasName));
+
             String[] tmp = aliasName.split(" ");
             for(String data: tmp) {
-                alias.put(data, name);
+                alias.put(data, name.charAt(0));
             }
 
             ++aliasId;
@@ -84,7 +88,7 @@ public class Config {
         widthMonitor = new Integer(properties.getProperty("widthMonitor"));
     }
 
-    public String getAliasName(String name) {
+    public Character getAliasName(String name) {
         return alias.get(name);
     }
 

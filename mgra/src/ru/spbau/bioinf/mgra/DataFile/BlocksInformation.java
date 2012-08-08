@@ -3,15 +3,14 @@ package ru.spbau.bioinf.mgra.DataFile;
 import java.util.HashMap;
 
 public class BlocksInformation {
-    private HashMap<String, HashMap<String, Long>> genome = new HashMap<String, HashMap<String, Long>>();
+    private HashMap<String, HashMap<Character, Long>> genome = new HashMap<String, HashMap<Character, Long>>();
 
-    public void putHashMap(String key, HashMap<String, Long> value) {
+    public void putHashMap(String key, HashMap<Character, Long> value) {
         genome.put(key, value);
     }
 
-    //peredelat
     public Long getLength(String numberBlock, String key) {
-        HashMap<String, Long> blockSize = genome.get(numberBlock);
+        HashMap<Character, Long> blockSize = genome.get(numberBlock);
         if (blockSize != null) {
             if (key.length() > 1) {
                 long length = 0;

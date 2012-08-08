@@ -11,6 +11,7 @@ import org.eclipse.jetty.servlets.MultiPartFilter;
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.Drawer.Drawer;
+import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
 import ru.spbau.bioinf.mgra.Parser.Transformer;
 
 import javax.servlet.FilterChain;
@@ -194,6 +195,7 @@ public class JettyServer {
                        baseRequest.setHandled(true);
                        ((Request) request).setHandled(true);
                    } catch (Throwable e) {
+                       response(out, "SUMMARY: Error processing request. Read the information in the log. If there are no problems with input data please contact us.");
                        log.error("Error processing request", e);
                    } finally {
                        for (int i = 0; i < files.length; i++) {
@@ -214,7 +216,7 @@ public class JettyServer {
         server.start();
     }
 
-    private static void processRequest(final PrintWriter out, Properties properties, File genomeFileUpload) throws IOException, InterruptedException, SaxonApiException {
+    private static void processRequest(final PrintWriter out, Properties properties, File genomeFileUpload) throws IOException, InterruptedException, SaxonApiException, LongUniqueName {
         updateDateDir();
 
         File datasetDir;
@@ -236,15 +238,19 @@ public class JettyServer {
         out.println("<html><title>MGRA processing information</title><body>");
         response(out, "<pre>");
 
-        response(out, "Greating CFG...");
+        response(out, "STAGE: Greating CFG...");
         Config config;
         try {
             config = new Config(datasetDir.getAbsolutePath(), properties);
             config.createFile(true);
         } catch (IOException e) {
-            response(out, "Problem to create CFG file");
+            response(out, "ERROR: Problem to create CFG file");
             log.error("Problem to create CFG file ", e);
             throw new IOException();
+        } catch (LongUniqueName e) {
+            response(out, "<strong>ERROR FOR INPUT DATA</strong>: Your name genome is not valid. Max length name = 1. Please check your input data");
+            log.error("Problem with name in genome", e);
+            throw new LongUniqueName();
         }
 
         BlocksInformation blocksInformation;
@@ -350,14 +356,14 @@ public class JettyServer {
         BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         String s;
         String nameBlock = "";
-        HashMap<String, Long> map = new HashMap<String, Long>();
+        HashMap<Character, Long> map = new HashMap<Character, Long>();
 
         while((s = input.readLine()) != null) {
             s = s.trim();
             if (s.isEmpty()) {
                 if (nameBlock != null && !nameBlock.isEmpty())  {
                     output.putHashMap(nameBlock, map);
-                    map = new HashMap<String, Long>();
+                    map = new HashMap<Character, Long>();
                     nameBlock = "";
                }
             } else if (s.startsWith(">")) {
@@ -366,7 +372,7 @@ public class JettyServer {
                 continue;
             } else {
                 int index = s.indexOf(".");
-                String key = config.getAliasName(s.substring(0, index));
+                Character key = config.getAliasName(s.substring(0, index));
                 Long left = new Long(s.substring(s.indexOf(":") + 1, s.indexOf("-")));
                 Long right = new Long(s.substring(s.indexOf("-") + 1, s.indexOf(" ")));
                 map.put(key, right - left);
@@ -406,6 +412,20 @@ public class JettyServer {
     public static void response(PrintWriter out, String message) {
         synchronized (out) {
             out.println(message);
+            out.flush();
+        }
+    }
+
+    public static void responseErrorUser(PrintWriter out, String message) {
+        synchronized (out) {
+            out.println("<strong>USER ERROR:</strong> " + message);
+            out.flush();
+        }
+    }
+
+    public static void responseErrorServer(PrintWriter out, String message) {
+        synchronized (out) {
+            out.println("<u>SERVER ERROR:</u> " + message);
             out.flush();
         }
     }

@@ -64,12 +64,14 @@ public class Drawer {
         drawGenome(genome.getChromosomes(), genome.getFormat());
     }
 
-    public void writeInPng(String nameFile){
+    public boolean writeInPng(String nameFile){
         try {
             ImageIO.write(image, "png", new File(nameFile + ".png"));
             log.debug("Create image with genome " + nameFile);
+            return true;
         } catch (IOException e) {
             log.error("Problem to save image with genome " + nameFile + ".png");
+            return false;
         }
     }
 

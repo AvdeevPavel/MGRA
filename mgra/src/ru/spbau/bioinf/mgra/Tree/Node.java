@@ -1,11 +1,10 @@
 package ru.spbau.bioinf.mgra.Tree;
 
 import org.jdom.Element;
-import ru.spbau.bioinf.mgra.Drawer.DrawerGenomes;
+import ru.spbau.bioinf.mgra.Drawer.CreatorInformation;
 import ru.spbau.bioinf.mgra.Parser.Transformer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +13,6 @@ public class Node {
     private Node parent;
     private List<Node> children = new ArrayList<Node>();
 
-    private String dataString = "";
     private HashSet<Character> dataSet = new HashSet<Character>();
 
     private int height = 0;
@@ -29,11 +27,11 @@ public class Node {
         for (int i = 0;  i < s.length(); i++) {
              char ch = s.charAt(i);
              if (Character.isLetterOrDigit(ch)) {
-                 dataString += ch;
+                 dataSet.add(ch);
              }
         }
 
-        if (s.length() == dataString.length())
+        if (s.length() == dataSet.size())
             return;
 
         if (s.startsWith("(")) {
@@ -98,22 +96,20 @@ public class Node {
         children.add(nodeSecond);
     }
 
-    void addCells(ArrayList<Element> elementsOfLevel, String path, DrawerGenomes genomes) {
+    void addCells(ArrayList<Element> elementsOfLevel, CreatorInformation genomes) {
         for(Node child: children) {
-            child.addCell(elementsOfLevel.get(child.height), path, genomes);
-            child.addCells(elementsOfLevel, path, genomes);
+            child.addCell(elementsOfLevel.get(child.height), genomes);
+            child.addCells(elementsOfLevel, genomes);
         }
     }
 
     boolean merge(Node mergeTreeRoot) {
         for(int i = 0; i < children.size(); ++i) {
             if (children.get(i).dataSet.equals(mergeTreeRoot.dataSet)) {
-                if (children.get(i).children.isEmpty()) {
-                    mergeTreeRoot.parent = this;
-                    children.remove(i);
-                    children.add(i, mergeTreeRoot);
-                    return true;
-                }
+                mergeTreeRoot.parent = this;
+                children.remove(i);
+                children.add(i, mergeTreeRoot);
+                return true;
             } else {
                 if (children.get(i).merge(mergeTreeRoot)) {
                     return true;
@@ -123,16 +119,15 @@ public class Node {
         return false;
     }
 
-    boolean isCompleteTransformation(String path) {
+    boolean isCompleteTransformation(CreatorInformation information) {
         if (parent != null) {
-            File gen = new File(path, dataString + ".gen");
-            if (!gen.exists()) {
+            if (!information.existsGen(dataSet)) {
                 return false;
             }
         }
 
         for(Node child: children) {
-            if (!child.isCompleteTransformation(path)) {
+            if (!child.isCompleteTransformation(information)) {
                 return false;
             }
         }
@@ -142,7 +137,7 @@ public class Node {
 
     Branch createRootBranch() {
         if (!children.isEmpty()) {
-            return new Branch(dataSet, parent.dataSet);
+            return new Branch(children.get(0).dataSet, dataSet);
         }
         return null;
     }
@@ -220,20 +215,6 @@ public class Node {
         }
     }
 
-    void setData() {
-        if (dataSet.isEmpty()) {
-            for(int i = 0; i < dataString.length(); ++i) {
-                dataSet.add(dataString.charAt(i));
-            }
-        }
-
-        if (dataString.isEmpty()) {
-            for(Character ch: dataSet) {
-                dataString += ch;
-            }
-        }
-    }
-
     /********/
     /*Geters*/
     /********/
@@ -242,8 +223,15 @@ public class Node {
    }
 
     /*Other function*/
-    private void addCell(Element parent, String path, DrawerGenomes genomes) {
+    private void addCell(Element parent, CreatorInformation information) {
         Element cell = new Element("cell");
+
+        if (information.isCreateImage(dataSet)) {
+            XmlUtil.addElement(cell, "name", information.getGenomeName(dataSet));
+        } else {
+            XmlUtil.addElement(cell, "name", Transformer.convertToString(dataSet));
+        }
+
         XmlUtil.addElement(cell, "level", this.height);
         XmlUtil.addElement(cell, "numberNode", this.numberOnLevel);
 
@@ -263,8 +251,6 @@ public class Node {
             XmlUtil.addElement(cell, "rightChildNumber", -1);
         }
 
-        Transformer.createInformationForGenome(cell, dataString, dataSet, genomes);
-        Transformer.createTransformationToPNG(cell, genomes.getGenome(dataSet), dataString, path);
         parent.addContent(cell);
     }
 
@@ -288,7 +274,7 @@ public class Node {
     @Override
     public String toString() {
         if (children.isEmpty()) {
-            return dataString;
+            return Transformer.convertToString(dataSet);
         } else {
             String ans = "(";
             for(int i = 0; i < children.size(); ++i) {

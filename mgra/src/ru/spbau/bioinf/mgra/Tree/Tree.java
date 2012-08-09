@@ -1,8 +1,7 @@
 package ru.spbau.bioinf.mgra.Tree;
 
 import org.jdom.Element;
-import ru.spbau.bioinf.mgra.DataFile.Config;
-import ru.spbau.bioinf.mgra.Drawer.DrawerGenomes;
+import ru.spbau.bioinf.mgra.Drawer.CreatorInformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class Tree {
 
         Collections.sort(inputSet, Collections.reverseOrder());
 
-        Node root = new Node(inputSet.get(0).getAllSet());
+        root = new Node(inputSet.get(0).getAllSet());
 
         for(Branch branch: inputSet) {
             root.addChild(new Node(branch.getFirstSet()));
@@ -35,15 +34,18 @@ public class Tree {
     }
 
     public boolean merge(Tree mergeTree) {
-        return root.merge(mergeTree.root);
+        boolean flag = root.merge(mergeTree.root);
+        if (flag == true)
+            normalize();
+        return flag;
     }
 
     public boolean isFullTree(int numberGenomes) {
         return ((root.calculateBranch() - 1) == 2 * numberGenomes - 3);
     }
 
-    public boolean isCompleteTransformation(String path) {
-        return root.isCompleteTransformation(path);
+    public boolean isCompleteTransformation(CreatorInformation creator) {
+        return root.isCompleteTransformation(creator);
     }
 
     public void createBranches(ArrayList<Branch> branches) {
@@ -51,16 +53,16 @@ public class Tree {
         branches.add(root.createRootBranch());
     }
 
-    public Element toXml(Config config, DrawerGenomes genomes) {
-        elementOfLevel = new ArrayList<Element>(height + 1);
-        for(int i = 0; i <= height; ++i) {
+    public Element toXml(CreatorInformation genomes) {
+        elementOfLevel = new ArrayList<Element>(this.height + 1);
+        for(int i = 0; i <= this.height; ++i) {
             elementOfLevel.add(new Element("row"));
         }
 
         Element tree = new Element("tree");
         XmlUtil.addElement(tree, "number", idTree);
 
-        root.addCells(elementOfLevel, config.getPathParentFile(), genomes);
+        root.addCells(elementOfLevel, genomes);
 
         for(int i = 1; i <= root.getCurrentMaxHeight(); ++i) {
             tree.addContent(elementOfLevel.get(i));
@@ -70,11 +72,10 @@ public class Tree {
 
     private void normalize() {
         root.finishBuilding();
-        root.setData();
         root.setParent(null);
         root.evaluateHeight();
 
-        int height = root.getCurrentMaxHeight();
+        height = root.getCurrentMaxHeight();
 
         int[] countNodesOnLevel = new int[height + 1];
         countNodesOnLevel[0] = -1;

@@ -1,10 +1,9 @@
 package ru.spbau.bioinf.mgra.Tree;
 
 import ru.spbau.bioinf.mgra.Parser.Transformer;
-
 import java.util.*;
 
-public class Branch implements Comparable<Branch>{
+public class Branch implements Comparable<Branch> {
     private HashSet<Character> firstSet = new HashSet<Character>();
     private HashSet<Character> secondSet = new HashSet<Character>();
     private int weight = 0;
@@ -16,8 +15,8 @@ public class Branch implements Comparable<Branch>{
             second = temp;
         }
 
-        firstSet = Branch.convertToSet(first);
-        secondSet = Branch.convertToSet(second);
+        firstSet = Transformer.convertToSet(first);
+        secondSet = Transformer.convertToSet(second);
     }
 
     public Branch(String first, String second, int weight_) {
@@ -52,7 +51,7 @@ public class Branch implements Comparable<Branch>{
         return false;
     }
 
-    public boolean compatibilityAll(List<Branch> inputSet) {
+    public boolean compatibilityAll(Collection<Branch> inputSet) {
         for(Branch branch: inputSet) {
             if (!this.compatibilityTo(branch)) {
                 return false;
@@ -85,8 +84,25 @@ public class Branch implements Comparable<Branch>{
 
         LinkedList<InformationForBranch> informationTrees = new LinkedList<InformationForBranch>();
 
-        screeningOfBranches_visit(0, data, new LinkedList<Branch>(), input, informationTrees);
-        //add cheker that sets different
+        screeningOfBranches_visit(0, data, new HashSet<Branch>(), input, informationTrees);
+
+        boolean[] mark = new boolean[informationTrees.size()];
+        for(int j = 0; j < informationTrees.size(); ++j) {
+            if (!mark[j]) {
+                for(int i = 0; i < informationTrees.size(); ++i) {
+                    if (i != j && informationTrees.get(j).compare(informationTrees.get(i))) {
+                        mark[i] = true;
+                    }
+                }
+            }
+        }
+
+
+        for(int i = 0; i < informationTrees.size(); ++i) {
+            if (mark[i]) {
+                informationTrees.remove(i);
+            }
+        }
 
         ArrayList<ArrayList<Branch>> ans = new ArrayList<ArrayList<Branch>>();
         for(InformationForBranch tree: informationTrees) {
@@ -95,21 +111,21 @@ public class Branch implements Comparable<Branch>{
         return ans;
     }
 
-    private static void screeningOfBranches_visit(int start, ArrayList<Branch> inputSet, LinkedList<Branch> currentSet, ArrayList<Branch> stats, LinkedList<InformationForBranch> ans) {
+    private static void screeningOfBranches_visit(int start, ArrayList<Branch> inputSet, HashSet<Branch> currentSet, ArrayList<Branch> stats, LinkedList<InformationForBranch> ans) {
         int i = start;
         boolean flag = false;
 
         for(; i < stats.size(); ++i) {
             if (stats.get(i).compatibilityAll(inputSet) && stats.get(i).compatibilityAll(currentSet)) {
                 if (stats.get(i).isSizeBranchOne()) {
-                    currentSet.addLast(stats.get(i));
+                    currentSet.add(stats.get(i));
                 } else {
                     int index = currentSet.size();
-                    currentSet.addLast(stats.get(i));
+                    currentSet.add(stats.get(i));
                     screeningOfBranches_visit(i + 1, inputSet, currentSet, stats, ans);
                     currentSet.remove(index);
                     flag = true;
-                }
+               }
             }
         }
 
@@ -130,24 +146,45 @@ public class Branch implements Comparable<Branch>{
         }
     }
 
-    public static HashSet<Character> convertToSet(String name) {
-        HashSet<Character> ans = new HashSet<Character>();
-        for(int i = 0; i < name.length(); ++i) {
-            ans.add(name.charAt(i));
-        }
-        return ans;
-    }
-
     static class InformationForBranch {
         int weight = 0;
         ArrayList<Branch> branches;
 
-        InformationForBranch(List<Branch> branches_) {
-           for(Branch branch: branches_) {
+        InformationForBranch(HashSet<Branch> branches) {
+           for(Branch branch: branches) {
                weight += branch.weight;
            }
-           branches = new ArrayList<Branch>(branches_);
+           this.branches = new ArrayList<Branch>(branches);
         }
+
+        boolean compare(InformationForBranch secondBranch) {
+            for(Branch branch: branches) {
+                boolean flag = false;
+                for(Branch secBranch: secondBranch.branches) {
+                    if (branch.equals(secBranch)) {
+                        flag = true;
+                    }
+                }
+                if (!flag)
+                    return false;
+            }
+            return true;
+        }
+    }
+
+    public boolean equals(Branch second) {
+        if (this == second)
+            return true;
+
+        if (second.firstSet.equals(firstSet) && second.secondSet.equals(secondSet)) {
+            return true;
+        }
+
+        if (second.firstSet.equals(secondSet) && second.secondSet.equals(firstSet)) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override

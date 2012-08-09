@@ -238,32 +238,32 @@ public class JettyServer {
         out.println("<html><title>MGRA processing information</title><body>");
         response(out, "<pre>");
 
-        response(out, "STAGE: Greating CFG...");
+        response(out, "STAGE: Greating CFG file...");
         Config config;
         try {
             config = new Config(datasetDir.getAbsolutePath(), properties);
             config.createFile(true);
         } catch (IOException e) {
-            response(out, "ERROR: Problem to create CFG file");
+            responseErrorServer(out, "Problem to create CFG file");
             log.error("Problem to create CFG file ", e);
             throw new IOException();
         } catch (LongUniqueName e) {
-            response(out, "<strong>ERROR FOR INPUT DATA</strong>: Your name genome is not valid. Max length name = 1. Please check your input data");
+            responseErrorUser(out, "Your name genome is not valid. Max length name = 1. Please check your input data");
             log.error("Problem with name in genome", e);
             throw new LongUniqueName();
         }
 
         BlocksInformation blocksInformation;
         try {
-            response(out, "Create genome file...");
+            response(out, "STAGE: Create genome file...");
             blocksInformation = createGENOME_FILE(genomeFileUpload, properties, datasetDir, config);
         } catch (IOException e) {
-            response(out, "Problem to create genome file.");
+            responseErrorServer(out, "Problem to create genome file.");
             log.error("Problem to create genome file ", e);
             throw new IOException();
         }
 
-        response(out, "Start MGRA algorithm...");
+        response(out, "STAGE: Start MGRA algorithm...");
         String[] command = new String[]{exeFile.getAbsolutePath(), config.getNameFile()};
 
         Process process = Runtime.getRuntime().exec(command, new String[]{}, datasetDir);
@@ -284,16 +284,16 @@ public class JettyServer {
         outputThread.join();
         errorThread.join();
 
-        response(out, "Generating results information: html with tree, imag.PNG with chromosome...");
+        response(out, "STAGE: Generating results information: html with tree, imag.PNG with chromosome...");
         try {
             new Transformer(config, blocksInformation, out);
         } catch (IOException e) {
-            response(out, "Problem to create results inforamtion(xml file).");
+            responseErrorServer(out, "Problem to create results inforamtion(xml file).");
             log.error("Problem to create results inforamtion ", e);
             throw new IOException();
         }
 
-        response(out, "Applying XSLT to XML for create html...");
+        response(out, "STAGE: Applying XSLT to XML for create html...");
 
         try {
             XdmNode source = getSource(processor, new File(datasetDir, "tree.xml"));
@@ -306,7 +306,7 @@ public class JettyServer {
             xslt.setDestination(serializer);
             xslt.transform();
         } catch (SaxonApiException e) {
-            response(out, "Cannot end XST transformation, sorry.");
+            responseErrorServer(out, "Cannot end XST transformation, sorry.");
             log.error("Cannot end XST transformation", e);
         }
 
@@ -363,7 +363,7 @@ public class JettyServer {
             if (s.isEmpty()) {
                 if (nameBlock != null && !nameBlock.isEmpty())  {
                     output.putHashMap(nameBlock, map);
-                    map = new HashMap<Character, Long>();
+                    map.clear();
                     nameBlock = "";
                }
             } else if (s.startsWith(">")) {

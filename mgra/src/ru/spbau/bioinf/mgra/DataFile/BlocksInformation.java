@@ -6,7 +6,8 @@ public class BlocksInformation {
     private HashMap<String, HashMap<Character, Long>> genome = new HashMap<String, HashMap<Character, Long>>();
 
     public void putHashMap(String key, HashMap<Character, Long> value) {
-        genome.put(key, value);
+        HashMap<Character, Long> myValue = new HashMap<Character, Long>(value);
+        genome.put(key, myValue);
     }
 
     public Long getLength(String numberBlock, String key) {
@@ -16,7 +17,7 @@ public class BlocksInformation {
                 long length = 0;
                 int count = 0;
                 for(int i = 0; i < key.length(); ++i) {
-                    Long tmp = blockSize.get(String.valueOf(key.charAt(i)));
+                    Long tmp = blockSize.get(key.charAt(i));
                     if (tmp != null) {
                         length += tmp;
                         ++count;
@@ -27,7 +28,7 @@ public class BlocksInformation {
                 else
                     return length / (long) count;
             } else {
-                return blockSize.get(key);
+                return blockSize.get(key.charAt(0));
             }
         } else {
             return null;

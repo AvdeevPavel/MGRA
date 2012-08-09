@@ -1,7 +1,10 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.Server.XmlUtil;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Transformation {
@@ -86,11 +89,13 @@ public class Transformation {
 
     public Element toXml() {
         Element tr = new Element("transformation");
+
         tr.addContent(before);
         for (End end : ends) {
             tr.addContent(end.toXml());
         }
         tr.addContent(after);
+
         return tr;
     }
 

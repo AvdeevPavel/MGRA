@@ -2,14 +2,14 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output encoding="UTF-8" method="html" omit-xml-declaration="yes" indent="yes"/>
 
-<xsl:template match="targetgenome">
+<xsl:template match="target">
 <html>
 <head>
 <title>MGRA tree</title>
 </head>
 <body>
     <h1><p align="center"> MGRA tree, beta version</p></h1>
-    <xsl:apply-templates select="genome" mode="target"/>	
+    <xsl:apply-templates select="genomes/genome" mode="target"/>	
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
@@ -18,7 +18,7 @@
 </html>
 </xsl:template>
 
-<xsl:template match="trees">
+<xsl:template match="full">
 <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 <html>
 <head>
@@ -35,11 +35,12 @@
 <script src="http://www.kineticjs.com/download/kinetic-v3.10.4.js"></script>
 <script>
 	var values =  [
-		<xsl:apply-templates select="tree/row/cell/name"/>
+		<xsl:apply-templates select="genomes/genome/name"/>
 	]
 				
 	var trees = [ 
-		<xsl:apply-templates select="tree" mode = "array"/>
+		<xsl:apply-templates select="trees/input/tree" mode = "array"/>
+		<xsl:apply-templates select="trees/reconstruct/tree" mode = "array"/>
 	]
 
 	function getClientWidth() {
@@ -341,21 +342,37 @@
 	} 
 
 	window.onload = function() {
-		<xsl:apply-templates select="tree" mode = "code"/>
+		<xsl:apply-templates select="trees/input/tree" mode = "code"/>
+		<xsl:apply-templates select="trees/reconstruct/tree" mode = "code"/>
 	};
 </script>
 </head>
 <body>
     <p><center><font size = "18"><string> MGRA tree, beta version </string></font></center></p> <!--not use <h1> because bug in kinetic js-->
-    <xsl:apply-templates select="tree" mode = "createForm"/>
-    <xsl:apply-templates select="tree/row/cell/genome" mode = "notarget"/>	
-	<xsl:apply-templates select="tree/row/cell/transformations"/>
+	<xsl:apply-templates select="trees"/>
+	<xsl:apply-templates select="genomes"/>	
+	<xsl:apply-templates select="alltransformations"/>
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
 	</footer>
 </body>
 </html>
+</xsl:template>
+
+<xsl:template match="trees">
+	<xsl:apply-templates select="input"/>
+	<xsl:apply-templates select="reconstruct"/>
+</xsl:template>
+
+<xsl:template match="input">
+	<p><font size = "10"><string> Input tree: </string></font></p>
+	<xsl:apply-templates select="tree" mode = "createForm"/>
+</xsl:template>
+
+<xsl:template match="reconstruct">
+	<p><font size = "10"><string> Reconstructed tree: </string></font></p>
+	<xsl:apply-templates select="tree" mode = "createForm"/>
 </xsl:template>
 
 <xsl:template match="tree" mode = "array">
@@ -391,17 +408,25 @@
 	},
 </xsl:template>
 
-<xsl:template match="genome" mode = "target">
-    <h3>Chromosomes for <xsl:value-of select="../name"/></h3>
-	<xsl:if test= "resize = 'true'"> <img src="{../name}.png" width="100%"></img> </xsl:if>
-	<xsl:if test= "resize = 'false'"> <img src="{../name}.png"></img> </xsl:if>
+<xsl:template match="genomes">
+	<xsl:apply-templates select = "genome"/>
 </xsl:template>
 
-<xsl:template match="genome" mode = "notarget">
-	<div id="gen{../name}" style="display:none;">
-    	<h3>Chromosomes for <xsl:value-of select="../name"/></h3>
-		<xsl:if test= "resize = 'true'"> <img src="{../name}.png" width="100%"></img> </xsl:if>
-		<xsl:if test= "resize = 'false'"> <img src="{../name}.png"></img> </xsl:if>
+<xsl:template match="alltransformations">
+	<xsl:apply-templates select = "transformations"/>
+</xsl:template>
+
+<xsl:template match="genome" mode = "target">
+    <h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+	<xsl:if test= "resize = 'true'"> <img src="{./name}.png" width="100%"></img> </xsl:if>
+	<xsl:if test= "resize = 'false'"> <img src="{./name}.png"></img> </xsl:if>
+</xsl:template>
+
+<xsl:template match="genome">
+	<div id="gen{./name}" style="display:none;">
+    	<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+		<xsl:if test= "resize = 'true'"> <img src="{./name}.png" width="100%"></img> </xsl:if>
+		<xsl:if test= "resize = 'false'"> <img src="{./name}.png"></img> </xsl:if>
  	</div>
  </xsl:template>
 
@@ -410,13 +435,13 @@
 </xsl:template>
 	
 <xsl:template match="transformations">
-	<div id="trs{../name}" style="display:none;">
-            <h3>Transformations for <xsl:value-of select="../name"/></h3>
+	<div id="trs{./name}" style="display:none;">
+            <h3>Transformations for <xsl:value-of select="./name"/></h3>
             <xsl:apply-templates select="transformation"/>
         </div>
 </xsl:template>
 
-	<xsl:template match="transformation">
+<xsl:template match="transformation">
         <xsl:apply-templates select="before/chromosome">
             <xsl:sort select="id" data-type="number"/>
         </xsl:apply-templates>
@@ -426,7 +451,7 @@
             <xsl:sort select="id" data-type="number"/>
         </xsl:apply-templates>
         <br/>
-    </xsl:template>
+</xsl:template>
 
     <xsl:template match="chromosome">
         <xsl:if test="10>id">&#160;</xsl:if>

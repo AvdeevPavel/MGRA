@@ -82,21 +82,22 @@ public class Branch implements Comparable<Branch> {
             return null;
         }
 
+        if (input.isEmpty()) {
+            return null;
+        }
+
         LinkedList<InformationForBranch> informationTrees = new LinkedList<InformationForBranch>();
 
         screeningOfBranches_visit(0, data, new HashSet<Branch>(), input, informationTrees);
 
         boolean[] mark = new boolean[informationTrees.size()];
         for(int j = 0; j < informationTrees.size(); ++j) {
-            if (!mark[j]) {
                 for(int i = 0; i < informationTrees.size(); ++i) {
                     if (i != j && informationTrees.get(j).compare(informationTrees.get(i))) {
                         mark[i] = true;
                     }
                 }
-            }
         }
-
 
         for(int i = 0; i < informationTrees.size(); ++i) {
             if (mark[i]) {

@@ -49,7 +49,7 @@ public class JettyServer {
     private static final XsltCompiler comp = processor.newXsltCompiler();
     private static XsltTransformer xslt;
 
-    private static String REQUEST_START = "/2012/";
+    private static String REQUEST_START = "request"; //"/file/" "/2012/";
     private static final String GENOME_FILE = "genome.txt";
 
     private static final File execDir = new File("exec");
@@ -143,8 +143,9 @@ public class JettyServer {
                     throws IOException, ServletException {
                    String path = request.getPathInfo();
 
-                   if (path.startsWith(REQUEST_START) ) {
+                   if (path.contains(REQUEST_START) ) {
                        log.debug("Handling request " + path);
+                       //path = path.substring("/file".length());
                        File file = new File(uploadDir.getAbsolutePath(), path);
                        if (file.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
                            ServletOutputStream out = response.getOutputStream();
@@ -195,7 +196,7 @@ public class JettyServer {
                        baseRequest.setHandled(true);
                        ((Request) request).setHandled(true);
                    } catch (Throwable e) {
-                       response(out, "SUMMARY: Error processing request. Read the information in the log. If there are no problems with input data please contact us.");
+                       response(out, "SUMMARY: Error processing request. Read the information in the log. If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).");
                        log.error("Error processing request", e);
                    } finally {
                        for (int i = 0; i < files.length; i++) {

@@ -37,16 +37,16 @@ public class Transformer {
             JettyServer.response(out, "STAGE: Merge trees.");
             trees = merge(trees);
 
-            for(Tree tree: trees) {
-                System.out.println(tree);
+            boolean isFull = false;
+            boolean isComplete = false;
+
+            if (!trees.isEmpty()) {
+                JettyServer.response(out, "STAGE: Check is full trees.");
+                isFull = isAllFullTree(trees, config.getNumberOfGenome());
+
+                JettyServer.response(out, "STAGE: Is all transformation complete.");
+                isComplete = isAllTransformationComplete(trees, genomes);
             }
-
-
-            JettyServer.response(out, "STAGE: Check is full trees.");
-            boolean isFull = isAllFullTree(trees, config.getNumberOfGenome());
-
-            JettyServer.response(out, "STAGE: Is all transformation complete.");
-            boolean isComplete = isAllTransformationComplete(trees, genomes);
 
             ArrayList<Tree> newTrees = null;
             if (!isFull || !isComplete) {
@@ -54,6 +54,7 @@ public class Transformer {
 
                 JettyServer.response(out, "STAGE: Create branch for input tree.");
                 ArrayList<Branch> dataBranch = createBranchOfInputTree(trees);
+
 
                 ArrayList<ArrayList<Branch>> currentSet = subStageInAlgorithm(out, config, dataBranch);
                 if (currentSet == null || currentSet.isEmpty()) {
@@ -91,10 +92,6 @@ public class Transformer {
             rootXml = new Element("full");
             Element xmlTrees = new Element("trees");
 
-            for(Tree tree: trees) {
-                System.out.println(tree);
-            }
-
             JettyServer.response(out, "STAGE: Convert input tree to xml");
             covertTreeToXML(xmlTrees, "input", trees, genomes);
 
@@ -112,10 +109,13 @@ public class Transformer {
 
     private ArrayList<Tree> readTrees(ArrayList<String> stringTrees) {
         ArrayList<Tree> trees = new ArrayList<Tree>();
+
         int countTree = 0;
 
         for(String s: stringTrees) {
-            trees.add(new Tree(s, countTree++));
+            if (!s.isEmpty()) {
+                trees.add(new Tree(s, countTree++));
+            }
         }
 
         return trees;

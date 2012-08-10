@@ -6,7 +6,7 @@ Run local
 		change path to library kinetic.js in tree.xsl
 		change adress form in index.html
 	future: 
-		if html out in server is very late, change big image on href. It's help us download first str faster. 
+		if html out in server is very late, change big image on href. It's help 
 
 change id in chromosome xml, not needed
 
@@ -20,8 +20,8 @@ http://www.biomedcentral.com/1471-2105/7/315
 в обратную сторону тяжело, чем то что показывают
 колонна тоже тяжала. 
 
-
-
+copy mgra.jar  scp mgra.jar user@192.168.222.254:/opt/mgra
+connect ssh user@192.168.222.254
 
 
 

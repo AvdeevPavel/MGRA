@@ -60,7 +60,7 @@ public class Tree {
         }
 
         Element tree = new Element("tree");
-        XmlUtil.addElement(tree, "number", idTree);
+        XmlUtil.addElement(tree, "id" , idTree);
 
         root.addCells(elementOfLevel, genomes);
 

@@ -37,24 +37,18 @@ public class Transformer {
             JettyServer.response(out, "STAGE: Merge trees.");
             trees = merge(trees);
 
-            boolean isFull = false;
-            boolean isComplete = false;
+            JettyServer.response(out, "STAGE: Check is full trees.");
+            boolean isFull = isAllFullTree(trees, config.getNumberOfGenome());
 
-            if (!trees.isEmpty()) {
-                JettyServer.response(out, "STAGE: Check is full trees.");
-                isFull = isAllFullTree(trees, config.getNumberOfGenome());
+            JettyServer.response(out, "STAGE: Is all transformation complete.");
+            boolean isComplete = isAllTransformationComplete(trees, genomes);
 
-                JettyServer.response(out, "STAGE: Is all transformation complete.");
-                isComplete = isAllTransformationComplete(trees, genomes);
-            }
-
-            ArrayList<Tree> newTrees = null;
+            ArrayList<Tree> newTrees = new ArrayList<Tree>();
             if (!isFull || !isComplete) {
                 JettyServer.response(out, "STAGE: Start reconstructed tree.");
 
                 JettyServer.response(out, "STAGE: Create branch for input tree.");
                 ArrayList<Branch> dataBranch = createBranchOfInputTree(trees);
-
 
                 ArrayList<ArrayList<Branch>> currentSet = subStageInAlgorithm(out, config, dataBranch);
                 if (currentSet == null || currentSet.isEmpty()) {
@@ -146,19 +140,27 @@ public class Transformer {
     }
 
     private boolean isAllFullTree(ArrayList<Tree> trees, int number) {
-        boolean isFull = true;
-        for(Tree tree: trees) {
-            isFull = isFull && tree.isFullTree(number);
+        if (trees.isEmpty()) {
+            return false;
+        } else {
+            boolean isFull = true;
+            for(Tree tree: trees) {
+                isFull = isFull && tree.isFullTree(number);
+            }
+            return isFull;
         }
-        return isFull;
     }
 
     private boolean isAllTransformationComplete(ArrayList<Tree> trees, CreatorInformation genomes) {
-        boolean isComplete = true;
-        for(Tree tree: trees) {
-            isComplete = isComplete && tree.isCompleteTransformation(genomes);
+        if (trees.isEmpty()) {
+            return false;
+        } else {
+            boolean isComplete = true;
+            for(Tree tree: trees) {
+                isComplete = isComplete && tree.isCompleteTransformation(genomes);
+            }
+            return isComplete;
         }
-        return isComplete;
     }
 
     private ArrayList<Branch> createBranchOfInputTree(ArrayList<Tree> trees) {

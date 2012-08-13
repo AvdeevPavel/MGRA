@@ -32,7 +32,7 @@
 </style>
 
 <!--<script src="/home/Desktop/MGRA/mgra/html/lib/kinetic-v3.10.4.js"></script>-->
-<script src="http://www.kineticjs.com/download/kinetic-v3.10.4.js"></script>
+<script src="http://www.kineticjs.com/download/kinetic-v3.10.5.js"></script>
 <script>
 	var values =  [
 		<xsl:apply-templates select="genomes/genome/name"/>
@@ -342,13 +342,23 @@
 	} 
 
 	window.onload = function() {
-		<xsl:apply-templates select="trees/input/tree" mode = "code"/>
-		<xsl:apply-templates select="trees/reconstruct/tree" mode = "code"/>
+		for(var i = 0; i &lt; trees.length; ++i) {  
+			var stage = createStage("tree" + i, getClientWidth(),  getClientHeight() / 2);
+			var layer = new Kinetic.Layer();
+			main(i, stage, layer);
+			document.getElementById("save" + i).addEventListener("click", function() {
+    	    	stage.toDataURL({
+    	        	callback: function(dataUrl) {
+    	       		   window.open(dataUrl);
+    	        	}
+    	      	});
+    	    }, false);
+		} 
 	};
 </script>
 </head>
 <body>
-    <p><center><font size = "18"><string> MGRA tree, beta version </string></font></center></p> <!--not use <h1> because bug in kinetic js-->
+	<h1><p align="center"> MGRA tree, beta version</p></h1>
 	<xsl:apply-templates select="trees"/>
 	<xsl:apply-templates select="genomes"/>	
 	<xsl:apply-templates select="alltransformations"/>
@@ -381,14 +391,11 @@
 	], 
 </xsl:template>
 
-<xsl:template match="tree" mode = "code">
-	var stage<xsl:value-of select="number"/> = createStage("tree<xsl:value-of select="number"/>", getClientWidth(),  getClientHeight() / 2);
-	var layer<xsl:value-of select="number"/> = new Kinetic.Layer();
-	main(<xsl:value-of select="number"/>, stage<xsl:value-of select="number"/>, layer<xsl:value-of select="number"/>);
-</xsl:template>
-
 <xsl:template match="tree" mode = "createForm">
-	<div id="tree{./number}"></div>  	
+	<div id = "block{./id}">
+	<div id="tree{./id}"></div>  
+	<center> <button id = "save{./id}">Save as image</button> </center>	
+	</div>
 </xsl:template>
 
 
@@ -495,7 +502,7 @@
 	'<xsl:value-of select="."/>',
 </xsl:template>
 
-<xsl:template match="number">
+<xsl:template match="id">
 	'<xsl:value-of select="."/>',
 </xsl:template>
 </xsl:stylesheet>

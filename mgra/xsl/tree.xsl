@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1><p align="center"> MGRA tree, beta version</p></h1>
-    <xsl:apply-templates select="genomes/genome" mode="target"/>	
+    <xsl:apply-templates select="genomes" mode="target"/>	
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
@@ -35,7 +35,8 @@
 <script src="http://www.kineticjs.com/download/kinetic-v3.10.5.js"></script>
 <script>
 	var values =  [
-		<xsl:apply-templates select="genomes/genome/name"/>
+		<xsl:apply-templates select="genomes/genome_png/name"/>
+		<xsl:apply-templates select="genomes/genome_xml/name"/>
 	]
 				
 	var trees = [ 
@@ -361,7 +362,7 @@
 	<h1><p align="center"> MGRA tree, beta version</p></h1>
 	<xsl:apply-templates select="trees"/>
 	<xsl:apply-templates select="genomes"/>	
-	<xsl:apply-templates select="alltransformations"/>
+	<xsl:apply-templates select="all_transformations"/>
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
@@ -370,6 +371,7 @@
 </html>
 </xsl:template>
 
+<!--Trees transformation-->
 <xsl:template match="trees">
 	<xsl:apply-templates select="input"/>
 	<xsl:apply-templates select="reconstruct"/>
@@ -393,11 +395,10 @@
 
 <xsl:template match="tree" mode = "createForm">
 	<div id = "block{./id}">
-	<div id="tree{./id}"></div>  
-	<center> <button id = "save{./id}">Save as image</button> </center>	
+		<div id = "tree{./id}"></div>  
+		<center> <button id = "save{./id}">Save as image</button> </center>	
 	</div>
 </xsl:template>
-
 
 <xsl:template match="row">
    	[
@@ -415,94 +416,123 @@
 	},
 </xsl:template>
 
+<!--Genomes transformation-->
+<xsl:template match="genomes" mode="target">
+	<xsl:apply-templates select = "genome_png" mode="target"/>
+	<xsl:apply-templates select = "genome_xml" mode="target"/>
+</xsl:template>
+
 <xsl:template match="genomes">
-	<xsl:apply-templates select = "genome"/>
+	<xsl:apply-templates select = "genome_png"/>
+	<xsl:apply-templates select = "genome_xml"/>
 </xsl:template>
 
-<xsl:template match="alltransformations">
-	<xsl:apply-templates select = "transformations"/>
-</xsl:template>
-
-<xsl:template match="genome" mode = "target">
+<xsl:template match="genome_png" mode ="target">
     <h3>Chromosomes for <xsl:value-of select="./name"/></h3>
-	<xsl:if test= "resize = 'true'"> <img src="{./name}.png" width="100%"></img> </xsl:if>
-	<xsl:if test= "resize = 'false'"> <img src="{./name}.png"></img> </xsl:if>
+	<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
+	<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
 </xsl:template>
 
-<xsl:template match="genome">
+<xsl:template match="genome_xml" mode ="target">
+	<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+	<xsl:apply-templates select="chromosome"/>
+</xsl:template>
+
+<xsl:template match="genome_png">
 	<div id="gen{./name}" style="display:none;">
     	<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
-		<xsl:if test= "resize = 'true'"> <img src="{./name}.png" width="100%"></img> </xsl:if>
-		<xsl:if test= "resize = 'false'"> <img src="{./name}.png"></img> </xsl:if>
+		<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
+		<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
  	</div>
- </xsl:template>
+</xsl:template>
 
-<xsl:template match="resize">
-	'<xsl:value-of select="."/>',
+<xsl:template match="genome_xml">
+	<div id="gen{./name}" style="display:none;">
+		<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+		<xsl:apply-templates select="chromosome"/>
+	</div>
+</xsl:template>
+
+<!--Transformations XSL transformation-->
+<xsl:template match="all_transformations">
+	<xsl:apply-templates select = "transformations_xml"/>
+	<xsl:apply-templates select = "transformations_png"/>
 </xsl:template>
 	
-<xsl:template match="transformations">
+<xsl:template match="transformations_png">
 	<div id="trs{./name}" style="display:none;">
-            <h3>Transformations for <xsl:value-of select="./name"/></h3>
-            <xsl:apply-templates select="transformation"/>
-        </div>
+		<h3>Transformations for <xsl:value-of select="./name"/></h3>
+		<xsl:if test= "resize = 'true'"> <img src="{./name}_trs.png" width="100%"></img> </xsl:if>
+		<xsl:if test= "resize = 'false'"> <img src="{./name}_trs.png"></img> </xsl:if>
+	</div>
+</xsl:template>
+
+<xsl:template match="transformations_xml">
+	<div id="trs{./name}" style="display:none;">
+		<h3>Transformations for <xsl:value-of select="./name"/></h3>
+		<xsl:apply-templates select="transformation"/>
+	</div>
 </xsl:template>
 
 <xsl:template match="transformation">
-        <xsl:apply-templates select="before/chromosome">
-            <xsl:sort select="id" data-type="number"/>
-        </xsl:apply-templates>
-        <xsl:apply-templates select="end"/>
-        <br/>
-        <xsl:apply-templates select="after/chromosome">
-            <xsl:sort select="id" data-type="number"/>
-        </xsl:apply-templates>
-        <br/>
+	<xsl:apply-templates select="before/chromosome">
+		<xsl:sort select="id" data-type="number"/>
+	</xsl:apply-templates>
+	<xsl:apply-templates select="end"/>
+	<br/>
+	<xsl:apply-templates select="after/chromosome">
+		<xsl:sort select="id" data-type="number"/>
+	</xsl:apply-templates>
+	<br/>
 </xsl:template>
 
-    <xsl:template match="chromosome">
-        <xsl:if test="10>id">&#160;</xsl:if>
-        <xsl:value-of select="id"/>.<xsl:apply-templates select="gene"/><br/>
-    </xsl:template>
+<xsl:template match="chromosome">
+	<xsl:if test="10>id">&#160;</xsl:if>
+	<xsl:value-of select="id"/>.<xsl:apply-templates select="gene"/><br/>
+</xsl:template>
 
-    <xsl:template match="gene">
-        <xsl:apply-templates select="end" mode="prefix"/>
-        <a href="#{id}" title="{id}">
-            <xsl:choose>
-                <xsl:when test="direction='minus'">&lt;</xsl:when>
-                <xsl:otherwise>&gt;</xsl:otherwise>
-            </xsl:choose>
-        </a>
-        <xsl:apply-templates select="end" mode="suffix"/>
-    </xsl:template>
+<xsl:template match="gene">
+	<xsl:apply-templates select="end" mode="prefix"/>
+	<a href="#{id}" title="{id}">
+	<xsl:choose>
+		<xsl:when test="direction='minus'">&lt;</xsl:when>
+		<xsl:otherwise>&gt;</xsl:otherwise>
+	</xsl:choose>
+	</a>
+	<xsl:apply-templates select="end" mode="suffix"/>
+</xsl:template>
 
-    <xsl:template match="end">
-        <span class="end{color}">
-            <xsl:value-of select="id"/><xsl:value-of select="type"/>&#160;
-        </span>
-    </xsl:template>
+<xsl:template match="end">
+	<span class="end{color}">
+		<xsl:value-of select="id"/><xsl:value-of select="type"/>&#160;
+	</span>
+</xsl:template>
 
-    <xsl:template match="end" mode="prefix">
-        <xsl:if test="((../direction ='plus') and(type='t')) or ((../direction ='minus') and(type='h'))">
-            &#160;<xsl:apply-templates select="." mode="show"/>
-        </xsl:if>
-    </xsl:template>
+<xsl:template match="end" mode="prefix">
+	<xsl:if test="((../direction ='plus') and(type='t')) or ((../direction ='minus') and(type='h'))">
+		&#160;<xsl:apply-templates select="." mode="show"/>
+	</xsl:if>
+</xsl:template>
 
-    <xsl:template match="end" mode="suffix">
-        <xsl:if test="((../direction ='plus') and(type='h')) or ((../direction ='minus') and(type='t'))">
-            <xsl:apply-templates select="." mode="show"/>&#160;
-        </xsl:if>
-    </xsl:template>
+<xsl:template match="end" mode="suffix">
+	<xsl:if test="((../direction ='plus') and(type='h')) or ((../direction ='minus') and(type='t'))">
+		<xsl:apply-templates select="." mode="show"/>&#160;
+	</xsl:if>
+</xsl:template>
 
-    <xsl:template match="end" mode="show">
-        <span class="end{color}"><xsl:value-of select="type"/></span>
-    </xsl:template>
+<xsl:template match="end" mode="show">
+	<span class="end{color}"><xsl:value-of select="type"/></span>
+</xsl:template>
 
 <xsl:template match="name">
 	'<xsl:value-of select="."/>',
 </xsl:template>
 
 <xsl:template match="id">
+	'<xsl:value-of select="."/>',
+</xsl:template>
+
+<xsl:template match="resize">
 	'<xsl:value-of select="."/>',
 </xsl:template>
 </xsl:stylesheet>

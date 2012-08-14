@@ -1,7 +1,7 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 
-public enum Direction {
+public enum Direction implements  Cloneable {
     MINUS("minus") {
         @Override
         int getSide(EndType endType) {
@@ -39,6 +39,7 @@ public enum Direction {
     public int getSide(End end) {
         return getSide(end.getType());
     }
+
     abstract Direction reverse();
 
     @Override

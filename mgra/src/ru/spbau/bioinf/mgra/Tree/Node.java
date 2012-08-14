@@ -226,7 +226,7 @@ public class Node {
     private void addCell(Element parent, CreatorInformation information) {
         Element cell = new Element("cell");
 
-        if (information.isCreateImage(dataSet)) {
+        if (information.existsGen(dataSet)) {
             XmlUtil.addElement(cell, "name", information.getGenomeName(dataSet));
         } else {
             XmlUtil.addElement(cell, "name", Transformer.convertToString(dataSet));

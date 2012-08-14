@@ -3,18 +3,15 @@ package ru.spbau.bioinf.mgra.Parser;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Chromosome {
+public class Chromosome implements Cloneable {
     private int id;
     private long length = 0;
     private List<Gene> genes = new LinkedList<Gene>();
 
-
-    public Chromosome(List<Gene> genes) {
+    public Chromosome(LinkedList<Gene> genes) {
         this.genes = genes;
     }
 
@@ -29,6 +26,19 @@ public class Chromosome {
         }
 
         setLengthInGene(name, blocksInformation);
+    }
+
+    public Chromosome clone() throws CloneNotSupportedException {
+        Chromosome clone = (Chromosome) super.clone();
+        LinkedList<Gene> newGenes = new LinkedList<Gene>();
+
+        for(Gene gene: genes) {
+            newGenes.add(gene.clone());
+        }
+
+        clone.genes = newGenes;
+
+        return clone;
     }
 
     public void setId(int id) {
@@ -67,7 +77,7 @@ public class Chromosome {
 
     public Element toXml() {
         Element chr = new Element("chromosome");
-        XmlUtil.addElement(chr, "id", id);
+        XmlUtil.addElement(chr, "id", (id + 1));
         for (Gene gene : genes) {
             chr.addContent(gene.toXml());
         }
@@ -75,14 +85,14 @@ public class Chromosome {
     }
 
 
-    public void split(List<Chromosome> parts) {
-        List<Gene> cur = new ArrayList<Gene>();
+    public void split(List<Chromosome> parts) throws CloneNotSupportedException {
+        LinkedList<Gene> cur = new LinkedList<Gene>();
         for (Gene g : genes) {
-            cur.add(g);
+            cur.add(g.clone());
             for (End end : g.getEnds()) {
                 if (g.getSide(end) == 1) {
                     parts.add(new Chromosome(cur));
-                    cur = new ArrayList<Gene>();
+                    cur = new LinkedList<Gene>();
                 }
             }
         }
@@ -139,6 +149,10 @@ public class Chromosome {
            }
         }
         return false;
+    }
+
+    public int getId() {
+        return this.id + 1;
     }
 
     public List<Gene> getGenes() {

@@ -196,7 +196,7 @@ public class JettyServer {
                        baseRequest.setHandled(true);
                        ((Request) request).setHandled(true);
                    } catch (Throwable e) {
-                       response(out, "SUMMARY: Error processing request. Read the information in the log. If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).");
+                       response(out, "<font style=\"font-size:20pt;\">SUMMARY: Error processing request. Read the information in the log. If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).</font>");
                        log.error("Error processing request", e);
                    } finally {
                        for (int i = 0; i < files.length; i++) {
@@ -239,15 +239,16 @@ public class JettyServer {
         out.println("<html><title>MGRA processing information</title><body>");
         response(out, "<pre>");
 
-        response(out, "STAGE: Greating CFG file...");
+        responseStage(out, "Greating CFG file.");
         Config config;
         try {
             config = new Config(datasetDir.getAbsolutePath(), properties);
             config.createFile(true);
+            responseInformation(out, "CFG file created");
         } catch (IOException e) {
             responseErrorServer(out, "Problem to create CFG file");
             log.error("Problem to create CFG file ", e);
-            throw new IOException();
+            throw e;
         } catch (LongUniqueName e) {
             responseErrorUser(out, "Your name genome is not valid. Max length name = 1. Please check your input data");
             log.error("Problem with name in genome", e);
@@ -255,16 +256,17 @@ public class JettyServer {
         }
 
         BlocksInformation blocksInformation;
+        responseStage(out, "Start create genome file.");
         try {
-            response(out, "STAGE: Create genome file...");
             blocksInformation = createGENOME_FILE(genomeFileUpload, properties, datasetDir, config);
+            responseInformation(out, "Genome file created");
         } catch (IOException e) {
             responseErrorServer(out, "Problem to create genome file.");
             log.error("Problem to create genome file ", e);
-            throw new IOException();
+            throw e;
         }
 
-        response(out, "STAGE: Start MGRA algorithm...");
+        responseStage(out, "Start MGRA algorithm");
         String[] command = new String[]{exeFile.getAbsolutePath(), config.getNameFile()};
 
         Process process = Runtime.getRuntime().exec(command, new String[]{}, datasetDir);
@@ -285,17 +287,10 @@ public class JettyServer {
         outputThread.join();
         errorThread.join();
 
-        response(out, "STAGE: Generating results information: html with tree, imag.PNG with chromosome...");
-        try {
-            new Transformer(config, blocksInformation, out);
-        } catch (IOException e) {
-            responseErrorServer(out, "Problem to create results inforamtion(xml file).");
-            log.error("Problem to create results inforamtion ", e);
-            throw new IOException();
-        }
+        responseStage(out, "Start to transform output data.");
+        new Transformer(config, blocksInformation, out);
 
-        response(out, "STAGE: Applying XSLT to XML for create html...");
-
+        responseStage(out, "Applying XSLT to XML for create html.");
         try {
             XdmNode source = getSource(processor, new File(datasetDir, "tree.xml"));
             Serializer serializer = new Serializer();
@@ -306,13 +301,15 @@ public class JettyServer {
             xslt.setInitialContextNode(source);
             xslt.setDestination(serializer);
             xslt.transform();
+            responseInformation(out, "XSL transformation done");
         } catch (SaxonApiException e) {
-            responseErrorServer(out, "Cannot end XST transformation, sorry.");
-            log.error("Cannot end XST transformation", e);
+            responseErrorServer(out, "Can not end XSL transformation, sorry.");
+            log.error("Can not end XST transformation", e);
+            throw e;
         }
 
         synchronized (out) {
-            out.println("Done.");
+            out.println("<font style=\"font-size:20pt;\">All stage done. You can see tree.</font>");
             out.println("</pre>");
             out.println("<p><a href=\"" +treeLink + "\">MGRA tree</a> Press this link if it doesn't works automatically.</p>");
             out.println("<script>document.location.href='" + treeLink + "'</script>");
@@ -419,14 +416,28 @@ public class JettyServer {
 
     public static void responseErrorUser(PrintWriter out, String message) {
         synchronized (out) {
-            out.println("<strong>USER ERROR:</strong> " + message);
+            out.println("<font color = \"red\"><strong>USER ERROR:</strong> " + message + "</font>");
             out.flush();
         }
     }
 
     public static void responseErrorServer(PrintWriter out, String message) {
         synchronized (out) {
-            out.println("<u>SERVER ERROR:</u> " + message);
+            out.println("<font color = \"red\"><u>SERVER ERROR:</u> " + message + "</font>");
+            out.flush();
+        }
+    }
+
+    public static void responseStage(PrintWriter out, String message) {
+        synchronized (out) {
+            out.println("<strong>STAGE:</strong> " + message);
+            out.flush();
+        }
+    }
+
+    public static void responseInformation(PrintWriter out, String message) {
+        synchronized (out) {
+            out.println("<u>INFORAMTION:</u> " + message);
             out.flush();
         }
     }

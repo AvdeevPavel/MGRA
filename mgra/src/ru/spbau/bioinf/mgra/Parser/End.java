@@ -3,11 +3,9 @@ package ru.spbau.bioinf.mgra.Parser;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
-public class End {
-
+public class End implements Cloneable{
     private String id;
     private int color;
-
     private EndType type;
 
     public End(int color, String s) {
@@ -22,6 +20,10 @@ public class End {
         }
     }
 
+    public End clone() throws CloneNotSupportedException {
+        return (End) super.clone();
+    }
+
     public String getId() {
         return id;
     }
@@ -29,6 +31,7 @@ public class End {
     public int getColorType() {
         return color % 2;
     }
+
     public EndType getType() {
         return type;
     }
@@ -39,5 +42,9 @@ public class End {
         XmlUtil.addElement(end, "type", type.toString());
         XmlUtil.addElement(end, "color", color);
         return end;
+    }
+
+    public int getColor() {
+        return color;
     }
 }

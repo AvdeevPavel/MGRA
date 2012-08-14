@@ -23,37 +23,37 @@ public class Transformer {
         Document doc = new Document();
         Element rootXml;
 
-        JettyServer.response(out, "STAGE: Read information in *.gen and create image.");
-        JettyServer.response(out, "STAGE: Read information in *.trs and create xml.");
-        CreatorInformation genomes = new CreatorInformation(config, blocksInformation);
+        CreatorInformation genomes = new CreatorInformation(config, blocksInformation, out);
 
         if (config.isUseTarget() && config.getTarget() != null) {
-            JettyServer.response(out, "STAGE: You entered target genome.");
+            JettyServer.responseStage(out, "You entered target genome.");
             rootXml = new Element("target");
         } else {
-            JettyServer.response(out, "STAGE: Read trees.");
+            JettyServer.responseStage(out, "Read trees.");
             ArrayList<Tree> trees = readTrees(config.getTrees());
 
-            JettyServer.response(out, "STAGE: Merge trees.");
+            JettyServer.responseStage(out, "Merge trees.");
             trees = merge(trees);
 
-            JettyServer.response(out, "STAGE: Check is full trees.");
+            JettyServer.responseStage(out, "Check is full trees.");
             boolean isFull = isAllFullTree(trees, config.getNumberOfGenome());
+            JettyServer.responseInformation(out, "Answer is " + isFull);
 
-            JettyServer.response(out, "STAGE: Is all transformation complete.");
+            JettyServer.responseStage(out, "Check is all transformation complete.");
             boolean isComplete = isAllTransformationComplete(trees, genomes);
+            JettyServer.responseInformation(out, "Answer is " + isComplete);
 
             ArrayList<Tree> newTrees = new ArrayList<Tree>();
             if (!isFull || !isComplete) {
-                JettyServer.response(out, "STAGE: Start reconstructed tree.");
+                JettyServer.responseStage(out, "Start reconstructed tree.");
 
-                JettyServer.response(out, "STAGE: Create branch for input tree.");
+                JettyServer.responseStage(out, "Create branch for input tree.");
                 ArrayList<Branch> dataBranch = createBranchOfInputTree(trees);
 
                 ArrayList<ArrayList<Branch>> currentSet = subStageInAlgorithm(out, config, dataBranch);
                 if (currentSet == null || currentSet.isEmpty()) {
-                    JettyServer.response(out, "STAGE: Not found correct branches. Is input tree correct?");
-                    JettyServer.response(out, "STAGE: Run MGRA tool without input tree.");
+                    JettyServer.responseInformation(out, "Not found correct branches. Is input tree correct?");
+                    JettyServer.responseStage(out, "Run MGRA tool without input tree.");
                     config.createFile(false);
 
                     String[] command = new String[]{JettyServer.exeFile.getAbsolutePath(), config.getNameFile()};
@@ -81,16 +81,18 @@ public class Transformer {
 
                 JettyServer.response(out, "STAGE: Create trees with new correct branches");
                 newTrees = createTreesOfBranch(dataBranch, currentSet, trees.size());
+            } else {
+                JettyServer.responseInformation(out, "Not reconstructed tree.");
             }
 
             rootXml = new Element("full");
             Element xmlTrees = new Element("trees");
 
-            JettyServer.response(out, "STAGE: Convert input tree to xml");
-            covertTreeToXML(xmlTrees, "input", trees, genomes);
+            JettyServer.responseStage(out, "Convert input tree to xml");
+            convertTreeToXML(xmlTrees, "input", trees, genomes);
 
-            JettyServer.response(out, "STAGE: Convert reconstructed tree to xml");
-            covertTreeToXML(xmlTrees, "reconstruct", newTrees, genomes);
+            JettyServer.responseStage(out, "Convert reconstructed tree to xml");
+            convertTreeToXML(xmlTrees, "reconstruct", newTrees, genomes);
 
             rootXml.addContent(xmlTrees);
             rootXml.addContent(genomes.getTransformationXml());
@@ -98,7 +100,15 @@ public class Transformer {
 
         rootXml.addContent(genomes.getGenomesXml());
         doc.setRootElement(rootXml);
-        XmlUtil.saveXml(doc, new File(config.getPathParentFile(), "tree.xml"));
+
+        JettyServer.responseStage(out, "Save results to xml file");
+        try {
+            XmlUtil.saveXml(doc, new File(config.getPathParentFile(), "tree.xml"));
+            JettyServer.responseInformation(out, "File saved.");
+        } catch(IOException e) {
+            JettyServer.responseErrorServer(out, "Do not save xml file.");
+            throw e;
+        }
     }
 
     private ArrayList<Tree> readTrees(ArrayList<String> stringTrees) {
@@ -124,7 +134,7 @@ public class Transformer {
                 if (j == i) continue;
                 Tree mergeTree = oldTrees.get(j);
 
-                if (oldTrees.get(i).merge(mergeTree) == true) {
+                if (oldTrees.get(i).merge(mergeTree)) {
                     mark[j] = true;
                 }
             }
@@ -172,24 +182,24 @@ public class Transformer {
     }
 
     private ArrayList<ArrayList<Branch>> subStageInAlgorithm(PrintWriter out, Config config, ArrayList<Branch> dataBranch) {
-        JettyServer.response(out, "STAGE: Read branch for stats.txt");
+        JettyServer.responseStage(out, "Read branch for stats.txt");
         ArrayList<Branch> inputBranch = null;
-
         try {
             inputBranch = readBranchInStats(config, true);
+            JettyServer.responseInformation(out, "Finish read branch.");
         } catch (Exception e) {
             JettyServer.responseErrorServer(out, "Problem read file stats.txt with information for reconstructed trees and branches");
             log.error("Problem read file stats.txt with information for reconstructed trees and branches", e);
         }
 
-        JettyServer.response(out, "STAGE: Screening of branches and choose correct");
+        JettyServer.responseStage(out, "Screening of branches and choose correct");
         return Branch.screeningOfBranches(dataBranch, inputBranch);
     }
 
     private ArrayList<Branch> readBranchInStats(Config config, boolean isDropBf) throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(new File(config.getPathParentFile(), "stats.txt"))));
         int stage = 0;
-        String s = "";
+        String s;
 
         while((s = input.readLine()) != null) {
             if (s.contains("Rearrangement characters")) {
@@ -243,7 +253,7 @@ public class Transformer {
         return newTrees;
     }
 
-    private void covertTreeToXML(Element parent, String name, ArrayList<Tree> trees, CreatorInformation genomes) {
+    private void convertTreeToXML(Element parent, String name, ArrayList<Tree> trees, CreatorInformation genomes) {
         if (trees != null) {
             if (!trees.isEmpty()) {
                 Element xmlTree = new Element(name);
@@ -280,7 +290,6 @@ public class Transformer {
         inputSet.add(new Branch("BC", "ADEFGH", 1));
         inputSet.add(new Branch("BCD", "AEFGH", 1));
         inputSet.add(new Branch("FGH", "ABCDE", 1));
-
-        //createTree(inputSet, 0);
+        //createTreesOfBranch(inputSet, 0);
     }
 }

@@ -1,18 +1,14 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
-import ru.spbau.bioinf.mgra.Server.XmlUtil;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Transformation {
-    private List<Chromosome> chromosomes = new ArrayList<Chromosome>();
-    private Element before = new Element("before");
-    private Element after = new Element("after");
-
+    private ArrayList<Chromosome> beforeChromosomes = new ArrayList<Chromosome>();
+    private ArrayList<Chromosome> afterChromosomes = new ArrayList<Chromosome>();
     End[] ends = new End[4];
+
 
     public Transformation(String text) {
         String[] data = text.split("[ \t]");
@@ -21,78 +17,151 @@ public class Transformation {
         }
     }
 
-    public void update(Genome genome) {
+    public void update(Genome genome) throws CloneNotSupportedException {
         List<Chromosome> all = genome.getChromosomes();
         List<Integer> ids = new ArrayList<Integer>();
+
         for (int i = 0; i < all.size(); i++) {
             Chromosome chromosome =  all.get(i);
             for (End end : ends) {
                 if (chromosome.contains(end)) {
-                    this.chromosomes.add(chromosome);
+                    this.beforeChromosomes.add(chromosome.clone());
                     ids.add(i);
                     break;
                 }
             }
         }
 
-        for (Chromosome chromosome : chromosomes) {
+        for (Chromosome chromosome : beforeChromosomes) {
             chromosome.clearEnds();
             for (End end : ends) {
                 chromosome.mark(end);
             }
-            before.addContent(chromosome.toXml());
         }
 
-        List<Chromosome> parts = new ArrayList<Chromosome>();
-        for (Chromosome chromosome : chromosomes) {
-            chromosome.split(parts);
+        ArrayList<Chromosome> temp = new ArrayList<Chromosome>(beforeChromosomes);
+        for (Chromosome chromosome : temp) {
+            chromosome.split(afterChromosomes);
         }
 
-        for (int i = 0; i < parts.size(); i++) {
-            Chromosome first = parts.get(i);
-            for (int j = i+1; j < parts.size(); j++) {
-                Chromosome second = parts.get(j);
+        for (int i = 0; i < afterChromosomes.size(); i++) {
+            Chromosome first = afterChromosomes.get(i);
+            for (int j = i + 1; j < afterChromosomes.size(); j++) {
+                Chromosome second = afterChromosomes.get(j);
                 if (first.join(second)) {
-                    parts.remove(j);
+                    afterChromosomes.remove(j);
                     j = i;
                 }
             }
         }
 
         int order = 0;
-        while (parts.size() > order && ids.size() > order) {
-            Chromosome chr = parts.get(order);
+        while (afterChromosomes.size() > order && ids.size() > order) {
+            Chromosome chr = afterChromosomes.get(order);
             int id = ids.get(order);
             chr.setId(id + 1);
             all.remove(id);
             all.add(id, chr);
             order++;
         }
-        if (parts.size() > order) {
-            Chromosome chr = parts.get(order);
+
+        if (afterChromosomes.size() > order) {
+            Chromosome chr = afterChromosomes.get(order);
             chr.setId(all.size() +1);
             all.add(chr);
         }
+
         if (ids.size() > order) {
             int id = ids.get(order);
             all.remove(id);
         }
 
-        for (Chromosome chromosome : parts) {
+        for (Chromosome chromosome : afterChromosomes) {
              chromosome.clearEnds();
              for (End end : ends) {
                  chromosome.mark(end);
              }
-             after.addContent(chromosome.toXml());
-         }
+        }
+    }
+
+    public int getSizeBeforeChromosome() {
+        return beforeChromosomes.size();
+    }
+
+    public ArrayList<Chromosome> getBeforeChromosomes() {
+        return beforeChromosomes;
+    }
+
+    public End[] getEnds() {
+        return ends;
+    }
+
+    public int getSizeAfterChromosome() {
+        return afterChromosomes.size();
+    }
+
+    public ArrayList<Chromosome> getAfterChromosomes() {
+        return afterChromosomes;
+    }
+
+    public static long getLengthMaxLengthOfChromosomes(ArrayList<Transformation> transformations) {
+        if (transformations != null || !transformations.isEmpty()) {
+            long maxLengthChromosome = transformations.get(0).beforeChromosomes.get(0).getLength();
+            for(Transformation transformation: transformations) {
+                for(Chromosome chromosome: transformation.beforeChromosomes) {
+                    if (maxLengthChromosome < chromosome.getLength()) {
+                        maxLengthChromosome = chromosome.getLength();
+                    }
+                }
+
+                for(Chromosome chromosome: transformation.afterChromosomes) {
+                    if (maxLengthChromosome < chromosome.getLength()) {
+                        maxLengthChromosome = chromosome.getLength();
+                    }
+                }
+            }
+            return maxLengthChromosome;
+        }
+        return 0;
+    }
+
+    public static Chromosome getMaxLengthOfChromosome(ArrayList<Transformation> transformations) {
+        if (transformations != null || !transformations.isEmpty()) {
+            Chromosome longChromosome  = transformations.get(0).beforeChromosomes.get(0);
+            for(Transformation transformation: transformations) {
+                for(Chromosome chromosome: transformation.beforeChromosomes) {
+                    if (longChromosome.getLength() < chromosome.getLength()) {
+                        longChromosome  = chromosome;
+                    }
+                }
+
+                for(Chromosome chromosome: transformation.beforeChromosomes) {
+                    if (longChromosome.getLength() < chromosome.getLength()) {
+                        longChromosome  = chromosome;
+                    }
+                }
+            }
+            return longChromosome;
+        }
+        return null;
     }
 
     public Element toXml() {
         Element tr = new Element("transformation");
 
+        Element before = new Element("before");
+        for (Chromosome chromosome : beforeChromosomes) {
+            before.addContent(chromosome.toXml());
+        }
         tr.addContent(before);
+
         for (End end : ends) {
             tr.addContent(end.toXml());
+        }
+
+        Element after = new Element("after");
+        for (Chromosome chromosome : afterChromosomes) {
+            after.addContent(chromosome.toXml());
         }
         tr.addContent(after);
 

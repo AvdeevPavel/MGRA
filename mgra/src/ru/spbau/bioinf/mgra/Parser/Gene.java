@@ -6,7 +6,7 @@ import ru.spbau.bioinf.mgra.Server.XmlUtil;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Gene {
+public class Gene implements Cloneable {
     private String id;
     private Direction direction;
     private long length;
@@ -16,6 +16,16 @@ public class Gene {
     public Gene(String id, Direction direction) {
         this.id = id;
         this.direction = direction;
+    }
+
+    public Gene clone() throws CloneNotSupportedException {
+        Gene clone = (Gene) super.clone();
+        List<End> newEnds = new LinkedList<End>();
+        for(End end: ends) {
+            newEnds.add(end.clone());
+        }
+        clone.ends = newEnds;
+        return clone;
     }
 
     public void setPercent(double percent_) {

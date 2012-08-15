@@ -139,10 +139,9 @@ public class JettyServer {
         uploadFilter.init(config);
 
         Handler handler = new AbstractHandler() {
-            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                    throws IOException, ServletException {
+            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
                    String path = request.getPathInfo();
-
+                   log.debug("Request name " + path);
                    if (path.contains(REQUEST_START) ) {
                        log.debug("Handling request " + path);
                        //path = path.substring("/file".length());
@@ -161,52 +160,52 @@ public class JettyServer {
                        }
                        log.debug(path + " request processed.");
                        return;
+                   } else if (path.equals("/")) {
+                        final Properties properties = new Properties();
+                        final File[] files = new File[1];
+                        PrintWriter out = response.getWriter();
+                        try {
+                            uploadFilter.doFilter(request, response, new FilterChain() {
+                                public void doFilter(ServletRequest wrapper, ServletResponse servletResponse) throws IOException, ServletException {
+                                    Enumeration uploads = wrapper.getAttributeNames();
+
+                                    while (uploads.hasMoreElements()) {
+                                       String fileField = (String) uploads.nextElement();
+                                       if ("genome".equals(fileField)) {
+                                           files[0] = (File) wrapper.getAttribute(fileField);
+                                       }
+                                    }
+
+                                    Enumeration parameters = wrapper.getParameterNames();
+                                    while (parameters.hasMoreElements()) {
+                                        String name = (String) parameters.nextElement();
+                                        String[] values = wrapper.getParameterValues(name);
+                                        String concatValues = "";
+                                        for (String value : values) {
+                                            concatValues += value + " ";
+                                        }
+                                        properties.put(name, concatValues.trim());
+                                    }
+                                }
+                            });
+                            response.setContentType("text/html");
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            processRequest(out, properties, files[0]);
+                            baseRequest.setHandled(true);
+                            ((Request) request).setHandled(true);
+                        } catch (Throwable e) {
+                            response(out, "<font style=\"font-size:14pt;\"><p>SUMMARY: Error processing request. Read the information in the log.</p>If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).</font>");
+                            log.error("Error processing request", e);
+                        } finally {
+                            for (int i = 0; i < files.length; i++) {
+                                File file = files[i];
+                                if (file != null && file.exists())
+                                    file.delete();
+                            }
+                            out.close();
+                        }
                    }
-
-                   final Properties properties = new Properties();
-                   final File[] files = new File[1];
-                   PrintWriter out = response.getWriter();
-                   try {
-                       uploadFilter.doFilter(request, response, new FilterChain() {
-                           public void doFilter(ServletRequest wrapper, ServletResponse servletResponse) throws IOException, ServletException {
-                               Enumeration uploads = wrapper.getAttributeNames();
-
-                               while (uploads.hasMoreElements()) {
-                                   String fileField = (String) uploads.nextElement();
-                                   if ("genome".equals(fileField)) {
-                                       files[0] = (File) wrapper.getAttribute(fileField);
-                                   }
-                               }
-
-                               Enumeration parameters = wrapper.getParameterNames();
-                               while (parameters.hasMoreElements()) {
-                                   String name = (String) parameters.nextElement();
-                                   String[] values = wrapper.getParameterValues(name);
-                                   String concatValues = "";
-                                   for (String value : values) {
-                                       concatValues += value + " ";
-                                   }
-                                   properties.put(name, concatValues.trim());
-                               }
-                           }
-                       });
-                       response.setContentType("text/html");
-                       response.setStatus(HttpServletResponse.SC_OK);
-                       processRequest(out, properties, files[0]);
-                       baseRequest.setHandled(true);
-                       ((Request) request).setHandled(true);
-                   } catch (Throwable e) {
-                       response(out, "<font style=\"font-size:14pt;\"><p>SUMMARY: Error processing request. Read the information in the log.</p>If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).</font>");
-                       log.error("Error processing request", e);
-                   } finally {
-                       for (int i = 0; i < files.length; i++) {
-                           File file = files[i];
-                           if (file != null && file.exists())
-                               file.delete();
-                       }
-                       out.close();
-                   }
-               }
+            }
         };
 
         Server server = new Server(port);
@@ -236,7 +235,7 @@ public class JettyServer {
 
         String treeLink = path.substring(cur + 1) + "/tree.html";
 
-        out.println("<html><title>MGRA processing information</title>");                                                                // function remain() { setTimeout('location.replace(" + treeLink + ")', 1000);}</script></head>");
+        out.println("<html><title>MGRA processing information</title>");
         response(out, "<body><pre>");
 
         responseStage(out, "Greating CFG file.");

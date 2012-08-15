@@ -196,7 +196,7 @@ public class JettyServer {
                        baseRequest.setHandled(true);
                        ((Request) request).setHandled(true);
                    } catch (Throwable e) {
-                       response(out, "<font style=\"font-size:20pt;\">SUMMARY: Error processing request. Read the information in the log. If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).</font>");
+                       response(out, "<font style=\"font-size:14pt;\"><p>SUMMARY: Error processing request. Read the information in the log.</p>If there are no problems with input data please contact us(maxal@cse.sc.edu or/and avdeevp@gmail.com).</font>");
                        log.error("Error processing request", e);
                    } finally {
                        for (int i = 0; i < files.length; i++) {
@@ -236,8 +236,8 @@ public class JettyServer {
 
         String treeLink = path.substring(cur + 1) + "/tree.html";
 
-        out.println("<html><title>MGRA processing information</title><body>");
-        response(out, "<pre>");
+        out.println("<html><title>MGRA processing information</title>");                                                                // function remain() { setTimeout('location.replace(" + treeLink + ")', 1000);}</script></head>");
+        response(out, "<body><pre>");
 
         responseStage(out, "Greating CFG file.");
         Config config;
@@ -309,10 +309,14 @@ public class JettyServer {
         }
 
         synchronized (out) {
-            out.println("<font style=\"font-size:20pt;\">All stage done. You can see tree.</font>");
+            out.println("<font style=\"font-size:14pt;\">All stage done. You can see tree.</font>");
             out.println("</pre>");
-            out.println("<p><a href=\"" +treeLink + "\">MGRA tree</a> Press this link if it doesn't works automatically.</p>");
-            out.println("<script>document.location.href='" + treeLink + "'</script>");
+            out.println("<script language = 'javascript'>\n" +
+                    "var delay = 15000;\n" +
+                    "setTimeout(\"document.location.href='" + treeLink + "'\", delay);\n" +
+                    "</script>");
+            out.println("Read log. After 15 seconds will occur automatically.");
+            out.println("<p><a href=\"" +treeLink + "\">MGRA tree</a> Press this link if it doesn't works automatically or you do not want to wait.</p>");
             out.println("</body></html>");
             out.flush();
         }
@@ -437,7 +441,7 @@ public class JettyServer {
 
     public static void responseInformation(PrintWriter out, String message) {
         synchronized (out) {
-            out.println("<u>INFORAMTION:</u> " + message);
+            out.println("<font color = \"blue\">INFORAMTION:</font>" + message);
             out.flush();
         }
     }

@@ -243,7 +243,7 @@ public class Drawer {
         graphics.setFont(font);
         FontMetrics fontMetrics = graphics.getFontMetrics();
 
-        int startX = image.getWidth() / 2  - fontMetrics.stringWidth(st) / 2;
+        int startX = 20;//image.getWidth() / 2  - fontMetrics.stringWidth(st) / 2;
         int topStartY = startY + heigthBlock / 2 + fontMetrics.getHeight() / 4;
 
         for(End end: ends) {

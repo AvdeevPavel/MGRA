@@ -13,20 +13,17 @@
 		#content_text { 
 			float: left; 
 		    margin: 2px 5px 0px 5px; 
-		    padding: 5px; 
-			width: 150px; 
+		    width: 150px; 
    		}
 
 		#content_text1 { 
 			float: left; 
 		    margin: 10px 5px 20px 5px; 
-		    padding: 5px; 
-			width: 150px; 
+		    width: 220px; 
    		}
 
 		#content {
-		    margin: 10px 5px 20px 225px; 
-		    padding: 5px; 
+		    margin: 10px 5px 20px 235px; 
    		}
 
 		#menu_content {
@@ -37,150 +34,61 @@
 		#right_text { 
 			float: left; 
     		width: 100px; 
-    		padding: 5px; 
-		    margin: 70px 10px 20px 5px; 
+    	    margin: 70px 10px 20px 5px; 
+		} 
+		
+		#file { 	
+			margin: 10px 5px 20px 235px; 
+			padding: 5px;
 		} 
 	</style>
 
 	<script type = "text/javascript">	
-		var genomeCountGrm = 0;
-		var genomeCountInf = 0; 
+		var grm_genomeCount = 0;
+		var inf_genomeCount = 0; 
+		var file_genomeCount = 0; 
 
 		function getClientWidth() {
 			return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
 		}	
 
-		/*Grimm format functions*/
-        function addGenomeGrm() {
-            genomeCountGrm++;
-            var table = document.getElementById("grm_genomes");
-            var row = table.insertRow(genomeCountGrm - 1);
-            row.align = "left";
-            row.vAlign = "top";
-            var c = [];
-            for (var j = 0; 1 > j; j++) {
-                c[j] = row.insertCell(j);
-                c[j].align = "left";
-                c[j].vAlign = "top";
-            }
+		function setFormat(format) { 
+			grm_clearFormat(); 				
+			file_clearFormat(); 
+			inf_clearFormat();				
+						
+			if (format == 'file') { 
+				document.getElementById('file_widthMonitor').value = getClientWidth(); 
+				document.getElementById('file_showForm').style.display = ''; 
+				document.choose.inputformat[0].checked = true;
+			} else { 
+				document.getElementById('file_showForm').style.display = 'none'; 
+				document.choose.inputformat[0].checked = false;
 
-            c[0].innerHTML =
-                "<div id = \"right_text\"><strong>Genome " + genomeCountGrm + ":</strong></div>" +
-                "<div id = \"content\"> <div>Name: <input size='1' id='grm_name" + genomeCountGrm + "' name='name" + genomeCountGrm +
-				"'> Aliases <input id='grm_alias" + genomeCountGrm + "'size='28' name='alias" + genomeCountGrm + "'></div>" +
-                "<textarea id='grm_genome" + genomeCountGrm + "' name='genome" + genomeCountGrm + "' rows='6' cols='60'></textarea></div>";
-        }
+			} 
 
-		function initGenomesGrm(n) {
-            var table = document.getElementById("grm_genomes");
-            for(var i = table.rows.length - 1; i >= 0; i--) {
-                table.deleteRow(i);
-            }
-            genomeCountGrm = 0;
-            for (var i = 0; i < n; i++) {
-                addGenomeGrm();
-            }
-            clearFileGrm();
-        }
+			if (format == 'inf') { 
+				document.getElementById('inf_widthMonitor').value = getClientWidth(); 
+				document.getElementById('inf_showForm').style.display = '';
+				document.choose.inputformat[1].checked = true;
+			} else { 
+				document.getElementById('inf_showForm').style.display = 'none'; 
+				document.choose.inputformat[1].checked = false;
+			}  
+			
+			if (format == 'grm') { 	
+				document.getElementById('grm_widthMonitor').value = getClientWidth(); 
+				document.getElementById('grm_showForm').style.display = ''; 
+				document.choose.inputformat[2].checked = true;
+			} else {
+				document.getElementById('grm_showForm').style.display = 'none'; 
+				document.choose.inputformat[2].checked = false;
+			} 	
 
-		function clearGrimmFormat() { 
-			initGenomesGrm(2);
-			document.getElementById("grm_trees").value = '';
-            document.getElementById("grm_stages").value = '3';
-            document.getElementById("grm_target").value = '';
-            document.getElementById("grm_completion").value = ''	
-			viewInformForGrimmExample("");
-			showTargetGrm(false);
+			document.getElementById('showHelp').style.display = (format == 'help')?'':'none'; 
 		} 
 
-		function showTargetGrm(show) {
-            document.getElementById('grm_targetDiv').style.display= show ? '' : 'none';
-            document.getElementById('grm_targetControl').style.display=show ? 'none' : '';
-            document.getElementById('grm_useTarget').value=show ? 1 : 0;
-            return false;
-        }
-
-		function clearFileGrm() { 
-			document.getElementById('grm_genome_file').value = '';
-		} 
-
-		function setGrimmFormat() { 
-			clearGrimmFormat();
-			document.getElementById('grm_widthMonitor').value = getClientWidth(); 
-			document.getElementById('showInferCarsForm').style.display = 'none'; 
-			document.getElementById('showGrimmForm').style.display = '';
-			document.getElementById('showHelp').style.display = 'none';
-		}
-		
-		function viewInformForGrimmExample(showStr) {
-			document.getElementById("grm_murphy_information").style.display = "murphy" == showStr ? "" : "none";
-			document.getElementById("grm_toy_information").style.display = "toy" == showStr ? "" : "none";
-			document.getElementById("grm_shigella_information").style.display = "shigella" == showStr ? "" : "none";
-		} 
-
-		/*InferCARs format functions*/
-		function addGenomeInf() {
-            genomeCountInf++;
-            var table = document.getElementById("inf_genomes");
-            var row = table.insertRow(genomeCountInf - 1);
-            row.align = "left";
-            row.vAlign = "top";
-            var c = [];
-            for (var j = 0; 1 > j; j++) {
-                c[j] = row.insertCell(j);
-                c[j].align = "left";
-                c[j].vAlign = "top";
-            }
-
-            c[0].innerHTML =
-                "<div id = \"content_text1\"><strong>Genome " + genomeCountInf + ":</strong></div>" +
-                "<div id = \"content\"> <div>Name: <input size='1' id='inf_name" + genomeCountInf + "' name='name" + genomeCountInf +
-				"'> Aliases <input id='inf_alias" + genomeCountInf + "'size='28' name='alias" + genomeCountInf + "'></div></div>"
-        }
-
-		function initGenomesInf(n) {
-            var table = document.getElementById("inf_genomes");
-            for(var i = table.rows.length - 1; i >= 0; i--) {
-                table.deleteRow(i);
-            }
-            genomeCountInf = 0;
-            for (var i = 0; i < n; i++) {
-                addGenomeInf();
-            }
-            clearFileInf();
-        }
-	
-		function showTargetInf(show) {
-            document.getElementById('inf_targetDiv').style.display= show ? '' : 'none';
-            document.getElementById('inf_targetControl').style.display=show ? 'none' : '';
-            document.getElementById('inf_useTarget').value=show ? 1 : 0;
-            return false;
-        }
-
-        function clearFileInf() {
-            document.getElementById('inf_genome_file').value = '';
-        }
-
-    	function clearInferCarsFormat() { 
-			initGenomesInf(2); 
-            document.getElementById("inf_genome").value = '';
-            document.getElementById("inf_trees").value = '';
-            document.getElementById("inf_stages").value = '3';
-            document.getElementById("inf_target").value = '';
-            document.getElementById("inf_completion").value = ''	
-			showTargetInf(false);
-		} 
-
-		function setInferCarsFormat() { 
-			clearInferCarsFormat();
-			viewInformForInferCarsExample("");
-			document.getElementById('inf_widthMonitor').value = getClientWidth(); 
-			document.getElementById('showInferCarsForm').style.display = ''; 
-			document.getElementById('showGrimmForm').style.display = 'none';	
-			document.getElementById('showHelp').style.display = 'none'; 
-		} 
-	 
-    	function loadFile(file) {
+		function loadFile(file) {
             var X = new XMLHttpRequest();
             X.open('GET', file, false );
             X.setRequestHeader('Content-Type', 'text/html')
@@ -188,7 +96,161 @@
             return X.responseText;
         }
 
-		function viewInformForInferCarsExample(showStr) {
+		/*File format fubctions*/
+		function file_addGenome() { 
+			++file_genomeCount;
+            var table = document.getElementById("file_genomes");
+            var row = table.insertRow(file_genomeCount - 1);
+            row.align = "left";
+            row.vAlign = "top";
+            var c = [];
+            for (var j = 0; 1 > j; j++) {
+                c[j] = row.insertCell(j);
+                c[j].align = "left";
+                c[j].vAlign = "top";
+            }
+
+            c[0].innerHTML = "<div id = \"content_text1\"><strong>Genome " + file_genomeCount + "</strong></div>" + 
+							 "<div id = \"content\"> <div>Name: <input size='1' id='file_name" + file_genomeCount + "' name='name" + file_genomeCount +
+	                         "'> Aliases <input id='file_alias" + file_genomeCount + "'size='29' name='alias" + file_genomeCount + "'></div></div>"
+		} 	
+
+		function clearFile() { 
+			document.getElementById('genome_file').value = '';
+		} 
+
+		function file_initGenomes(n) {
+            var table = document.getElementById("file_genomes");
+            for(var i = table.rows.length - 1; i >= 0; i--) {
+                table.deleteRow(i);
+            }
+            file_genomeCount = 0;
+            for (var i = 0; i < n; i++) {
+                file_addGenome();
+            }
+        }
+
+		function file_clearFormat() { 
+			file_initGenomes(2);
+			document.getElementById("file_trees").value = '';
+            document.getElementById("file_stages").value = '3';
+            document.getElementById("file_target").value = '';
+            document.getElementById("file_completion").value = ''	
+			file_showTarget(false);
+		} 
+
+		function file_showTarget(show) {
+            document.getElementById('file_targetDiv').style.display= show ? '' : 'none';
+            document.getElementById('file_targetControl').style.display=show ? 'none' : '';
+            document.getElementById('file_useTarget').value=show ? 1 : 0;
+            return false;
+        }
+
+		/*Grimm format functions*/
+        function grm_addGenome() {
+            ++grm_genomeCount;
+            var table = document.getElementById("grm_genomes");
+            var row = table.insertRow(grm_genomeCount - 1);
+            row.align = "left";
+            row.vAlign = "top";
+            var c = [];
+            for (var j = 0; 1 > j; j++) {
+                c[j] = row.insertCell(j);
+                c[j].align = "left";
+                c[j].vAlign = "top";
+            }
+
+            c[0].innerHTML =
+                "<div id = \"right_text\"><strong>Genome " + grm_genomeCount + ":</strong></div>" +
+                "<div id = \"content\"> <div>Name: <input size='1' id='grm_name" + grm_genomeCount + "' name='name" + grm_genomeCount +
+				"'> Aliases <input id='grm_alias" + grm_genomeCount + "'size='29' name='alias" + grm_genomeCount + "'></div>" +
+                "<textarea id='grm_genome" + grm_genomeCount + "' name='genome" + grm_genomeCount + "' rows='6' cols='61'></textarea></div>";
+        }
+
+		function grm_initGenomes(n) {
+            var table = document.getElementById("grm_genomes");
+            for(var i = table.rows.length - 1; i >= 0; i--) {
+                table.deleteRow(i);
+            }
+            grm_genomeCount = 0;
+            for (var i = 0; i < n; i++) {
+                grm_addGenome();
+            }
+        }
+
+		function grm_clearFormat() { 
+			grm_initGenomes(2);
+			document.getElementById("grm_trees").value = '';
+            document.getElementById("grm_stages").value = '3';
+            document.getElementById("grm_target").value = '';
+            document.getElementById("grm_completion").value = ''	
+			grm_viewInformForExample("");
+			grm_showTarget(false);
+		} 
+
+		function grm_showTarget(show) {
+            document.getElementById('grm_targetDiv').style.display= show ? '' : 'none';
+            document.getElementById('grm_targetControl').style.display=show ? 'none' : '';
+            document.getElementById('grm_useTarget').value=show ? 1 : 0;
+            return false;
+        }
+	
+		function grm_viewInformForExample(showStr) {
+			document.getElementById("grm_murphy_information").style.display = "murphy" == showStr ? "" : "none";
+			document.getElementById("grm_toy_information").style.display = "toy" == showStr ? "" : "none";
+			document.getElementById("grm_shigella_information").style.display = "shigella" == showStr ? "" : "none";
+		} 
+
+		/*InferCARs format functions*/
+		function inf_addGenome() {
+            ++inf_genomeCount;
+            var table = document.getElementById("inf_genomes");
+            var row = table.insertRow(inf_genomeCount - 1);
+            row.align = "left";
+            row.vAlign = "top";
+            var c = [];
+            for (var j = 0; 1 > j; j++) {
+                c[j] = row.insertCell(j);
+                c[j].align = "left";
+                c[j].vAlign = "top";
+            }
+
+            c[0].innerHTML =
+                "<div id = \"content_text1\"><strong>Genome " + inf_genomeCount + "</strong></div>" +
+                "<div id = \"content\"> <div>Name: <input size='1' id='inf_name" + inf_genomeCount + "' name='name" + inf_genomeCount +
+				"'> Aliases <input id='inf_alias" + inf_genomeCount + "'size='28' name='alias" + inf_genomeCount + "'></div></div>"
+        }
+
+		function inf_initGenomes(n) {
+            var table = document.getElementById("inf_genomes");
+            for(var i = table.rows.length - 1; i >= 0; i--) {
+                table.deleteRow(i);
+            }
+            inf_genomeCount = 0;
+            for (var i = 0; i < n; i++) {
+                inf_addGenome();
+            }
+         }
+	
+		function inf_showTarget(show) {
+            document.getElementById('inf_targetDiv').style.display= show ? '' : 'none';
+            document.getElementById('inf_targetControl').style.display=show ? 'none' : '';
+            document.getElementById('inf_useTarget').value=show ? 1 : 0;
+            return false;
+        }
+
+
+    	function inf_clearFormat() { 
+			inf_initGenomes(2); 
+            document.getElementById("inf_genome").value = '';
+            document.getElementById("inf_trees").value = '';
+            document.getElementById("inf_stages").value = '3';
+            document.getElementById("inf_target").value = '';
+            document.getElementById("inf_completion").value = ''	
+			inf_showTarget(false);
+		} 
+
+		function inf_viewInformForExample(showStr) {
 			document.getElementById("inf_mam6_information").style.display = "mam6" == showStr ? "" : "none";
 			document.getElementById("inf_mam7_information").style.display = "mam7" == showStr ? "" : "none";
 			document.getElementById("inf_rosaceae_information").style.display = "rosaceae" == showStr ? "" : "none";
@@ -196,9 +258,9 @@
 
 		/*Set example in file*/
 	    function setMam6() {
-            setInferCarsFormat(); 
-			initGenomesInf(6); 
-			viewInformForInferCarsExample("mam6");
+            setFormat('inf'); 
+			inf_initGenomes(6); 
+			inf_viewInformForExample("mam6");
 			document.getElementById("inf_name1").value = 'M';
 	        document.getElementById("inf_name2").value = 'R';
             document.getElementById("inf_name3").value = 'D';
@@ -225,13 +287,13 @@
                                                             '81t 83h 80h 84t Q\n'+
                                                             '794h 795t 795h 796t Q\n'+
                                                             '1196h 1198h 1202t 1199t D\n';
-            showTargetInf(true);
+            inf_showTarget(true);
         }
 
         function setMam7() {
-            setInferCarsFormat();
-			initGenomesInf(7); 
-			viewInformForInferCarsExample("mam7");
+            setFormat('inf');
+			inf_initGenomes(7); 
+			inf_viewInformForExample("mam7");
 			document.getElementById("inf_name1").value = 'M';
             document.getElementById("inf_name2").value = 'R';
             document.getElementById("inf_name3").value = 'D';
@@ -254,13 +316,14 @@
             document.getElementById("inf_stages").value = '3';
             document.getElementById("inf_target").value = '';
             document.getElementById("inf_completion").value = '';
-            showTargetInf(false);
+
+            inf_showTarget(false);
         }
 
 		function setRosaceae() { 
-			setInferCarsFormat(); 
-			initGenomesInf(3); 
-			viewInformForInferCarsExample("rosaceae");
+			setFormat('inf'); 
+			inf_initGenomes(3); 
+			inf_viewInformForExample("rosaceae");
 			document.getElementById("inf_name1").value = 'P';
             document.getElementById("inf_name2").value = 'S';
             document.getElementById("inf_name3").value = 'V';
@@ -274,14 +337,14 @@
             document.getElementById("inf_stages").value = '3';
             document.getElementById("inf_target").value = 'PS';
             document.getElementById("inf_completion").value = '';
-            showTargetInf(true);
+            inf_showTarget(true);
 		} 
 
 
         function setMurphy() {
-			setGrimmFormat();
-            initGenomesGrm(7);
-			viewInformForGrimmExample("murphy");
+			setFormat('grm');
+            grm_initGenomes(7);
+			grm_viewInformForExample("murphy");
 
 			document.getElementById("grm_name1").value = 'H';
          	document.getElementById("grm_alias1").value = 'human';
@@ -318,13 +381,13 @@
             document.getElementById("grm_stages").value = '3';
             document.getElementById("grm_target").value = 'DCPW';
             document.getElementById("grm_completion").value = '';
-            showTargetGrm(true);
+            grm_showTarget(true);
         }
 
         function setToy() {
-			setGrimmFormat();
-            initGenomesGrm(4);
-			viewInformForGrimmExample("toy");
+			setFormat('grm');
+			grm_initGenomes(4);
+			grm_viewInformForExample("toy");
 	
      		document.getElementById("grm_name1").value = '1';
 			document.getElementById("grm_alias1").value = 'P1';
@@ -348,13 +411,13 @@
             document.getElementById("grm_target").value = '';
             document.getElementById("grm_completion").value = '';
 
-            showTargetGrm(false);
+            grm_showTarget(false);
         }
 
 		function setShigella() { 
-			setGrimmFormat(); 
-			initGenomesGrm(6);
-			viewInformForGrimmExample("shigella");
+			setFormat('grm'); 
+			grm_initGenomes(6);
+			grm_viewInformForExample("shigella");
 
       		document.getElementById("grm_name1").value = 'A';
 			document.getElementById("grm_alias1").value = 'Shi1 S1';
@@ -387,16 +450,7 @@
             document.getElementById("grm_completion").value = '357h 365t 268t 321h D\n' + 
 															  '400t 401h 398h 401t D\n' + 
 															  '425t 426t 426h 407h B';
-            showTargetGrm(true);
-		} 
-
-
-		function viewHelp() { 
-			clearGrimmFormat();
-			clearInferCarsFormat();
-			document.getElementById('showInferCarsForm').style.display = 'none'; 
-			document.getElementById('showGrimmForm').style.display = 'none'; 
-			document.getElementById('showHelp').style.display = ''; 
+            grm_showTarget(true);
 		} 
 	</script>
 </head>
@@ -409,31 +463,116 @@
 		<p> 
 			<strong> Input formats: </strong> <br>
 			<blockquote> 
-				<a href="#" onclick="setInferCarsFormat(); return false;">infercars</a> <br>
-				<a href="#" onclick="setGrimmFormat(); return false;">grimm</a> <br>
-			</blockquote>	
+				<form name="choose">
+					<input type="radio" name="inputformat" value="download file" onClick="setFormat('file');" CHECKED/>  <font color = "blue"> download file </font> <br/>
+					<input type="radio" name="inputformat" value="infercars" onClick="setFormat('inf');"/>  <font color = "blue"> infercars </font> <br/>
+					<input type="radio" name="inputformat" value="grimm" onClick="setFormat('grm');"/>  <font color = "blue"> grimm </font> <br/>
+				</form>
+			</blockquote>
 			<strong> Examples: </strong> <br>
 			<blockquote> 
-				<a href="#" onclick="setMam6(); return false;">mam6</a> <br>
-				<a href="#" onclick="setMam7(); return false;">mam7</a> <br>
-				<a href="#" onclick="setRosaceae(); return false;">rosaceae</a> <br>			
-		        <a href="#" onclick="setMurphy(); return false;">murphy05</a> <br>
-				<a href="#" onclick="setToy(); return false;">toy</a> <br>
-				<a href="#" onclick="setShigella(); return false;">shigella</a> <br>					        
+				<form name="example">
+					<input type="radio" name="examples" value="rosaceae" onClick="setRosaceae();"/>  <font color = "blue"> rosaceae </font> <br/>
+					<input type="radio" name="examples" value="mam7" onClick="setMam7();"/>  <font color = "blue"> mam7 </font> <br/>
+					<input type="radio" name="examples" value="mam6" onClick="setMam6();"/>  <font color = "blue"> mam6 </font> <br/>
+					<input type="radio" name="examples" value="murphy05" onClick="setMurphy();"/>  <font color = "blue"> murphy05 </font> <br/>
+					<input type="radio" name="examples" value="toy" onClick="setToy();"/>  <font color = "blue"> toy </font> <br/>
+					<input type="radio" name="examples" value="shigella" onClick="setShigella();"/>  <font color = "blue"> shigella </font> <br/>
+				</form>
 			</blockquote>
-			<a href="#" onclick="viewHelp(); return false;">How to work</a> <br>			
+			<a href="#" onclick="setFormat('help'); return false;">How to work</a> <br>			
 		</p>
 	</nav>
-	
+
 	<div id = "menu_content">	
+	<!-- file format to detected-->
+	<div id = "file_showForm"> 
+		<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="file_mgraForm">
+
+		<input type="hidden" name="useFormat" id="file_useFormat" value="auto"/>
+		<input type="hidden" name="widthMonitor" id="file_widthMonitor" value=""/>
+		
+		<h2><p align="center">Genomes</p></h2>	
+
+		<table id="file_genomes">
+	    </table>
+
+	    <script>
+			document.choose.inputformat[0].checked = true; 
+	        file_initGenomes(2);
+	    </script>
+		
+		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="file_addGenome(); return false;"/> </div>
+
+		<p>
+        	<div id = "content_text1"> <strong>Load file with genomes:</strong> </div> 
+			<div id = "file"> <input type="file" id="genome_file" name="genome_file"> <a href="#" onclick="clearFile();">Clear</a> </div>
+	    </p>		
+
+		<p>
+    	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
+    	    MGRA assumes that only terminal branches are known.  
+    	</p>
+   		
+		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="file_trees"></textarea></div>
+		<input type="checkbox" id="grm_reconstr" name="reconstr" value="reconstr1" /><strong>&nbsp;recostructed tree</strong><br/>
+
+	    <p>
+	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="file_stages" value="3"/><br>
+	        <p>
+				Higher values correspond to less reliable heuristics.
+		        The highest value is 4 and usually it still requires manual completion (see below).
+		        Smaller values require 'target' specification to produce ancestral reconstruction.
+	        	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
+			</p>
+	    </p>
+
+	    <div id="file_targetControl">
+            <a href="#" onclick="return file_showTarget(true);">Show Target and Completion fields</a>
+        </div>
+
+        <div id="file_targetDiv" style="display:none;">
+    		<p>
+    	    	<a href="#" onclick="return file_showTarget(false);">Remove Target and Completion fields</a>
+	   		</p>
+
+    		<p>
+				<p>
+					By default, MGRA reconstructs all ancestral genomes but it first has to complete transformation into an identity breakpoint graph.
+		        	If 'target' is specified, MGRA focuses on reconstruction of the specified ancestral genome
+		        	and can produce a partial reconstruction at any point (even if the transformation is not complete).
+				</p>
+    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="file_target"/><br>
+    	   	</p>
+		    <p>	
+		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+		        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+		        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+		        'oo' stands for a chromosome end.
+		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+		    </p> 
+			<div id = "content">
+			    <textarea rows="5" cols="60" name="completion" id="file_completion"></textarea>
+		    </div>
+
+		    <input type="hidden" name="useTarget" id="file_useTarget" value="0"/>
+		</div> 
+			<p>
+				<div align = "center"> 
+			        <input type="submit" value="run mgra"/>
+				</div>
+		    </p>
+    </form>
+	</div> 
+
 	<!--Form for infercars format-->
-	<div id = "showInferCarsForm"> 
-		<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="inferCarsMgraForm">
+	<div id = "inf_showForm" style="display:none;"> 
+		<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="inf_mgraForm">
 
 		<input type="hidden" name="useFormat" id="inf_useFormat" value="infercars"/>
 		<input type="hidden" name="widthMonitor" id="inf_widthMonitor" value=""/>
 		
-		<h2><p align="center">Genome in infercars format</p></h2>	
+		<h2><p align="center">Genomes in infercars format</p></h2>	
 
 		<div id="inf_mam6_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
@@ -466,28 +605,25 @@
 	    </table>
 
 	    <script>
-	        initGenomesInf(2);
+	        inf_initGenomes(2);
 	    </script>
 		
-		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="addGenomeInf(); return false;"/> </div>
-
-		<p>
-        	<div id ="content_text"> <strong>Genome file:</strong> </div> 
-			<div id ="content"> <input type="file" id="inf_genome_file" name="genome_file"> <a href="#" onclick="clearFileInf();">Clear</a> </div>
-	    </p>
+		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="inf_addGenome(); return false;"/> </div>
 
 		<div id ="right_text"> <strong>Genome:</strong></div>
-		<div id ="content"> <textarea id='inf_genome' name='genome' rows='10' cols='60'></textarea></div>
+		<div id ="content"> <textarea id='inf_genome' name='genome' rows='10' cols='61'></textarea></div>
+
 		<p>
-    	    <strong>Known subtrees of the phylogenetic tree of the above genomes in Newick format</strong><br>
-    	    If no trees are given, MGRA assumes that only terminal branches are known (as in MGR).  
+    	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
+    	    MGRA assumes that only terminal branches are known.  
     	</p>
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="inf_trees"></textarea></div>
+		<input type="checkbox" id="inf_reconstr" name="reconstr" value="reconstr1" /><strong>&nbsp;recostructed tree</strong><br/>
 
 	    <p>
-	        <strong>The number of stages to perform</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="inf_stages" value="3"/><br>
-	        <p style="text-indent: 25px;">
+	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="inf_stages" value="3"/><br>
+	        <p>
 				Higher values correspond to less reliable heuristics.
 		        The highest value is 4 and usually it still requires manual completion (see below).
 		        Smaller values require 'target' specification to produce ancestral reconstruction.
@@ -496,23 +632,23 @@
 	    </p>
 
 	    <div id="inf_targetControl">
-            <a href="#" onclick="return showTargetInf(true);">Show Target and Completion fields</a>
+            <a href="#" onclick="return inf_showTarget(true);">Show Target and Completion fields</a>
         </div>
 
         <div id="inf_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return showTargetInf(false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return inf_showTarget(false);">Remove Target and Completion fields</a>
 	   		</p>
 
     		<p>
-    	    	<strong>Target</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="inf_target"/><br>
-    	   		<p style="text-indent: 25px;">
+				<p>
 					By default, MGRA reconstructs all ancestral genomes but it first has to complete transformation into an identity breakpoint graph.
 		        	If 'target' is specified, MGRA focuses on reconstruction of the specified ancestral genome
 		        	and can produce a partial reconstruction at any point (even if the transformation is not complete).
 				</p>
-    		</p>
-		    <p style="text-indent: 25px;">	
+    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="inf_target"/><br>
+    	   	</p>
+		    <p>	
 		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
 		        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
 		        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
@@ -527,7 +663,7 @@
 		</div> 
 			<p>
 				<div align = "center"> 
-			        <input type="submit" value="run calculate"/>
+			        <input type="submit" value="run mgra"/>
 				</div>
 		    </p>
     </form>
@@ -535,13 +671,13 @@
 
 
 	<!--Form for grimm format-->
-	<div id = "showGrimmForm" style="display:none;"> 
-	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="grimmMgraForm" >
+	<div id = "grm_showForm" style="display:none;"> 
+	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="grm_mgraForm" >
 		
 		<input type="hidden" name="useFormat" id="grm_useFormat" value="grimm"/>
 		<input type="hidden" name="widthMonitor" id="grm_widthMonitor" value=""/>
 	
-		<h2><p align="center">Genome in grimm format</p></h2>	
+		<h2><p align="center">Genomes in grimm format</p></h2>	
 
 		<div id="grm_murphy_information" style="display:none;">
 			<p style="text-indent: 25px;"><strong>Information on the example:</strong></p>
@@ -573,27 +709,22 @@
 	    </table>
 
 	    <script>
-	        initGenomesGrm(2);
+	        grm_initGenomes(2);
 	    </script>
 		
-		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="addGenomeGrm(); return false;"/> </div>
-		
-		<p>
-        	<div id = "content_text"> <strong>Genome file:</strong> </div> 
-			<div id = "content"> <input type="file" id="grm_genome_file" name="genome_file"> <a href="#" onclick="clearFileGrm();">Clear</a> </div>
-	    </p>
-		
+		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="grm_addGenome(); return false;"/> </div>
 	    
     	<p>
-    	    <strong>Known subtrees of the phylogenetic tree of the above genomes in Newick format</strong><br>
-    	    If no trees are given, MGRA assumes that only terminal branches are known (as in MGR).  
+    	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
+    	    MGRA assumes that only terminal branches are known.  
     	</p>
-   		
+   	
 		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="grm_trees"></textarea></div>
+		<input type="checkbox" id="grm_reconstr" name="reconstr" value="reconstr1" /><strong>&nbsp;recostructed tree</strong><br/>
 
 	    <p>
-	        <strong>The number of stages to perform</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="grm_stages" value="3"/><br>
-	        <p style="text-indent: 25px;">
+	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="grm_stages" value="3"/><br>
+	        <p>
 				Higher values correspond to less reliable heuristics.
 		        The highest value is 4 and usually it still requires manual completion (see below).
 		        Smaller values require 'target' specification to produce ancestral reconstruction.
@@ -602,23 +733,23 @@
 	    </p>
 
 	    <div id="grm_targetControl">
-            <a href="#" onclick="return showTargetGrm(true);">Show Target and Completion fields</a>
+            <a href="#" onclick="return grm_showTarget(true);">Show Target and Completion fields</a>
         </div>
 
         <div id="grm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return showTargetGrm(false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return grm_showTarget(false);">Remove Target and Completion fields</a>
 	   		</p>
 
     		<p>
-    	    	<strong>Target</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="grm_target"/><br>
-    	   		<p style="text-indent: 25px;">
+				<p>
 					By default, MGRA reconstructs all ancestral genomes but it first has to complete transformation into an identity breakpoint graph.
 		        	If 'target' is specified, MGRA focuses on reconstruction of the specified ancestral genome
 		        	and can produce a partial reconstruction at any point (even if the transformation is not complete).
 				</p>
-    		</p>
-		    <p style="text-indent: 25px;">	
+    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="grm_target"/><br>
+    	   	</p>
+		    <p>	
 		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
 		        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
 		        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
@@ -633,7 +764,7 @@
 		</div> 
 			<p>
 				<div align = "center"> 
-			        <input type="submit" value="run calculate"/>
+			        <input type="submit" value="run mgra"/>
 				</div>
 		    </p>
     </form>
@@ -664,7 +795,7 @@
 		</li>
 		<br>
 		<li>
-			<strong> Push button "run calculate", and server will begin processing the data, which may take some time. </strong>
+			<strong> Push button "run mgra", and server will begin processing the data, which may take some time. </strong>
 		</li>
 		<br>
 		<li>
@@ -678,11 +809,11 @@
 			<ul type="square">
 			<br>
 			<li><u>Genome</u> <br>
-				Genome represented as the sequence of synteny blocks. Each synteny block has its number and oriented to the head or to the tail. If we will 				use numbers for the representation it will be pretty hard to figure the length of the genome or its part. That's why we use > and &lt; to 					represent synteny blocks, depending on their orientation. The synteny block number can be viewed as title to the link associated with > or 					&lt; sign. 
+				Genome represented as the sequence of synteny blocks. Each synteny block has its number and oriented to the head or to the tail. If we will use numbers for the representation it will be pretty hard to figure the length of the genome or its part. That's why we use > and &lt; to represent synteny blocks, depending on their orientation. The synteny block number can be viewed as title to the link associated with > or 					&lt; sign. 
 			</li>
 			<br>
 			<li><u>Genome transformation</u> <br>
-				The original MGRA outputs only the ends of the breaks of the transformations. We show this ends using h and t letters. Each end has its own 				color that allows us to show where it goes after the transformation. We use similar colors for the ends that are clued after the 					transformation.
+				The original MGRA outputs only the ends of the breaks of the transformations. We show this ends using h and t letters. Each end has its own color that allows us to show where it goes after the transformation. We use similar colors for the ends that are clued after the transformation.
 			</li>
 		</li>
 		<ol>

@@ -8,7 +8,9 @@
 <title>MGRA tree</title>
 </head>
 <body>
-    <h1><p align="center"> MGRA tree, beta version</p></h1>
+    <header> 
+		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
+	</header>
     <xsl:apply-templates select="genomes" mode="target"/>	
 	<footer>
 	<hr/>
@@ -359,7 +361,9 @@
 </script>
 </head>
 <body>
-	<h1><p align="center"> MGRA tree, beta version</p></h1>
+	<header> 
+		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
+	</header>
 	<xsl:apply-templates select="trees"/>
 	<xsl:apply-templates select="genomes"/>	
 	<xsl:apply-templates select="all_transformations"/>
@@ -378,7 +382,7 @@
 </xsl:template>
 
 <xsl:template match="input">
-	<p><font size = "10"><string> Input tree: </string></font></p>
+	<p><font size = "10"><string> Input subtree(s): </string></font></p>
 	<xsl:apply-templates select="tree" mode = "createForm"/>
 </xsl:template>
 
@@ -428,19 +432,19 @@
 </xsl:template>
 
 <xsl:template match="genome_png" mode ="target">
-    <h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+    <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 	<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
 	<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
 </xsl:template>
 
 <xsl:template match="genome_xml" mode ="target">
-	<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 	<xsl:apply-templates select="chromosome"/>
 </xsl:template>
 
 <xsl:template match="genome_png">
 	<div id="gen{./name}" style="display:none;">
-    	<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+    	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 		<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
 		<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
  	</div>
@@ -448,7 +452,7 @@
 
 <xsl:template match="genome_xml">
 	<div id="gen{./name}" style="display:none;">
-		<h3>Chromosomes for <xsl:value-of select="./name"/></h3>
+		<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 		<xsl:apply-templates select="chromosome"/>
 	</div>
 </xsl:template>

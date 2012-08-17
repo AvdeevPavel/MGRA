@@ -24,7 +24,6 @@ public class CreatorInformation {
     class DataGenome {
         String name = "";
         boolean exists = false;
-        boolean image = false;
     }
 
     HashMap<HashSet<Character>, DataGenome> information = new HashMap<HashSet<Character>, DataGenome>();
@@ -60,18 +59,12 @@ public class CreatorInformation {
         return false;
     }
 
-    public boolean isCreateImage(HashSet<Character> nameRequest) {
-        if (information.get(nameRequest) != null) {
-            return information.get(nameRequest).image;
-        }
-        return false;
-    }
-
     private void createGenomeInformation(Config config, BlocksInformation blocksInformation, HashMap<HashSet<Character>, Genome> genomes, PrintWriter out) {
         gens = new Element("genomes");
         File[] files = new File(config.getPathParentFile()).listFiles();
         for(File file: files) {
             if (file.getName().endsWith(".gen")) {
+                JettyServer.responseInformation(out, "Create image for " + file.getName());
                 createChromosomesToPNG(gens, file, config, blocksInformation, genomes, out);
             }
         }
@@ -82,6 +75,7 @@ public class CreatorInformation {
         File[] files = new File(config.getPathParentFile()).listFiles();
         for(File file: files) {
             if (file.getName().endsWith(".trs")) {
+                JettyServer.responseInformation(out, "Create image for " + file.getName());
                 createTransformationToPNG(trss, file, config, genomes.get(Transformer.convertToSet(file.getName().substring(0, file.getName().indexOf('.')))), out);
             }
         }
@@ -116,13 +110,19 @@ public class CreatorInformation {
                         gen = new Element("genome_png");
                         XmlUtil.addElement(gen, "name", name);
                         XmlUtil.addElement(gen, "resize", picture.isBigImage(config.getWidthMonitor()));
-                        data.image = true;
+                        JettyServer.responseInformation(out, "Done save " + name + " genome file");
                     } catch (IOException e) {
                         JettyServer.responseErrorServer(out, "Can not save image file with " + name + " genome. Full file name " + file.getName());
                         JettyServer.responseStage(out, "Try save information in xml");
                         gen = genome.toXml(name);
                         log.debug("Can not save image file with genome " + file.getName() + "_gen");
                     }
+                } catch (OutOfMemoryError e) {
+                    JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
+                    gen = genome.toXml(name);
+                } catch (NegativeArraySizeException e) {
+                    JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
+                    gen = genome.toXml(name);
                 } catch (Exception e) {
                     JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
                     gen = genome.toXml(name);
@@ -166,6 +166,7 @@ public class CreatorInformation {
                     trs = new Element("transformations_png");
                     XmlUtil.addElement(trs, "name", name);
                     XmlUtil.addElement(trs, "resize", picture.isBigImage(config.getWidthMonitor()));
+                    JettyServer.responseInformation(out, "Done save " + name + " transformation file");
                 } catch (IOException e) {
                      JettyServer.responseErrorServer(out, "Can not save image file with " + name + " transformation. Full file name " + file.getName());
                      JettyServer.responseStage(out, "Try save information in xml");
@@ -173,8 +174,22 @@ public class CreatorInformation {
                      XmlUtil.addElement(trs, "name", name);
                      log.debug("Can not save image file with transformation " + file.getName() + "_trs");
                 }
-            } catch (Exception e) {
+            } catch (OutOfMemoryError e) {
                 JettyServer.responseInformation(out, "<strong> Image with transformations is largest </strong>. Try to create in xml.");
+                trs = new Element("transformations_xml");
+                XmlUtil.addElement(trs, "name", name);
+                for (Transformation transformation : transformations) {
+                    trs.addContent(transformation.toXml());
+                }
+            } catch (NegativeArraySizeException e) {
+                JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
+                trs = new Element("transformations_xml");
+                XmlUtil.addElement(trs, "name", name);
+                for (Transformation transformation : transformations) {
+                    trs.addContent(transformation.toXml());
+                }
+            } catch (Exception e) {
+                JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
                 trs = new Element("transformations_xml");
                 XmlUtil.addElement(trs, "name", name);
                 for (Transformation transformation : transformations) {

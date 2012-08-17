@@ -344,6 +344,7 @@ public class JettyServer {
             genomeFile.close();
         }
 
+        config.resolveFormat();
         if (config.getInputFormat().equals("infercars")) {
             return readBloksInformation(new File(datasetDir.getAbsolutePath() + "/genome.txt"), config);
         } else {

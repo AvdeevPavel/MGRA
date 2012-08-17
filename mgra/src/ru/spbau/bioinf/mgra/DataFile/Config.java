@@ -4,6 +4,7 @@ import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -28,6 +29,7 @@ public class Config {
     private String completion = null;
     private int widthMonitor = 0;
     private String pathParentFile = "";
+    private boolean reconstructedTree = false;
 
     private HashMap<String, Character> alias = new HashMap<String, Character>();
 
@@ -56,7 +58,7 @@ public class Config {
 
 
         /*[Blocks]*/
-        inputFormat = properties.getProperty("useFormat").trim();
+       inputFormat = properties.getProperty("useFormat").trim();
 
         /*[Trees]*/
         String inputTrees = properties.getProperty("trees");
@@ -65,6 +67,8 @@ public class Config {
             s = s.trim();
             trees.add(s);
         }
+
+        reconstructedTree = new Boolean(properties.getProperty("information_reconstracted"));
 
         /*[Algorithm]*/
         stage = new Integer(properties.getProperty("stages"));
@@ -136,6 +140,10 @@ public class Config {
         return nameGenome.size();
     }
 
+    public boolean isReconstructedTree() {
+        return reconstructedTree;
+    }
+
     public void createFile(boolean isShowTree) throws IOException {
         PrintWriter cfgFile = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(pathParentFile, CFG_FILE_NAME)), "UTF-8"));
 
@@ -186,5 +194,27 @@ public class Config {
         }
 
         cfgFile.close();
+    }
+
+    public void resolveFormat() throws IOException {
+        if (inputFormat.equals("auto")) {
+            BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(new File(pathParentFile, "genome.txt"))));
+            String s;
+            int infercars = 0;
+            int grimm = 0;
+            while ((s = reader.readLine())!=null) {
+                s = s.trim();
+                if (!s.startsWith("#") && s.length() > 0) {
+                    if (s.endsWith("+") || s.endsWith("-")) {
+                        infercars++;
+                    } else {
+                        if (s.endsWith("$")) {
+                            grimm++;
+                        }
+                    }
+                }
+            }
+            inputFormat = (infercars > grimm ? "infercars" : "grimm");
+        }
     }
 }

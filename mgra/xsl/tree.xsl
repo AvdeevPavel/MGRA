@@ -9,9 +9,9 @@
 </head>
 <body>
     <header> 
-		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
+		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1> <!--mgra.bioinf.spbau.ru-->
 	</header>
-    <xsl:apply-templates select="genomes" mode="target"/>	
+    <xsl:apply-templates select="genomes/genome_png" mode="target"/>	
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
@@ -38,7 +38,6 @@
 <script>
 	var values =  [
 		<xsl:apply-templates select="genomes/genome_png/name"/>
-		<xsl:apply-templates select="genomes/genome_xml/name"/>
 	]
 				
 	var trees = [ 
@@ -362,8 +361,23 @@
 </head>
 <body>
 	<header> 
-		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
+		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>  <!--mgra.bioinf.spbau.ru-->
 	</header>
+	<h3>Information for working subtree(s):</h3>
+	<ol type = "1">
+		<li>
+			You can drag and drop nodes. Click interesting node and drag what you want.   
+		</li>
+		<br/>
+		<li>
+			If node is dark blue, you push double click and see genome.
+		</li>
+		<br/>
+		<li>
+			If arrow is black, you push double click and see transformation.
+		</li>
+		<br/>
+	</ol>
 	<xsl:apply-templates select="trees"/>
 	<xsl:apply-templates select="genomes"/>	
 	<xsl:apply-templates select="all_transformations"/>
@@ -421,25 +435,18 @@
 </xsl:template>
 
 <!--Genomes transformation-->
-<xsl:template match="genomes" mode="target">
-	<xsl:apply-templates select = "genome_png" mode="target"/>
-	<xsl:apply-templates select = "genome_xml" mode="target"/>
-</xsl:template>
-
 <xsl:template match="genomes">
 	<xsl:apply-templates select = "genome_png"/>
-	<xsl:apply-templates select = "genome_xml"/>
 </xsl:template>
 
 <xsl:template match="genome_png" mode ="target">
     <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 	<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
 	<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
-</xsl:template>
-
-<xsl:template match="genome_xml" mode ="target">
-	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-	<xsl:apply-templates select="chromosome"/>
+	<div id="buttons_gen_{./name}" align="center">
+		<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
+		<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+	</div>
 </xsl:template>
 
 <xsl:template match="genome_png">
@@ -447,19 +454,15 @@
     	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 		<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
 		<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
+		<div id="buttons_gen_{./name}" align="center">
+			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
+			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+		</div>
  	</div>
-</xsl:template>
-
-<xsl:template match="genome_xml">
-	<div id="gen{./name}" style="display:none;">
-		<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-		<xsl:apply-templates select="chromosome"/>
-	</div>
 </xsl:template>
 
 <!--Transformations XSL transformation-->
 <xsl:template match="all_transformations">
-	<xsl:apply-templates select = "transformations_xml"/>
 	<xsl:apply-templates select = "transformations_png"/>
 </xsl:template>
 	
@@ -468,13 +471,10 @@
 		<h3>Transformations for <xsl:value-of select="./name"/></h3>
 		<xsl:if test= "resize = 'true'"> <img src="{./name}_trs.png" width="100%"></img> </xsl:if>
 		<xsl:if test= "resize = 'false'"> <img src="{./name}_trs.png"></img> </xsl:if>
-	</div>
-</xsl:template>
-
-<xsl:template match="transformations_xml">
-	<div id="trs{./name}" style="display:none;">
-		<h3>Transformations for <xsl:value-of select="./name"/></h3>
-		<xsl:apply-templates select="transformation"/>
+		<div id="buttons_trs_{./name}" align="center">
+			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
+			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+		</div>
 	</div>
 </xsl:template>
 
@@ -488,11 +488,6 @@
 		<xsl:sort select="id" data-type="number"/>
 	</xsl:apply-templates>
 	<br/>
-</xsl:template>
-
-<xsl:template match="chromosome">
-	<xsl:if test="10>id">&#160;</xsl:if>
-	<xsl:value-of select="id"/>.<xsl:apply-templates select="gene"/><br/>
 </xsl:template>
 
 <xsl:template match="gene">

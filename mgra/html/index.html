@@ -61,6 +61,10 @@
 		function clearFile() { 
 			document.getElementById('genome_file').value = '';
 		} 
+				 
+		function setReconstructed(idform) { 
+			document.forms[idform].elements["information_reconstracted"].value = document.forms[idform].reconstracted.checked;
+		} 
 
 		function showTarget(idform, show) {
 			document.getElementById(document.forms[idform].name + "_targetDiv").style.display= show ? '' : 'none';
@@ -180,6 +184,8 @@
             form.elements["genome"].value = loadFile('mam6/blocks6.txt');
             form.elements["trees"].value = '(((M,R),D),(Q,(H,C)))';
 			form.reconstracted.checked = false;
+			setReconstructed(2);
+
             form.elements["stages"].value = '4';
             form.elements["target"].value = '';
             form.elements["completion"].value = '1299h 1300h 1300t 1301t R\n'+
@@ -220,6 +226,7 @@
                                            '(MRDO,(Q,(H,C)))';
 
 			form.reconstracted.checked = true;
+			setReconstructed(2);
 			form.elements["stages"].value = '3';
             form.elements["target"].value = '';
             form.elements["completion"].value = '';
@@ -244,6 +251,7 @@
             form.elements["genome"].value = loadFile('rosaceae/rosaceae.txt');
             form.elements["trees"].value = '((P,S),V)';
 			form.reconstracted.checked = false;
+			setReconstructed(2);
             form.elements["stages"].value = '3';
             form.elements["target"].value = 'PS';
             form.elements["completion"].value = '';
@@ -290,6 +298,7 @@
                                            '((D,C),HRMPW)\n' +
                                            '((P,W),HRMDC)';
 			form.reconstracted.checked = false;
+			setReconstructed(3);
             form.elements["stages"].value = '3';
             form.elements["target"].value = 'DCPW';
             form.elements["completion"].value = '';
@@ -320,6 +329,7 @@
 			
             form.elements["trees"].value = '((1,2),(3,4))';
 			form.reconstracted.checked = false; 
+			setReconstructed(3);
 
             form.elements["stages"].value = '3';
             form.elements["target"].value = '';
@@ -360,8 +370,9 @@
 
             form.elements["trees"].value = '(((A,B),F),((D,C),E))';
 			form.reconstracted.checked = false;
-            form.elements["stages"].value = '4';
-       
+			setReconstructed(3);
+            
+			form.elements["stages"].value = '4';       
             form.elements["completion"].value = '357h 365t 268t 321h D\n' + 
 															  '400t 401h 398h 401t D\n' + 
 															  '425t 426t 426h 407h B';
@@ -404,7 +415,9 @@
 	
 		<input type="hidden" name="useFormat" id="useFormat" value="auto"/>
 		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
-		
+		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
+		<input type="hidden" name="useTarget" id="useTarget" value="0"/>
+
 		<table id="fileForm_genomes">
 	    </table>
 
@@ -427,17 +440,26 @@
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
-	    <input type="checkbox" name="reconstracted" value="1" /><strong>&nbsp;recostructed tree</strong><br/>
+	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(1);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
 	    <p>
 	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="stages" value="3"/><br>
-	        <p>
-				Higher values correspond to less reliable heuristics.
-		        The highest value is 4 and usually it still requires manual completion (see below).
-		        Smaller values require 'target' specification to produce ancestral reconstruction.
-	        	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
-			</p>
-	    </p>
+	     	Higher values correspond to less reliable heuristics.
+		    The highest value is 4 and usually it still requires manual completion (see below).
+		    Smaller values require 'target' specification to produce ancestral reconstruction.
+	      	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
+		</p>
+   		<p>	
+			<strong>Completion</strong><br/>
+		    Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+		    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+		    replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+		    'oo' stands for a chromosome end.
+			Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+		</p> 
+		<div id = "content">
+		    <textarea rows="5" cols="60" name="completion" id="completion"></textarea>
+		</div>
 
 	    <div id="fileForm_targetControl">
             <a href="#" onclick="return showTarget(1, true);">Show Target and Completion fields</a>
@@ -456,18 +478,6 @@
 				</p>
     	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
-		    <p>	
-		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
-		        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
-		        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
-		        'oo' stands for a chromosome end.
-		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
-		    </p> 
-			<div id = "content">
-			    <textarea rows="5" cols="60" name="completion" id="completion"></textarea>
-		    </div>
-
-		    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 		</div> 
 			<p>
 				<div align = "center"> 
@@ -481,9 +491,10 @@
 		
 		<h2><p align="center">Genomes in infercars format</p></h2>	
 
-		
 		<input type="hidden" name="useFormat" id="useFormat" value="infercars"/>
 		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
+		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
+	    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 	
 		<div id="mam6_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
@@ -526,17 +537,27 @@
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
-		<input type="checkbox" name="reconstracted" value="1" /><strong>&nbsp;recostructed tree</strong><br/>
+		<input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(2);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
 	    <p>
 	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="stages" value="3"/><br>
-	        <p>
-				Higher values correspond to less reliable heuristics.
-		        The highest value is 4 and usually it still requires manual completion (see below).
-		        Smaller values require 'target' specification to produce ancestral reconstruction.
-	        	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
-			</p>
+	        Higher values correspond to less reliable heuristics.
+		    The highest value is 4 and usually it still requires manual completion (see below).
+		    Smaller values require 'target' specification to produce ancestral reconstruction.
+	        It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
 	    </p>
+		
+   		<p>	
+			<strong>Completion</strong><br/>
+	        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+	        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+	        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+	        'oo' stands for a chromosome end.
+	        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+	    </p> 
+		<div id = "content">
+			<textarea rows="5" cols="60" name="completion" id="completion"></textarea>
+		</div>	
 
 	    <div id="infForm_targetControl">
             <a href="#" onclick="return showTarget(2, true);">Show Target and Completion fields</a>
@@ -546,7 +567,6 @@
     		<p>
     	    	<a href="#" onclick="return showTarget(2, false);">Remove Target and Completion fields</a>
 	   		</p>
-
     		<p>
 				<p>
 					By default, MGRA reconstructs all ancestral genomes but it first has to complete transformation into an identity breakpoint graph.
@@ -555,18 +575,6 @@
 				</p>
     	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
-		    <p>	
-		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
-		        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
-		        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
-		        'oo' stands for a chromosome end.
-		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
-		    </p> 
-			<div id = "content">
-			    <textarea rows="5" cols="60" name="completion" id="completion"></textarea>
-		    </div>
-
-		    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 		</div> 
 			<p>
 				<div align = "center"> 
@@ -582,6 +590,8 @@
 
 		<input type="hidden" name="useFormat" id="useFormat" value="grimm"/>
 		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
+		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
+		<input type="hidden" name="useTarget" id="useTarget" value="0"/>
 	
 		<div id="murphy_information" style="display:none;">
 			<p style="text-indent: 25px;"><strong>Information on the example:</strong></p>
@@ -621,17 +631,27 @@
    	
 		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
-	    <input type="checkbox" name="reconstracted" value="1" /><strong>&nbsp;recostructed tree</strong><br/>
+	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(3);"/><strong>&nbsp;recostructed tree</strong><br/>
 	    
 	    <p>
 	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="stages" value="3"/><br>
-	        <p>
-				Higher values correspond to less reliable heuristics.
-		        The highest value is 4 and usually it still requires manual completion (see below).
-		        Smaller values require 'target' specification to produce ancestral reconstruction.
-	        	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
-			</p>
+	      	Higher values correspond to less reliable heuristics.
+		    The highest value is 4 and usually it still requires manual completion (see below).
+		    Smaller values require 'target' specification to produce ancestral reconstruction.
+	      	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
 	    </p>
+
+ 		<p>	
+			<strong>Completion</strong><br/>
+			Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+		    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+		    replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+		    'oo' stands for a chromosome end.
+		    Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+		</p>
+		<div id = "content">
+		    <textarea rows="6" cols="60" name="completion" id="completion"></textarea>
+		</div>
 
 	    <div id="grmForm_targetControl">
             <a href="#" onclick="return showTarget(3, true);">Show Target and Completion fields</a>
@@ -641,7 +661,6 @@
     		<p>
     	    	<a href="#" onclick="return showTarget(3, false);">Remove Target and Completion fields</a>
 	   		</p>
-
     		<p>
 				<p>
 					By default, MGRA reconstructs all ancestral genomes but it first has to complete transformation into an identity breakpoint graph.
@@ -650,18 +669,6 @@
 				</p>
     	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
-		    <p>	
-		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
-		        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
-		        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
-		        'oo' stands for a chromosome end.
-		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
-		    </p> 
-			<div id = "content">
-			    <textarea rows="6" cols="60" name="completion" id="completion"></textarea>
-		    </div>
-
-		    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 		</div>
 			<p>
 				<div align = "center"> 

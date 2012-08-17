@@ -4,7 +4,12 @@ import org.apache.log4j.Logger;
 import ru.spbau.bioinf.mgra.Parser.*;
 import ru.spbau.bioinf.mgra.Server.JettyServer;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
@@ -19,13 +24,13 @@ public class Drawer {
     private Graphics2D graphics;
     private BufferedImage image;
 
-    private final static int heigthBlock = 60;
-    private static int widthPolygone = 90;
+    private final static int heigthBlock = 38;
+    private static int widthPolygone = 76;
 
-    private final static int indent = 10;
+    private final static int indent = 5;
 
-    private final static int sizeFontInBlock = 18;
-    private final static int sizeFontString = 32;
+    private final static int sizeFontInBlock = 12;
+    private final static int sizeFontString = 22;
 
     private final static int nPointsPol = 5;
 
@@ -42,7 +47,7 @@ public class Drawer {
     private int green = 0;
     private int blue = 0;
 
-    private void init(int widthImage, int heigthImage) throws OutOfMemoryError, NegativeArraySizeException{
+    private void init(int widthImage, int heigthImage) throws OutOfMemoryError, NegativeArraySizeException {
         log.debug("Posted buffered image width = " + widthImage + " height = " + heigthImage);
         image = new BufferedImage(widthImage, heigthImage, BufferedImage.TYPE_INT_RGB);
         graphics = image.createGraphics();
@@ -50,7 +55,7 @@ public class Drawer {
         graphics.fillRect(0, 0, widthImage, heigthImage);
     }
 
-    public Drawer(String inputFormat, Genome genome) throws OutOfMemoryError {
+    public Drawer(String inputFormat, Genome genome) throws OutOfMemoryError, NegativeArraySizeException {
         int widthImage;
         int heigthImage = (heigthBlock + indent) * genome.getNumberOfChromosomes() - 3 * bound;
 
@@ -66,7 +71,7 @@ public class Drawer {
         drawChromosomes(bound, genome.getChromosomes(), inputFormat);
     }
 
-    public Drawer(String inputFormat, ArrayList<Transformation> transformations) throws OutOfMemoryError {
+    public Drawer(String inputFormat, ArrayList<Transformation> transformations) throws OutOfMemoryError, NegativeArraySizeException {
         int widthImage;
         int heigthImage = 0;
 
@@ -110,9 +115,9 @@ public class Drawer {
         int length = 100;
         for(Gene gene: genes) {
             if (gene.getPercent() > threshold) {
-                length += new Double(step * gene.getPercent()).intValue() + 1;
+                length += new Double(step * gene.getPercent()).intValue() + 1 + 1;
             } else {
-                length += widthPolygone;
+                length += (widthPolygone + 1);
             }
             ++length;
         }
@@ -134,9 +139,11 @@ public class Drawer {
     private int drawChromosomes(int startY, List<Chromosome> chromosomes, String inputFormat) {
         HashMap<String, Color> map = new HashMap<String, Color>();
         int topStartY = startY;
-        int bottomStartY = startY + 50/*heigthBlock / 2 + fontMetrics.getHeight() / 4*/;
 
         Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
+        graphics.setFont(font);
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+        int bottomStartY = startY + heigthBlock / 2 + fontMetrics.getHeight() / 4;
 
         for(Chromosome chromosome: chromosomes) {
             drawChromosome(chromosome, bottomStartY, topStartY, font, map, inputFormat);

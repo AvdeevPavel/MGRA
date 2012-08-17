@@ -44,49 +44,11 @@
 	</style>
 
 	<script type = "text/javascript">	
-		var grm_genomeCount = 0;
-		var inf_genomeCount = 0; 
-		var file_genomeCount = 0; 
+		var genomeCount = new Object();
 
 		function getClientWidth() {
 			return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
 		}	
-
-		function setFormat(format) { 
-			grm_clearFormat(); 				
-			file_clearFormat(); 
-			inf_clearFormat();				
-						
-			if (format == 'file') { 
-				document.getElementById('file_widthMonitor').value = getClientWidth(); 
-				document.getElementById('file_showForm').style.display = ''; 
-				document.choose.inputformat[0].checked = true;
-			} else { 
-				document.getElementById('file_showForm').style.display = 'none'; 
-				document.choose.inputformat[0].checked = false;
-
-			} 
-
-			if (format == 'inf') { 
-				document.getElementById('inf_widthMonitor').value = getClientWidth(); 
-				document.getElementById('inf_showForm').style.display = '';
-				document.choose.inputformat[1].checked = true;
-			} else { 
-				document.getElementById('inf_showForm').style.display = 'none'; 
-				document.choose.inputformat[1].checked = false;
-			}  
-			
-			if (format == 'grm') { 	
-				document.getElementById('grm_widthMonitor').value = getClientWidth(); 
-				document.getElementById('grm_showForm').style.display = ''; 
-				document.choose.inputformat[2].checked = true;
-			} else {
-				document.getElementById('grm_showForm').style.display = 'none'; 
-				document.choose.inputformat[2].checked = false;
-			} 	
-
-			document.getElementById('showHelp').style.display = (format == 'help')?'':'none'; 
-		} 
 
 		function loadFile(file) {
             var X = new XMLHttpRequest();
@@ -96,61 +58,23 @@
             return X.responseText;
         }
 
-		/*File format fubctions*/
-		function file_addGenome() { 
-			++file_genomeCount;
-            var table = document.getElementById("file_genomes");
-            var row = table.insertRow(file_genomeCount - 1);
-            row.align = "left";
-            row.vAlign = "top";
-            var c = [];
-            for (var j = 0; 1 > j; j++) {
-                c[j] = row.insertCell(j);
-                c[j].align = "left";
-                c[j].vAlign = "top";
-            }
-
-            c[0].innerHTML = "<div id = \"content_text1\"><strong>Genome " + file_genomeCount + "</strong></div>" + 
-							 "<div id = \"content\"> <div>Name: <input size='1' id='file_name" + file_genomeCount + "' name='name" + file_genomeCount +
-	                         "'> Aliases <input id='file_alias" + file_genomeCount + "'size='29' name='alias" + file_genomeCount + "'></div></div>"
-		} 	
-
 		function clearFile() { 
 			document.getElementById('genome_file').value = '';
 		} 
 
-		function file_initGenomes(n) {
-            var table = document.getElementById("file_genomes");
-            for(var i = table.rows.length - 1; i >= 0; i--) {
-                table.deleteRow(i);
-            }
-            file_genomeCount = 0;
-            for (var i = 0; i < n; i++) {
-                file_addGenome();
-            }
+		function showTarget(idform, show) {
+			document.getElementById(document.forms[idform].name + "_targetDiv").style.display= show ? '' : 'none';
+			document.getElementById(document.forms[idform].name + "_targetControl").style.display=show ? 'none' : '';
+            document.forms[idform].elements["useTarget"].value=show ? 1 : 0;
+			return false;
         }
 
-		function file_clearFormat() { 
-			file_initGenomes(2);
-			document.getElementById("file_trees").value = '';
-            document.getElementById("file_stages").value = '3';
-            document.getElementById("file_target").value = '';
-            document.getElementById("file_completion").value = ''	
-			file_showTarget(false);
-		} 
-
-		function file_showTarget(show) {
-            document.getElementById('file_targetDiv').style.display= show ? '' : 'none';
-            document.getElementById('file_targetControl').style.display=show ? 'none' : '';
-            document.getElementById('file_useTarget').value=show ? 1 : 0;
-            return false;
-        }
-
-		/*Grimm format functions*/
-        function grm_addGenome() {
-            ++grm_genomeCount;
-            var table = document.getElementById("grm_genomes");
-            var row = table.insertRow(grm_genomeCount - 1);
+		function addGenome(idform) {
+			var form = document.forms[idform]; 
+			++genomeCount[form.name];
+			var value = genomeCount[form.name];
+            var table = document.getElementById(form.name + "_genomes");
+            var row = table.insertRow(value - 1);
             row.align = "left";
             row.vAlign = "top";
             var c = [];
@@ -160,126 +84,105 @@
                 c[j].vAlign = "top";
             }
 
-            c[0].innerHTML =
-                "<div id = \"right_text\"><strong>Genome " + grm_genomeCount + ":</strong></div>" +
-                "<div id = \"content\"> <div>Name: <input size='1' id='grm_name" + grm_genomeCount + "' name='name" + grm_genomeCount +
-				"'> Aliases <input id='grm_alias" + grm_genomeCount + "'size='29' name='alias" + grm_genomeCount + "'></div>" +
-                "<textarea id='grm_genome" + grm_genomeCount + "' name='genome" + grm_genomeCount + "' rows='6' cols='61'></textarea></div>";
-        }
+			if(form.name == "grmForm") { 
+       		    c[0].innerHTML = "<div id = \"right_text\"><strong>Genome " + value + ":</strong></div>" +
+            	"<div id = \"content\"> <div>Name: <input size='1' id='name" + value + "' name='name" + value +
+				"'> Aliases <input id='alias" + value + "'size='29' name='alias" + value + "'></div>" +
+            	"<textarea id='genome" + value + "' name='genome" + value + "' rows='6' cols='61'></textarea></div>";
+			} else { 
+				 c[0].innerHTML = "<div id = \"content_text1\"><strong>Genome " + value + "</strong></div>" + 
+				 "<div id = \"content\"> <div>Name: <input size='1' id='name" + value + "' name='name" + value +
+	             "'> Aliases <input id='alias" + value + "'size='29' name='alias" + value + "'></div></div>"
+			} 
+		}	
 
-		function grm_initGenomes(n) {
-            var table = document.getElementById("grm_genomes");
-            for(var i = table.rows.length - 1; i >= 0; i--) {
+		function initGenomes(idform, n) {
+			var table = document.getElementById(document.forms[idform].name + "_genomes");
+			for(var i = table.rows.length - 1; i >= 0; --i) {
                 table.deleteRow(i);
-            }
-            grm_genomeCount = 0;
+            }           
+			genomeCount[document.forms[idform].name] = 0;            
             for (var i = 0; i < n; i++) {
-                grm_addGenome();
+                addGenome(idform);
             }
         }
-
-		function grm_clearFormat() { 
-			grm_initGenomes(2);
-			document.getElementById("grm_trees").value = '';
-            document.getElementById("grm_stages").value = '3';
-            document.getElementById("grm_target").value = '';
-            document.getElementById("grm_completion").value = ''	
-			grm_viewInformForExample("");
-			grm_showTarget(false);
+		
+		function viewInformForExample(form, showStr) { 
+			if (form.name == "infForm") { 
+				document.getElementById("mam6_information").style.display = "mam6" == showStr ? "" : "none";
+				document.getElementById("mam7_information").style.display = "mam7" == showStr ? "" : "none";
+				document.getElementById("rosaceae_information").style.display = "rosaceae" == showStr ? "" : "none";
+			} else { 
+				document.getElementById("murphy_information").style.display = "murphy" == showStr ? "" : "none";
+				document.getElementById("toy_information").style.display = "toy" == showStr ? "" : "none";
+				document.getElementById("shigella_information").style.display = "shigella" == showStr ? "" : "none";
+			}
 		} 
 
-		function grm_showTarget(show) {
-            document.getElementById('grm_targetDiv').style.display= show ? '' : 'none';
-            document.getElementById('grm_targetControl').style.display=show ? 'none' : '';
-            document.getElementById('grm_useTarget').value=show ? 1 : 0;
-            return false;
-        }
-	
-		function grm_viewInformForExample(showStr) {
-			document.getElementById("grm_murphy_information").style.display = "murphy" == showStr ? "" : "none";
-			document.getElementById("grm_toy_information").style.display = "toy" == showStr ? "" : "none";
-			document.getElementById("grm_shigella_information").style.display = "shigella" == showStr ? "" : "none";
+		function clearFormat(idform) { 
+			initGenomes(idform, 2);
+			document.forms[idform].elements["widthMonitor"].value = getClientWidth(); 		
+			if (document.forms[idform].name == "infForm") { 
+				document.forms[idform].elements["genome"].value = '';
+			}
+			document.forms[idform].elements["trees"].value = '';
+            document.forms[idform].elements["stages"].value = '3';
+            document.forms[idform].elements["target"].value = '';
+            document.forms[idform].elements["completion"].value = '';
+			document.forms[idform].reconstracted.checked = false;
+			if (document.forms[idform].name == "fileForm") { 
+				clearFile();
+			} else { 
+				viewInformForExample(document.forms[idform], "");
+			} 			
+			showTarget(idform, false);
 		} 
 
-		/*InferCARs format functions*/
-		function inf_addGenome() {
-            ++inf_genomeCount;
-            var table = document.getElementById("inf_genomes");
-            var row = table.insertRow(inf_genomeCount - 1);
-            row.align = "left";
-            row.vAlign = "top";
-            var c = [];
-            for (var j = 0; 1 > j; j++) {
-                c[j] = row.insertCell(j);
-                c[j].align = "left";
-                c[j].vAlign = "top";
-            }
-
-            c[0].innerHTML =
-                "<div id = \"content_text1\"><strong>Genome " + inf_genomeCount + "</strong></div>" +
-                "<div id = \"content\"> <div>Name: <input size='1' id='inf_name" + inf_genomeCount + "' name='name" + inf_genomeCount +
-				"'> Aliases <input id='inf_alias" + inf_genomeCount + "'size='28' name='alias" + inf_genomeCount + "'></div></div>"
-        }
-
-		function inf_initGenomes(n) {
-            var table = document.getElementById("inf_genomes");
-            for(var i = table.rows.length - 1; i >= 0; i--) {
-                table.deleteRow(i);
-            }
-            inf_genomeCount = 0;
-            for (var i = 0; i < n; i++) {
-                inf_addGenome();
-            }
-         }
-	
-		function inf_showTarget(show) {
-            document.getElementById('inf_targetDiv').style.display= show ? '' : 'none';
-            document.getElementById('inf_targetControl').style.display=show ? 'none' : '';
-            document.getElementById('inf_useTarget').value=show ? 1 : 0;
-            return false;
-        }
-
-
-    	function inf_clearFormat() { 
-			inf_initGenomes(2); 
-            document.getElementById("inf_genome").value = '';
-            document.getElementById("inf_trees").value = '';
-            document.getElementById("inf_stages").value = '3';
-            document.getElementById("inf_target").value = '';
-            document.getElementById("inf_completion").value = ''	
-			inf_showTarget(false);
-		} 
-
-		function inf_viewInformForExample(showStr) {
-			document.getElementById("inf_mam6_information").style.display = "mam6" == showStr ? "" : "none";
-			document.getElementById("inf_mam7_information").style.display = "mam7" == showStr ? "" : "none";
-			document.getElementById("inf_rosaceae_information").style.display = "rosaceae" == showStr ? "" : "none";
+		function setFormat(format) { 
+			for(var i = 1; i < document.forms.length; ++i) { 
+				clearFormat(i);  				
+			} 
+			
+			for(var i = 1; i < document.forms.length; ++i) { 
+				if (document.forms[i].name == format) { 
+					document.forms[i].style.display = ''; 
+					document.choose.inputformat[i - 1].checked = true;
+				} else { 
+					document.forms[i].style.display = 'none'; 
+					document.choose.inputformat[i - 1].checked = false;
+				} 
+			} 
+			
+			document.getElementById('showHelp').style.display = (format == 'help')?'':'none'; 
 		} 
 
 		/*Set example in file*/
 	    function setMam6() {
-            setFormat('inf'); 
-			inf_initGenomes(6); 
-			inf_viewInformForExample("mam6");
-			document.getElementById("inf_name1").value = 'M';
-	        document.getElementById("inf_name2").value = 'R';
-            document.getElementById("inf_name3").value = 'D';
-            document.getElementById("inf_name4").value = 'Q';
-            document.getElementById("inf_name5").value = 'H';
-            document.getElementById("inf_name6").value = 'C';
+            setFormat('infForm'); 
+			initGenomes(2, 6); 
+			var form = document.forms[2];
+			viewInformForExample(form, "mam6");
+			
+			form.elements["name1"].value = 'M';
+	        form.elements["name2"].value = 'R';
+            form.elements["name3"].value = 'D';
+            form.elements["name4"].value = 'Q';
+            form.elements["name5"].value = 'H';
+            form.elements["name6"].value = 'C';
 
-            document.getElementById("inf_alias1").value = 'mouse mm9';
-            document.getElementById("inf_alias2").value = 'rat rn4';
-            document.getElementById("inf_alias3").value = 'dog canFam2';
-            document.getElementById("inf_alias4").value = 'macaque rheMac2';
-            document.getElementById("inf_alias5").value = 'human hg18';
-            document.getElementById("inf_alias6").value = 'chimpanzee panTro2';
+            form.elements["alias1"].value = 'mouse mm9';
+            form.elements["alias2"].value = 'rat rn4';
+            form.elements["alias3"].value = 'dog canFam2';
+            form.elements["alias4"].value = 'macaque rheMac2';
+            form.elements["alias5"].value = 'human hg18';
+            form.elements["alias6"].value = 'chimpanzee panTro2';
 
-            document.getElementById("inf_genome").value = loadFile('mam6/blocks6.txt');
-            document.getElementById("inf_trees").value = '(((M,R),D),(Q,(H,C)))';
-            document.getElementById("inf_stages").value = '4';
-            document.getElementById("inf_target").value = '';
-            document.getElementById("inf_completion").value = '1299h 1300h 1300t 1301t R\n'+
+            form.elements["genome"].value = loadFile('mam6/blocks6.txt');
+            form.elements["trees"].value = '(((M,R),D),(Q,(H,C)))';
+			form.reconstracted.checked = false;
+            form.elements["stages"].value = '4';
+            form.elements["target"].value = '';
+            form.elements["completion"].value = '1299h 1300h 1300t 1301t R\n'+
                                                             '1289h 1290h 1290t 1291t D\n'+
                                                             '374t 376t oo 375h R\n'+
                                                             '927t 610h 610t 609h R\n'+
@@ -287,170 +190,182 @@
                                                             '81t 83h 80h 84t Q\n'+
                                                             '794h 795t 795h 796t Q\n'+
                                                             '1196h 1198h 1202t 1199t D\n';
-            inf_showTarget(true);
+            showTarget(2, true);
         }
 
         function setMam7() {
-            setFormat('inf');
-			inf_initGenomes(7); 
-			inf_viewInformForExample("mam7");
-			document.getElementById("inf_name1").value = 'M';
-            document.getElementById("inf_name2").value = 'R';
-            document.getElementById("inf_name3").value = 'D';
-            document.getElementById("inf_name4").value = 'Q';
-            document.getElementById("inf_name5").value = 'H';
-            document.getElementById("inf_name6").value = 'C';
-            document.getElementById("inf_name7").value = 'O';
+            setFormat('infForm');
+			initGenomes(2, 7); 
+			var form = document.forms[2];
+			viewInformForExample(form, "mam7");
+			
+			form.elements["name1"].value = 'M';
+            form.elements["name2"].value = 'R';
+            form.elements["name3"].value = 'D';
+            form.elements["name4"].value = 'Q';
+            form.elements["name5"].value = 'H';
+            form.elements["name6"].value = 'C';
+            form.elements["name7"].value = 'O';
 
-            document.getElementById("inf_alias1").value = 'mouse mm9';
-            document.getElementById("inf_alias2").value = 'rat rn4';
-            document.getElementById("inf_alias3").value = 'dog canFam2';
-            document.getElementById("inf_alias4").value = 'macaque rheMac2';
-            document.getElementById("inf_alias5").value = 'human hg18';
-            document.getElementById("inf_alias6").value = 'chimpanzee panTro2';
-            document.getElementById("inf_alias7").value = 'opossum monDom4'; 
+            form.elements["alias1"].value = 'mouse mm9';
+            form.elements["alias2"].value = 'rat rn4';
+            form.elements["alias3"].value = 'dog canFam2';
+            form.elements["alias4"].value = 'macaque rheMac2';
+            form.elements["alias5"].value = 'human hg18';
+            form.elements["alias6"].value = 'chimpanzee panTro2';
+            form.elements["alias7"].value = 'opossum monDom4'; 
             
-            document.getElementById("inf_genome").value = loadFile('mam7/blocks7.txt');
-            document.getElementById("inf_trees").value = '((M,R),DOQHC)\n' +
-                                                     '(MRDO,(Q,(H,C)))';
-            document.getElementById("inf_stages").value = '3';
-            document.getElementById("inf_target").value = '';
-            document.getElementById("inf_completion").value = '';
+            form.elements["genome"].value = loadFile('mam7/blocks7.txt');
+            form.elements["trees"].value = '((M,R),DOQHC)\n' +
+                                           '(MRDO,(Q,(H,C)))';
 
-            inf_showTarget(false);
+			form.reconstracted.checked = true;
+			form.elements["stages"].value = '3';
+            form.elements["target"].value = '';
+            form.elements["completion"].value = '';
+
+            showTarget(2, false);
         }
 
 		function setRosaceae() { 
-			setFormat('inf'); 
-			inf_initGenomes(3); 
-			inf_viewInformForExample("rosaceae");
-			document.getElementById("inf_name1").value = 'P';
-            document.getElementById("inf_name2").value = 'S';
-            document.getElementById("inf_name3").value = 'V';
+			setFormat('infForm'); 
+			initGenomes(2, 3); 
+			var form = document.forms[2];
+			viewInformForExample(form, "rosaceae");
+		
+			form.elements["name1"].value = 'P';
+            form.elements["name2"].value = 'S';
+            form.elements["name3"].value = 'V';
 
-            document.getElementById("inf_alias1").value = 'pp prunus';
-            document.getElementById("inf_alias2").value = 'fv fragaria';
-            document.getElementById("inf_alias3").value = 'vv vitus';
+            form.elements["alias1"].value = 'pp prunus';
+            form.elements["alias2"].value = 'fv fragaria';
+            form.elements["alias3"].value = 'vv vitus';
             
-            document.getElementById("inf_genome").value = loadFile('rosaceae/rosaceae.txt');
-            document.getElementById("inf_trees").value = '((P,S),V)';
-            document.getElementById("inf_stages").value = '3';
-            document.getElementById("inf_target").value = 'PS';
-            document.getElementById("inf_completion").value = '';
-            inf_showTarget(true);
+            form.elements["genome"].value = loadFile('rosaceae/rosaceae.txt');
+            form.elements["trees"].value = '((P,S),V)';
+			form.reconstracted.checked = false;
+            form.elements["stages"].value = '3';
+            form.elements["target"].value = 'PS';
+            form.elements["completion"].value = '';
+
+            showTarget(2, true);
 		} 
 
 
         function setMurphy() {
-			setFormat('grm');
-            grm_initGenomes(7);
-			grm_viewInformForExample("murphy");
+			setFormat('grmForm');
+            initGenomes(3, 7);
+			var form = document.forms[3];
+			viewInformForExample(form, "murphy");
+		
+			form.elements["name1"].value = 'H';
+         	form.elements["alias1"].value = 'human';
+			form.elements["genome1"].value = loadFile('murphy05/murphy05_1.txt');
 
-			document.getElementById("grm_name1").value = 'H';
-         	document.getElementById("grm_alias1").value = 'human';
-			document.getElementById("grm_genome1").value = loadFile('murphy05/murphy05_1.txt');
+            form.elements["name2"].value = 'M';
+            form.elements["alias2"].value = 'mouse';
+			form.elements["genome2"].value = loadFile('murphy05/murphy05_2.txt');
 
-            document.getElementById("grm_name2").value = 'M';
-            document.getElementById("grm_alias2").value = 'mouse';
-			document.getElementById("grm_genome2").value = loadFile('murphy05/murphy05_2.txt');
+			form.elements["name3"].value = 'R';
+            form.elements["alias3"].value = 'rat';
+			form.elements["genome3"].value = loadFile('murphy05/murphy05_3.txt');
 
-			document.getElementById("grm_name3").value = 'R';
-            document.getElementById("grm_alias3").value = 'rat';
-			document.getElementById("grm_genome3").value = loadFile('murphy05/murphy05_3.txt');
+            form.elements["name4"].value = 'C';
+            form.elements["alias4"].value = 'cat';
+			form.elements["genome4"].value = loadFile('murphy05/murphy05_4.txt');
 
-            document.getElementById("grm_name4").value = 'C';
-            document.getElementById("grm_alias4").value = 'cat';
-			document.getElementById("grm_genome4").value = loadFile('murphy05/murphy05_4.txt');
+            form.elements["name5"].value = 'W';
+            form.elements["alias5"].value = 'cattle';
+			form.elements["genome5"].value = loadFile('murphy05/murphy05_5.txt');
 
-            document.getElementById("grm_name5").value = 'W';
-            document.getElementById("grm_alias5").value = 'cattle';
-			document.getElementById("grm_genome5").value = loadFile('murphy05/murphy05_5.txt');
+            form.elements["name6"].value = 'D';
+            form.elements["alias6"].value = 'dog';
+			form.elements["genome6"].value = loadFile('murphy05/murphy05_6.txt');
 
-            document.getElementById("grm_name6").value = 'D';
-            document.getElementById("grm_alias6").value = 'dog';
-			document.getElementById("grm_genome6").value = loadFile('murphy05/murphy05_6.txt');
+            form.elements["name7"].value = 'P';
+            form.elements["alias7"].value = 'pig';
+			form.elements["genome7"].value = loadFile('murphy05/murphy05_7.txt');           
 
-            document.getElementById("grm_name7").value = 'P';
-            document.getElementById("grm_alias7").value = 'pig';
-			document.getElementById("grm_genome7").value = loadFile('murphy05/murphy05_7.txt');           
-
-            document.getElementById("grm_trees").value = '((H,(M,R)),DCPW)\n'+
-                                                     '((D,C),HRMPW)\n' +
-                                                     '((P,W),HRMDC)';
-			
-            document.getElementById("grm_stages").value = '3';
-            document.getElementById("grm_target").value = 'DCPW';
-            document.getElementById("grm_completion").value = '';
-            grm_showTarget(true);
+            form.elements["trees"].value = '((H,(M,R)),DCPW)\n'+
+                                           '((D,C),HRMPW)\n' +
+                                           '((P,W),HRMDC)';
+			form.reconstracted.checked = false;
+            form.elements["stages"].value = '3';
+            form.elements["target"].value = 'DCPW';
+            form.elements["completion"].value = '';
+            showTarget(3, true);
         }
 
         function setToy() {
-			setFormat('grm');
-			grm_initGenomes(4);
-			grm_viewInformForExample("toy");
-	
-     		document.getElementById("grm_name1").value = '1';
-			document.getElementById("grm_alias1").value = 'P1';
-            document.getElementById("grm_genome1").value = loadFile('toy/toyblks_1.txt');
+			setFormat('grmForm');
+			initGenomes(3, 4);
+			var form = document.forms[3];
+			viewInformForExample(form, "toy");
+		
+     		form.elements["name1"].value = '1';
+			form.elements["alias1"].value = 'P1';
+            form.elements["genome1"].value = loadFile('toy/toyblks_1.txt');
 
-			document.getElementById("grm_name2").value = '2';
-            document.getElementById("grm_alias2").value = 'P2';
-			document.getElementById("grm_genome2").value = loadFile('toy/toyblks_2.txt');
+			form.elements["name2"].value = '2';
+            form.elements["alias2"].value = 'P2';
+			form.elements["genome2"].value = loadFile('toy/toyblks_2.txt');
 
-			document.getElementById("grm_name3").value = '3';
-            document.getElementById("grm_alias3").value = 'P3';
-			document.getElementById("grm_genome3").value = loadFile('toy/toyblks_3.txt');
+			form.elements["name3"].value = '3';
+            form.elements["alias3"].value = 'P3';
+			form.elements["genome3"].value = loadFile('toy/toyblks_3.txt');
 
-            document.getElementById("grm_name4").value = '4';
-            document.getElementById("grm_alias4").value = 'P4';
-    		document.getElementById("grm_genome4").value = loadFile('toy/toyblks_4.txt');
+            form.elements["name4"].value = '4';
+            form.elements["alias4"].value = 'P4';
+    		form.elements["genome4"].value = loadFile('toy/toyblks_4.txt');
 			
-            document.getElementById("grm_trees").value = '((1,2),(3,4))';
+            form.elements["trees"].value = '((1,2),(3,4))';
+			form.reconstracted.checked = false; 
 
-            document.getElementById("grm_stages").value = '3';
-            document.getElementById("grm_target").value = '';
-            document.getElementById("grm_completion").value = '';
+            form.elements["stages"].value = '3';
+            form.elements["target"].value = '';
+            form.elements["completion"].value = '';
 
-            grm_showTarget(false);
+            showTarget(3, false);
         }
 
 		function setShigella() { 
-			setFormat('grm'); 
-			grm_initGenomes(6);
-			grm_viewInformForExample("shigella");
+			setFormat('grmForm'); 
+			initGenomes(3, 6);
+			var form = document.forms[3];
+			viewInformForExample(form, "shigella");
+		
+      		form.elements["name1"].value = 'A';
+			form.elements["alias1"].value = 'Shi1 S1';
+			form.elements["genome1"].value = loadFile('shigella/shigella_1.txt');
 
-      		document.getElementById("grm_name1").value = 'A';
-			document.getElementById("grm_alias1").value = 'Shi1 S1';
-			document.getElementById("grm_genome1").value = loadFile('shigella/shigella_1.txt');
+            form.elements["name2"].value = 'B';
+            form.elements["alias2"].value = 'Shi2 S2';
+			form.elements["genome2"].value = loadFile('shigella/shigella_2.txt');
 
-            document.getElementById("grm_name2").value = 'B';
-            document.getElementById("grm_alias2").value = 'Shi2 S2';
-			document.getElementById("grm_genome2").value = loadFile('shigella/shigella_2.txt');
+			form.elements["name3"].value = 'C';
+            form.elements["alias3"].value = 'Shi3 S3';
+			form.elements["genome3"].value = loadFile('shigella/shigella_3.txt');
 
-			document.getElementById("grm_name3").value = 'C';
-            document.getElementById("grm_alias3").value = 'Shi3 S3';
-			document.getElementById("grm_genome3").value = loadFile('shigella/shigella_3.txt');
+            form.elements["name4"].value = 'D';
+            form.elements["alias4"].value = 'Shi4 S4';
+			form.elements["genome4"].value = loadFile('shigella/shigella_4.txt');
 
-            document.getElementById("grm_name4").value = 'D';
-            document.getElementById("grm_alias4").value = 'Shi4 S4';
-			document.getElementById("grm_genome4").value = loadFile('shigella/shigella_4.txt');
+            form.elements["name5"].value = 'E';
+            form.elements["alias5"].value = 'Shi5 S5';
+			form.elements["genome5"].value = loadFile('shigella/shigella_5.txt');
 
-            document.getElementById("grm_name5").value = 'E';
-            document.getElementById("grm_alias5").value = 'Shi5 S5';
-			document.getElementById("grm_genome5").value = loadFile('shigella/shigella_5.txt');
+            form.elements["name6"].value = 'F';
+            form.elements["alias6"].value = 'Shi6 S6';
+			form.elements["genome6"].value = loadFile('shigella/shigella_6.txt');           
 
-            document.getElementById("grm_name6").value = 'F';
-            document.getElementById("grm_alias6").value = 'Shi6 S6';
-			document.getElementById("grm_genome6").value = loadFile('shigella/shigella_6.txt');           
-
-            document.getElementById("grm_trees").value = '(((A,B),F),((D,C),E))';
-			
-            document.getElementById("grm_stages").value = '4';
+            form.elements["trees"].value = '(((A,B),F),((D,C),E))';
+			form.reconstracted.checked = false;
+            form.elements["stages"].value = '4';
        
-            document.getElementById("grm_completion").value = '357h 365t 268t 321h D\n' + 
+            form.elements["completion"].value = '357h 365t 268t 321h D\n' + 
 															  '400t 401h 398h 401t D\n' + 
 															  '425t 426t 426h 407h B';
-            grm_showTarget(true);
+            showTarget(3, true);
 		} 
 	</script>
 </head>
@@ -458,27 +373,25 @@
 	<header> 
 		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
 	</header>
-
+		
 	<nav id = "menu">
 		<p> 
 			<strong> Input formats: </strong> <br>
 			<blockquote> 
 				<form name="choose">
-					<input type="radio" name="inputformat" value="download file" onClick="setFormat('file');" CHECKED/>  <font color = "blue"> download file </font> <br/>
-					<input type="radio" name="inputformat" value="infercars" onClick="setFormat('inf');"/>  <font color = "blue"> infercars </font> <br/>
-					<input type="radio" name="inputformat" value="grimm" onClick="setFormat('grm');"/>  <font color = "blue"> grimm </font> <br/>
+					<input type="radio" name="inputformat" value="download file" onClick="setFormat('fileForm');" CHECKED/>  <font color = "blue"> download file </font> <br/>
+					<input type="radio" name="inputformat" value="infercars" onClick="setFormat('infForm');"/>  <font color = "blue"> infercars </font> <br/>
+					<input type="radio" name="inputformat" value="grimm" onClick="setFormat('grmForm');"/>  <font color = "blue"> grimm </font> <br/>					
 				</form>
 			</blockquote>
 			<strong> Examples: </strong> <br>
 			<blockquote> 
-				<form name="example">
-					<input type="radio" name="examples" value="rosaceae" onClick="setRosaceae();"/>  <font color = "blue"> rosaceae </font> <br/>
-					<input type="radio" name="examples" value="mam7" onClick="setMam7();"/>  <font color = "blue"> mam7 </font> <br/>
-					<input type="radio" name="examples" value="mam6" onClick="setMam6();"/>  <font color = "blue"> mam6 </font> <br/>
-					<input type="radio" name="examples" value="murphy05" onClick="setMurphy();"/>  <font color = "blue"> murphy05 </font> <br/>
-					<input type="radio" name="examples" value="toy" onClick="setToy();"/>  <font color = "blue"> toy </font> <br/>
-					<input type="radio" name="examples" value="shigella" onClick="setShigella();"/>  <font color = "blue"> shigella </font> <br/>
-				</form>
+				<a href="#" onclick="setRosaceae(); return false;">rosaceae</a> <br>      
+				<a href="#" onclick="setMam7(); return false;">mam7</a> <br>	
+				<a href="#" onclick="setMam6(); return false;">mam6</a> <br>
+		        <a href="#" onclick="setMurphy(); return false;">murphy05</a> <br>
+		        <a href="#" onclick="setToy(); return false;">toy</a> <br>
+				<a href="#" onclick="setShigella(); return false;">shigella</a> <br>      
 			</blockquote>
 			<a href="#" onclick="setFormat('help'); return false;">How to work</a> <br>			
 		</p>
@@ -486,23 +399,21 @@
 
 	<div id = "menu_content">	
 	<!-- file format to detected-->
-	<div id = "file_showForm"> 
-		<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="file_mgraForm">
-
-		<input type="hidden" name="useFormat" id="file_useFormat" value="auto"/>
-		<input type="hidden" name="widthMonitor" id="file_widthMonitor" value=""/>
-		
+	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="fileForm">
 		<h2><p align="center">Genomes</p></h2>	
-
-		<table id="file_genomes">
+	
+		<input type="hidden" name="useFormat" id="useFormat" value="auto"/>
+		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
+		
+		<table id="fileForm_genomes">
 	    </table>
 
 	    <script>
 			document.choose.inputformat[0].checked = true; 
-	        file_initGenomes(2);
+	        initGenomes(1, 2);
 	    </script>
 		
-		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="file_addGenome(); return false;"/> </div>
+		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="addGenome(1); return false;"/> </div>
 
 		<p>
         	<div id = "content_text1"> <strong>Load file with genomes:</strong> </div> 
@@ -514,11 +425,12 @@
     	    MGRA assumes that only terminal branches are known.  
     	</p>
    		
-		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="file_trees"></textarea></div>
-		<input type="checkbox" id="grm_reconstr" name="reconstr" value="reconstr1" /><strong>&nbsp;recostructed tree</strong><br/>
-
+		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
+	    <input type="checkbox" name="reconstracted" value="1" /><strong>&nbsp;recostructed tree</strong><br/>
+		
 	    <p>
-	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="file_stages" value="3"/><br>
+	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="stages" value="3"/><br>
 	        <p>
 				Higher values correspond to less reliable heuristics.
 		        The highest value is 4 and usually it still requires manual completion (see below).
@@ -527,13 +439,13 @@
 			</p>
 	    </p>
 
-	    <div id="file_targetControl">
-            <a href="#" onclick="return file_showTarget(true);">Show Target and Completion fields</a>
+	    <div id="fileForm_targetControl">
+            <a href="#" onclick="return showTarget(1, true);">Show Target and Completion fields</a>
         </div>
 
-        <div id="file_targetDiv" style="display:none;">
+        <div id="fileForm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return file_showTarget(false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return showTarget(1, false);">Remove Target and Completion fields</a>
 	   		</p>
 
     		<p>
@@ -542,7 +454,7 @@
 		        	If 'target' is specified, MGRA focuses on reconstruction of the specified ancestral genome
 		        	and can produce a partial reconstruction at any point (even if the transformation is not complete).
 				</p>
-    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="file_target"/><br>
+    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
 		    <p>	
 		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
@@ -552,10 +464,10 @@
 		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
 		    </p> 
 			<div id = "content">
-			    <textarea rows="5" cols="60" name="completion" id="file_completion"></textarea>
+			    <textarea rows="5" cols="60" name="completion" id="completion"></textarea>
 		    </div>
 
-		    <input type="hidden" name="useTarget" id="file_useTarget" value="0"/>
+		    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 		</div> 
 			<p>
 				<div align = "center"> 
@@ -563,18 +475,17 @@
 				</div>
 		    </p>
     </form>
-	</div> 
-
+	
 	<!--Form for infercars format-->
-	<div id = "inf_showForm" style="display:none;"> 
-		<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="inf_mgraForm">
-
-		<input type="hidden" name="useFormat" id="inf_useFormat" value="infercars"/>
-		<input type="hidden" name="widthMonitor" id="inf_widthMonitor" value=""/>
+	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="infForm" style="display:none;">
 		
 		<h2><p align="center">Genomes in infercars format</p></h2>	
 
-		<div id="inf_mam6_information" style="display:none;">
+		
+		<input type="hidden" name="useFormat" id="useFormat" value="infercars"/>
+		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
+	
+		<div id="mam6_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
 			<p>
 			Synteny blocks for 6 mammalian species, constructed by Jian Ma from the following builds: 
@@ -584,7 +495,7 @@
 			</p>
 		</div>
 
-		<div id="inf_mam7_information" style="display:none;">
+		<div id="mam7_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
 			<p>
 			Synteny blocks for 7 mammalian species, constructed by Jian Ma from the following builds: 
@@ -592,7 +503,7 @@
 			</p>
 		</div>
 
-		<div id="inf_rosaceae_information"	style="display:none;">
+		<div id="rosaceae_information"	style="display:none;">
 			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>
 			<p>
 				Synteny blocks for 3 genomes in rosaceous subfamilies: Prunus, Fragaria, Vitis. 
@@ -600,29 +511,25 @@
 			</p>
 		</div>
 		
-
-		<table id="inf_genomes">
+		<table id="infForm_genomes">
 	    </table>
 
-	    <script>
-	        inf_initGenomes(2);
-	    </script>
-		
-		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="inf_addGenome(); return false;"/> </div>
+		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="addGenome(2); return false;"/> </div>
 
 		<div id ="right_text"> <strong>Genome:</strong></div>
-		<div id ="content"> <textarea id='inf_genome' name='genome' rows='10' cols='61'></textarea></div>
+		<div id ="content"> <textarea id='genome' name='genome' rows='10' cols='61'></textarea></div>
 
 		<p>
     	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
     	    MGRA assumes that only terminal branches are known.  
     	</p>
    		
-		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="inf_trees"></textarea></div>
-		<input type="checkbox" id="inf_reconstr" name="reconstr" value="reconstr1" /><strong>&nbsp;recostructed tree</strong><br/>
-
+		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
+		<input type="checkbox" name="reconstracted" value="1" /><strong>&nbsp;recostructed tree</strong><br/>
+		
 	    <p>
-	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="inf_stages" value="3"/><br>
+	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="stages" value="3"/><br>
 	        <p>
 				Higher values correspond to less reliable heuristics.
 		        The highest value is 4 and usually it still requires manual completion (see below).
@@ -631,13 +538,13 @@
 			</p>
 	    </p>
 
-	    <div id="inf_targetControl">
-            <a href="#" onclick="return inf_showTarget(true);">Show Target and Completion fields</a>
+	    <div id="infForm_targetControl">
+            <a href="#" onclick="return showTarget(2, true);">Show Target and Completion fields</a>
         </div>
 
-        <div id="inf_targetDiv" style="display:none;">
+        <div id="infForm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return inf_showTarget(false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return showTarget(2, false);">Remove Target and Completion fields</a>
 	   		</p>
 
     		<p>
@@ -646,7 +553,7 @@
 		        	If 'target' is specified, MGRA focuses on reconstruction of the specified ancestral genome
 		        	and can produce a partial reconstruction at any point (even if the transformation is not complete).
 				</p>
-    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="inf_target"/><br>
+    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
 		    <p>	
 		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
@@ -656,10 +563,10 @@
 		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
 		    </p> 
 			<div id = "content">
-			    <textarea rows="5" cols="60" name="completion" id="inf_completion"></textarea>
+			    <textarea rows="5" cols="60" name="completion" id="completion"></textarea>
 		    </div>
 
-		    <input type="hidden" name="useTarget" id="inf_useTarget" value="0"/>
+		    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 		</div> 
 			<p>
 				<div align = "center"> 
@@ -667,19 +574,16 @@
 				</div>
 		    </p>
     </form>
-	</div> 
-
 
 	<!--Form for grimm format-->
-	<div id = "grm_showForm" style="display:none;"> 
-	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="grm_mgraForm" >
+	<form method="post" action="http://127.0.0.1:8080" enctype="multipart/form-data" name="grmForm" style="display:none;">
 		
-		<input type="hidden" name="useFormat" id="grm_useFormat" value="grimm"/>
-		<input type="hidden" name="widthMonitor" id="grm_widthMonitor" value=""/>
-	
 		<h2><p align="center">Genomes in grimm format</p></h2>	
 
-		<div id="grm_murphy_information" style="display:none;">
+		<input type="hidden" name="useFormat" id="useFormat" value="grimm"/>
+		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
+	
+		<div id="murphy_information" style="display:none;">
 			<p style="text-indent: 25px;"><strong>Information on the example:</strong></p>
 			<p>
 			Synteny blocks for 7 mammalian genomes:
@@ -688,7 +592,7 @@
 			</p>
 		</div>	
 
-		<div id="grm_toy_information" style="display:none;">
+		<div id="toy_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong>Information on the example:</strong> </p>
 			<p>
 			Synteny blocks for a set of 4 toy genomes shown in Fig.3 in the paper:
@@ -697,7 +601,7 @@
 			</p>
 		</div>	
 
-		<div id="grm_shigella_information" style="display:none;">
+		<div id="shigella_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong>Information on the example:</strong> </p>
 			<p>
 			Olga Bochkareva, Marat Kazanov, Mikhail Gelfand, personal communication. Institute for Information Transmission Problems of the Russian Academy of Sciences (Kharkevich Institute). <br/>
@@ -705,25 +609,22 @@
 			</p>
 		</div>	
 
-    	<table id="grm_genomes">
+    	<table id="grmForm_genomes">
 	    </table>
-
-	    <script>
-	        grm_initGenomes(2);
-	    </script>
 		
-		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="grm_addGenome(); return false;"/> </div>
+		<div align = "center"> <input name="add_genome" type="button" value="add genome" onclick="addGenome(3); return false;"/> </div>
 	    
     	<p>
     	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
     	    MGRA assumes that only terminal branches are known.  
     	</p>
    	
-		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="grm_trees"></textarea></div>
-		<input type="checkbox" id="grm_reconstr" name="reconstr" value="reconstr1" /><strong>&nbsp;recostructed tree</strong><br/>
-
+		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="trees"></textarea></div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
+	    <input type="checkbox" name="reconstracted" value="1" /><strong>&nbsp;recostructed tree</strong><br/>
+	    
 	    <p>
-	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="grm_stages" value="3"/><br>
+	        <strong>The number of stages to perform:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='5' name='stages' id="stages" value="3"/><br>
 	        <p>
 				Higher values correspond to less reliable heuristics.
 		        The highest value is 4 and usually it still requires manual completion (see below).
@@ -732,13 +633,13 @@
 			</p>
 	    </p>
 
-	    <div id="grm_targetControl">
-            <a href="#" onclick="return grm_showTarget(true);">Show Target and Completion fields</a>
+	    <div id="grmForm_targetControl">
+            <a href="#" onclick="return showTarget(3, true);">Show Target and Completion fields</a>
         </div>
 
-        <div id="grm_targetDiv" style="display:none;">
+        <div id="grmForm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return grm_showTarget(false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return showTarget(3, false);">Remove Target and Completion fields</a>
 	   		</p>
 
     		<p>
@@ -747,7 +648,7 @@
 		        	If 'target' is specified, MGRA focuses on reconstruction of the specified ancestral genome
 		        	and can produce a partial reconstruction at any point (even if the transformation is not complete).
 				</p>
-    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="grm_target"/><br>
+    	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
 		    <p>	
 		        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
@@ -757,18 +658,18 @@
 		        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
 		    </p> 
 			<div id = "content">
-			    <textarea rows="6" cols="60" name="completion" id="grm_completion"></textarea>
+			    <textarea rows="6" cols="60" name="completion" id="completion"></textarea>
 		    </div>
 
-		    <input type="hidden" name="useTarget" id="grm_useTarget" value="0"/>
-		</div> 
+		    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
+		</div>
 			<p>
 				<div align = "center"> 
 			        <input type="submit" value="run mgra"/>
 				</div>
 		    </p>
     </form>
-	</div> </div>
+	</div>
 
 	<div id = "showHelp" style="display:none;"> <div id = "content">
 		<h2><p align="center">How to work</p></h2>		
@@ -820,7 +721,7 @@
 
 		Name genome is one symbol
 	</div>
-	</div>	
+	</div>
 
 	<footer>
 	<hr>
@@ -828,3 +729,7 @@
 	</footer>
 </body>
 </html>
+
+<!--<form name="test">
+<input type="checkbox" name="reconstract" value="reconstr1"/><strong>&nbsp;recostructed tree</strong><br/>
+</form>-->

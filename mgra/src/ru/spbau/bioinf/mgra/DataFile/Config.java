@@ -4,7 +4,6 @@ import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -19,7 +18,7 @@ public class Config {
         }
     }
 
-    private static final String CFG_FILE_NAME = "mgra.cfg";
+    private String cfgFileName;
     private ArrayList<InformationGenome> nameGenome = new ArrayList<InformationGenome>();
     private String inputFormat = "";
     private ArrayList<String> trees = new ArrayList<String>();
@@ -33,7 +32,8 @@ public class Config {
 
     private HashMap<String, Character> alias = new HashMap<String, Character>();
 
-    public Config(String path, Properties properties) throws LongUniqueName {
+    public Config(String path, Properties properties, String fileName) throws LongUniqueName {
+        cfgFileName = fileName;
         /*[Genomes]*/
         int aliasId = 1;
         String key = "alias" + aliasId;
@@ -96,8 +96,8 @@ public class Config {
         return alias.get(name);
     }
 
-    public static String getNameFile() {
-        return CFG_FILE_NAME;
+    public String getNameFile() {
+        return cfgFileName;
     }
 
     public ArrayList<String> getNameGenomes() {
@@ -145,7 +145,7 @@ public class Config {
     }
 
     public void createFile(boolean isShowTree) throws IOException {
-        PrintWriter cfgFile = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(pathParentFile, CFG_FILE_NAME)), "UTF-8"));
+        PrintWriter cfgFile = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(pathParentFile, cfgFileName)), "UTF-8"));
 
         cfgFile.println("[Genomes]");
         for(InformationGenome genome: nameGenome) {

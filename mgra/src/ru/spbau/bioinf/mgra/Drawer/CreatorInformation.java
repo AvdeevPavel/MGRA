@@ -28,7 +28,7 @@ public class CreatorInformation {
 
     HashMap<HashSet<Character>, DataGenome> information = new HashMap<HashSet<Character>, DataGenome>();
 
-    public CreatorInformation(Config config, BlocksInformation blocksInformation, PrintWriter out) {
+   /* public CreatorInformation(Config config, BlocksInformation blocksInformation, PrintWriter out) {
         HashMap<HashSet<Character>, Genome> genomes = new HashMap<HashSet<Character>, Genome>();
 
         JettyServer.responseStage(out, "Read information in *.gen and create output");
@@ -205,5 +205,5 @@ public class CreatorInformation {
 
     private static BufferedReader getBufferedInputReader(File file) throws FileNotFoundException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-    }
+    }*/
 }

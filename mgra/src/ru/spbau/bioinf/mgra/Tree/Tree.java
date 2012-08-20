@@ -6,6 +6,8 @@ import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Tree {
     private Node root;
@@ -44,16 +46,12 @@ public class Tree {
         return ((root.calculateBranch() - 1) == 2 * numberGenomes - 3);
     }
 
-    public boolean isCompleteTransformation(CreatorInformation creator) {
-        return root.isCompleteTransformation(creator);
-    }
-
     public void createBranches(ArrayList<Branch> branches) {
         root.createBranches(root.getDataSet(), branches);
         branches.add(root.createRootBranch());
     }
 
-    public Element toXml(CreatorInformation genomes) {
+    public Element toXml(HashMap<HashSet<Character>, String> builtGenome) {
         elementOfLevel = new ArrayList<Element>(this.height + 1);
         for(int i = 0; i <= this.height; ++i) {
             elementOfLevel.add(new Element("row"));
@@ -62,7 +60,7 @@ public class Tree {
         Element tree = new Element("tree");
         XmlUtil.addElement(tree, "id" , idTree);
 
-        root.addCells(elementOfLevel, genomes);
+        root.addCells(elementOfLevel, builtGenome);
 
         for(int i = 1; i <= root.getCurrentMaxHeight(); ++i) {
             tree.addContent(elementOfLevel.get(i));

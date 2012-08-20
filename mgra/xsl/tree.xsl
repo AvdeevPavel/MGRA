@@ -9,9 +9,9 @@
 </head>
 <body>
     <header> 
-		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1> <!--mgra.bioinf.spbau.ru-->
+		<h1><p align="center"><a href="http://mgra.bioinf.spbau.ru">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
 	</header>
-    <xsl:apply-templates select="genomes/genome_png" mode="target"/>	
+    <xsl:apply-templates select="genomes/genome" mode="target"/>	
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
@@ -33,11 +33,13 @@
 	.end3{color:maroon}
 </style>
 
-<!--<script src="/home/Desktop/MGRA/mgra/html/lib/kinetic-v3.10.4.js"></script>-->
-<script src="http://www.kineticjs.com/download/kinetic-v3.10.5.js"></script>
+<script src="lib/jquery-1.8.0.js"></script>
+<script src="lib/kinetic-v3.10.5.js"></script>
 <script>
+	load_information = null; 
+
 	var values =  [
-		<xsl:apply-templates select="genomes/genome_png/name"/>
+		<xsl:apply-templates select="genomes/genome/name"/>
 	]
 				
 	var trees = [ 
@@ -178,7 +180,7 @@
  		var stepHeight = stage.getHeight() / (trees[k].length + 1); 
 		var countInLevel = 2; 
 
-		for(var i = 0; i &lt; trees[k].length; ++i) { 
+		for(var i = 0; i &lt;trees[k].length; ++i) { 
 			countInLevel = countInLevel * 2;
 			var stepWidth = 1; 
 			for(var j = 0; j &lt; trees[k][i].length; ++j) { 
@@ -357,14 +359,29 @@
     	    }, false);
 		} 
 	};
+
+	$(document).ready(function(){
+		function my_load_func(div_id, inf_id) { 
+			$(div_id).load("hello.html");
+   			
+			$(div_id).ajaxSend(function() { 
+				$(inf_id).html("Please wait. We processed this request");	
+			});
+
+			$(div_id).ajaxComplete(function() { 
+				$(inf_id).html("Process is finish.");	
+			});
+		} 
+		load_information = my_load_func; 
+	});	
 </script>
 </head>
 <body>
 	<header> 
-		<h1><p align="center"><a href="#">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>  <!--mgra.bioinf.spbau.ru-->
+		<h1><p align="center"><a href="http://mgra.bioinf.spbau.ru">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>  
 	</header>
-	<h3>Information for working subtree(s):</h3>
-	<ol type = "1">
+	<p><font size="4"><strong>Information for working subtree(s): </strong></font></p> 
+	<ol type="1">
 		<li>
 			You can drag and drop nodes. Click interesting node and drag what you want.   
 		</li>
@@ -374,13 +391,13 @@
 		</li>
 		<br/>
 		<li>
-			If arrow is black, you push double click and see transformation.
+			If arrow is black, you push double click and see transformation.        		
 		</li>
 		<br/>
 	</ol>
 	<xsl:apply-templates select="trees"/>
 	<xsl:apply-templates select="genomes"/>	
-	<xsl:apply-templates select="all_transformations"/>
+	<xsl:apply-templates select="transformations"/>
 	<footer>
 	<hr/>
 	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
@@ -436,91 +453,34 @@
 
 <!--Genomes transformation-->
 <xsl:template match="genomes">
-	<xsl:apply-templates select = "genome_png"/>
+	<xsl:apply-templates select = "genome"/>
 </xsl:template>
 
-<xsl:template match="genome_png" mode ="target">
+<xsl:template match="genome" mode ="target">
     <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-	<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
-	<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
-	<div id="buttons_gen_{./name}" align="center">
-		<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
-		<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
-	</div>
+	<p id="gen{./name}_bar"></p>
+	<div id="gen{./name}_info"></div>
 </xsl:template>
 
-<xsl:template match="genome_png">
+<xsl:template match="genome">
 	<div id="gen{./name}" style="display:none;">
     	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-		<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>
-		<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
-		<div id="buttons_gen_{./name}" align="center">
-			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
-			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
-		</div>
- 	</div>
+		<p id="gen{./name}_bar"></p>
+		<div id="gen{./name}_info"></div>
+	</div>
 </xsl:template>
 
 <!--Transformations XSL transformation-->
-<xsl:template match="all_transformations">
-	<xsl:apply-templates select = "transformations_png"/>
+<xsl:template match="transformations">
+	<xsl:apply-templates select = "transformation"/>
 </xsl:template>
 	
-<xsl:template match="transformations_png">
-	<div id="trs{./name}" style="display:none;">
-		<h3>Transformations for <xsl:value-of select="./name"/></h3>
-		<xsl:if test= "resize = 'true'"> <img src="{./name}_trs.png" width="100%"></img> </xsl:if>
-		<xsl:if test= "resize = 'false'"> <img src="{./name}_trs.png"></img> </xsl:if>
-		<div id="buttons_trs_{./name}" align="center">
-			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
-			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
-		</div>
-	</div>
-</xsl:template>
-
 <xsl:template match="transformation">
-	<xsl:apply-templates select="before/chromosome">
-		<xsl:sort select="id" data-type="number"/>
-	</xsl:apply-templates>
-	<xsl:apply-templates select="end"/>
-	<br/>
-	<xsl:apply-templates select="after/chromosome">
-		<xsl:sort select="id" data-type="number"/>
-	</xsl:apply-templates>
-	<br/>
-</xsl:template>
-
-<xsl:template match="gene">
-	<xsl:apply-templates select="end" mode="prefix"/>
-	<a href="#{id}" title="{id}">
-	<xsl:choose>
-		<xsl:when test="direction='minus'">&lt;</xsl:when>
-		<xsl:otherwise>&gt;</xsl:otherwise>
-	</xsl:choose>
-	</a>
-	<xsl:apply-templates select="end" mode="suffix"/>
-</xsl:template>
-
-<xsl:template match="end">
-	<span class="end{color}">
-		<xsl:value-of select="id"/><xsl:value-of select="type"/>&#160;
-	</span>
-</xsl:template>
-
-<xsl:template match="end" mode="prefix">
-	<xsl:if test="((../direction ='plus') and(type='t')) or ((../direction ='minus') and(type='h'))">
-		&#160;<xsl:apply-templates select="." mode="show"/>
-	</xsl:if>
-</xsl:template>
-
-<xsl:template match="end" mode="suffix">
-	<xsl:if test="((../direction ='plus') and(type='h')) or ((../direction ='minus') and(type='t'))">
-		<xsl:apply-templates select="." mode="show"/>&#160;
-	</xsl:if>
-</xsl:template>
-
-<xsl:template match="end" mode="show">
-	<span class="end{color}"><xsl:value-of select="type"/></span>
+	<div id="trs{./name}" style="display:none;">
+		<h3>Transformation for <xsl:value-of select="./name"/></h3>
+		<p id="trs{./name}_bar"></p>
+		<div id="trs{./name}_info"></div>
+	</div>
 </xsl:template>
 
 <xsl:template match="name">

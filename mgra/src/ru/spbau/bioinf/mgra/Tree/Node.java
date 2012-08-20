@@ -6,6 +6,7 @@ import ru.spbau.bioinf.mgra.Parser.Transformer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -96,10 +97,10 @@ public class Node {
         children.add(nodeSecond);
     }
 
-    void addCells(ArrayList<Element> elementsOfLevel, CreatorInformation genomes) {
+    void addCells(ArrayList<Element> elementsOfLevel, HashMap<HashSet<Character>, String> builtGenome) {
         for(Node child: children) {
-            child.addCell(elementsOfLevel.get(child.height), genomes);
-            child.addCells(elementsOfLevel, genomes);
+            child.addCell(elementsOfLevel.get(child.height), builtGenome);
+            child.addCells(elementsOfLevel, builtGenome);
         }
     }
 
@@ -117,22 +118,6 @@ public class Node {
             }
         }
         return false;
-    }
-
-    boolean isCompleteTransformation(CreatorInformation information) {
-        if (parent != null) {
-            if (!information.existsGen(dataSet)) {
-                return false;
-            }
-        }
-
-        for(Node child: children) {
-            if (!child.isCompleteTransformation(information)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     Branch createRootBranch() {
@@ -223,11 +208,10 @@ public class Node {
    }
 
     /*Other function*/
-    private void addCell(Element parent, CreatorInformation information) {
+    private void addCell(Element parent, HashMap<HashSet<Character>, String> builtGenome) {
         Element cell = new Element("cell");
-
-        if (information.existsGen(dataSet)) {
-            XmlUtil.addElement(cell, "name", information.getGenomeName(dataSet));
+        if (builtGenome.get(dataSet) != null) {
+            XmlUtil.addElement(cell, "name", builtGenome.get(dataSet));
         } else {
             XmlUtil.addElement(cell, "name", Transformer.convertToString(dataSet));
         }

@@ -35,14 +35,13 @@
 			float: left; 
     		width: 100px; 
     	    margin: 70px 10px 20px 5px; 
-		} 
+		} 	
 		
 		#file { 	
 			margin: 10px 5px 20px 235px; 
 			padding: 5px;
 		} 
 	</style>
-
 	<script type = "text/javascript">	
 		var genomeCount = new Object();
 
@@ -57,7 +56,7 @@
             X.send('');
             return X.responseText;
         }
-
+		
 		function clearFile() { 
 			document.getElementById('genome_file').value = '';
 		} 
@@ -182,7 +181,7 @@
             form.elements["alias6"].value = 'chimpanzee panTro2';
 
             form.elements["genome"].value = loadFile('mam6/blocks6.txt');
-            form.elements["trees"].value = '(((M,R),D),(Q,(H,C)))';
+			form.elements["trees"].value = '(((M,R),D),(Q,(H,C)))';
 			form.reconstracted.checked = false;
 			setReconstructed(2);
 
@@ -439,7 +438,8 @@
     	</p>
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
-		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree"/> </div>
+		<div id = "new_text"> </div>
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(1);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
 	    <p>

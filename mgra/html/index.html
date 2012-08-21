@@ -45,10 +45,6 @@
 	<script type = "text/javascript">	
 		var genomeCount = new Object();
 
-		function getClientWidth() {
-			return document.compatMode=='CSS1Compat' && !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
-		}	
-
 		function loadFile(file) {
             var X = new XMLHttpRequest();
             X.open('GET', file, false );
@@ -124,7 +120,6 @@
 
 		function clearFormat(idform) { 
 			initGenomes(idform, 2);
-			document.forms[idform].elements["widthMonitor"].value = getClientWidth(); 		
 			if (document.forms[idform].name == "infForm") { 
 				document.forms[idform].elements["genome"].value = '';
 			}
@@ -395,7 +390,7 @@
 				</form>
 			</blockquote>
 			<strong> Examples: </strong> <br>
-			<blockquote> 
+			<blockquote> 						
 				<a href="#" onclick="setRosaceae(); return false;">rosaceae</a> <br>      
 				<a href="#" onclick="setMam7(); return false;">mam7</a> <br>	
 				<a href="#" onclick="setMam6(); return false;">mam6</a> <br>
@@ -413,7 +408,6 @@
 		<h2><p align="center">Genomes</p></h2>	
 	
 		<input type="hidden" name="useFormat" id="useFormat" value="auto"/>
-		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
 		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
 		<input type="hidden" name="useTarget" id="useTarget" value="0"/>
 
@@ -492,7 +486,6 @@
 		<h2><p align="center">Genomes in infercars format</p></h2>	
 
 		<input type="hidden" name="useFormat" id="useFormat" value="infercars"/>
-		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
 		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
 	    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
 	
@@ -589,7 +582,6 @@
 		<h2><p align="center">Genomes in grimm format</p></h2>	
 
 		<input type="hidden" name="useFormat" id="useFormat" value="grimm"/>
-		<input type="hidden" name="widthMonitor" id="widthMonitor" value=""/>
 		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
 		<input type="hidden" name="useTarget" id="useTarget" value="0"/>
 	

@@ -4,144 +4,97 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
+import org.jdom.Document;
 import ru.spbau.bioinf.mgra.Parser.Genome;
 import ru.spbau.bioinf.mgra.Parser.Transformation;
-import ru.spbau.bioinf.mgra.Parser.Transformer;
 import ru.spbau.bioinf.mgra.Server.JettyServer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
-import ru.spbau.bioinf.mgra.Tree.Node;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class CreatorInformation {
-    private static final Logger log = Logger.getLogger(Node.class);
-    private Element gens;
-    private Element trss;
+    private static final Logger log = Logger.getLogger(JettyServer.class);
 
-    class DataGenome {
-        String name = "";
-        boolean exists = false;
-    }
-
-    HashMap<HashSet<Character>, DataGenome> information = new HashMap<HashSet<Character>, DataGenome>();
-
-   /* public CreatorInformation(Config config, BlocksInformation blocksInformation, PrintWriter out) {
-        HashMap<HashSet<Character>, Genome> genomes = new HashMap<HashSet<Character>, Genome>();
-
-        JettyServer.responseStage(out, "Read information in *.gen and create output");
-        createGenomeInformation(config, blocksInformation, genomes, out);
-        JettyServer.responseStage(out, "Read information in *.trs and create output");
-        createTransformationInformation(config, genomes, out);
-    }
-
-    public String getGenomeName(HashSet<Character> nameRequest) {
-        if (information.get(nameRequest) != null) {
-            return information.get(nameRequest).name;
-        }
-        return null;
-    }
-
-    public Element getGenomesXml() {
-        return gens;
-    }
-
-    public Element getTransformationXml() {
-        return trss;
-    }
-
-    public boolean existsGen(HashSet<Character> nameRequest) {
-        if (information.get(nameRequest) != null) {
-            return information.get(nameRequest).exists;
-        }
-        return false;
-    }
-
-    private void createGenomeInformation(Config config, BlocksInformation blocksInformation, HashMap<HashSet<Character>, Genome> genomes, PrintWriter out) {
-        gens = new Element("genomes");
-        File[] files = new File(config.getPathParentFile()).listFiles();
-        for(File file: files) {
-            if (file.getName().endsWith(".gen")) {
-                JettyServer.responseInformation(out, "Create image for " + file.getName());
-                createChromosomesToPNG(gens, file, config, blocksInformation, genomes, out);
-            }
+    public static void createGenome(String nameFile, File requestDirectory) throws IOException {
+        Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME);
+        BlocksInformation blocksInformation = new BlocksInformation(config, requestDirectory);
+        Document doc = new Document();
+        Element rootXml = createImagesForChromosomes(new File(requestDirectory, nameFile.substring(0, nameFile.indexOf("_")) + ".gen"), config, blocksInformation);
+        if (rootXml != null) {
+            doc.setRootElement(rootXml);
+            XmlUtil.saveXml(doc, new File(requestDirectory, nameFile.substring(0, nameFile.lastIndexOf(".") + 1) + "xml"));
         }
     }
 
-    private void createTransformationInformation(Config config, HashMap<HashSet<Character>, Genome> genomes, PrintWriter out) {
-        trss = new Element("all_transformations");
-        File[] files = new File(config.getPathParentFile()).listFiles();
-        for(File file: files) {
-            if (file.getName().endsWith(".trs")) {
-                JettyServer.responseInformation(out, "Create image for " + file.getName());
-                createTransformationToPNG(trss, file, config, genomes.get(Transformer.convertToSet(file.getName().substring(0, file.getName().indexOf('.')))), out);
-            }
+    public static void createTransformation(String nameFile, File requestDirectory) throws IOException {
+        Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME);
+        BlocksInformation blocksInformation = new BlocksInformation(config, requestDirectory);
+        Document doc= new Document();
+        Element rootXml = createImagesForRearrangement(new File(requestDirectory, nameFile.substring(0, nameFile.indexOf("_")) + ".trs"), config, blocksInformation);
+
+        if (rootXml != null) {
+            doc.setRootElement(rootXml);
+            XmlUtil.saveXml(doc, new File(requestDirectory, nameFile.substring(0, nameFile.lastIndexOf(".") + 1) + "xml"));
         }
     }
 
-    private void createChromosomesToPNG(Element parent, File file, Config config, BlocksInformation blocksInformation, HashMap<HashSet<Character>, Genome> genomes, PrintWriter out) {
+    private static Element createImagesForChromosomes(File file, Config config, BlocksInformation blocksInformation) {
         String name = file.getName().substring(0, file.getName().indexOf('.'));
-        HashSet<Character> key = Transformer.convertToSet(name);
-
-        if (information.get(key) == null) {
-            try {
-                BufferedReader input = getBufferedInputReader(file);
-
-                DataGenome data = new DataGenome();
-                Genome genome = new Genome(name);
-                data.name = name;
-                data.exists = true;
-
-                try {
-                    genome.addChromosomes(input, blocksInformation, config.getInputFormat());
-                } catch (IOException e) {
-                    JettyServer.responseErrorServer(out, "Can not read file with " + name + " genome");
-                    return;
-                }
-
-                Element gen;
-                try {
-                    Drawer picture = new Drawer(config.getInputFormat(), genome);
-
-                    try {
-                        picture.writeInPng(config.getPathParentFile() + "/" + name + "_gen");
-                        gen = new Element("genome_png");
-                        XmlUtil.addElement(gen, "name", name);
-                        XmlUtil.addElement(gen, "resize", picture.isBigImage(config.getWidthMonitor()));
-                        JettyServer.responseInformation(out, "Done save " + name + " genome file");
-                    } catch (IOException e) {
-                        JettyServer.responseErrorServer(out, "Can not save image file with " + name + " genome. Full file name " + file.getName());
-                        JettyServer.responseStage(out, "Try save information in xml");
-                        gen = genome.toXml(name);
-                        log.debug("Can not save image file with genome " + file.getName() + "_gen");
-                    }
-                } catch (OutOfMemoryError e) {
-                    JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
-                    gen = genome.toXml(name);
-                } catch (NegativeArraySizeException e) {
-                    JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
-                    gen = genome.toXml(name);
-                } catch (Exception e) {
-                    JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
-                    gen = genome.toXml(name);
-                }
-                genomes.put(key, genome);
-                information.put(key, data);
-                parent.addContent(gen);
-            } catch (IOException e) {
-                JettyServer.responseInformation(out, "Algorithm not created " + name + " genome");
-                log.debug("Algorithm not created " + file.getName());
-            }
-        }
-    }
-
-    private void createTransformationToPNG(Element parent, File file, Config config, Genome genome, PrintWriter out) {
-        String name = file.getName().substring(0, file.getName().indexOf('.'));
-
         try {
-            BufferedReader input = getBufferedInputReader(file);
+           BufferedReader input = getBufferedInputReader(file);
+           Genome genome = new Genome(name);
+
+           try {
+               genome.addChromosomes(input, blocksInformation, config.getInputFormat());
+           } catch (IOException e) {
+               log.debug("Can not read file with " + name + " genome");
+               return null;
+           }
+
+           Element gen;
+           try {
+               Drawer picture = new Drawer(config.getInputFormat(), genome);
+               try {
+                   picture.writeInPng(config.getPathParentFile() + "/" + name + "_gen");
+                   gen = new Element("genome_png");
+                   XmlUtil.addElement(gen, "name", name);
+                   XmlUtil.addElement(gen, "resize", picture.isBigImage(config.getWidthMonitor()));
+                   log.debug("Done save " + name + " genome file");
+               } catch (IOException e) {
+                   gen = genome.toXml(name);
+                   log.debug("Can not save image file with genome " + file.getName() + "_gen");
+               }
+           } catch (OutOfMemoryError e) {
+               gen = genome.toXml(name);
+           } catch (NegativeArraySizeException e) {
+               gen = genome.toXml(name);
+           } catch (Exception e) {
+               gen = genome.toXml(name);
+           } finally {
+               input.close();
+           }
+           return  gen;
+       } catch (IOException e) {
+           log.debug("Algorithm not created " + file.getName());
+           return null;
+       }
+    }
+
+    private static Element createImagesForRearrangement(File file, Config config, BlocksInformation blocksInformation) {
+        String name = file.getName().substring(0, file.getName().indexOf('.'));
+        try {
+            BufferedReader input = getBufferedInputReader(new File(file.getParentFile().getAbsolutePath(), name + ".gen"));
+            Genome genome = new Genome(name);
+
+            try {
+                genome.addChromosomes(input, blocksInformation, config.getInputFormat());
+            } catch (IOException e) {
+                log.error("Can not read file with " + name + " genome");
+                return null;
+            }
+            input.close();
+
+            input = getBufferedInputReader(file);
             ArrayList<Transformation> transformations = new ArrayList<Transformation>();
 
             try {
@@ -150,14 +103,37 @@ public class CreatorInformation {
                     transformations.add(new Transformation(s));
                 }
             } catch (IOException e) {
-                JettyServer.responseErrorServer(out, "Can not read file with " + name + " transformation. Full file name " + file.getName());
-                return;
+                log.error("Can not read file with " + name + " transformation. Full file name " + file.getName());
+                return null;
             }
+            input.close();
 
             for (Transformation transformation : transformations) {
                 transformation.update(genome);
             }
 
+            Element trs = new Element("transformation");
+            XmlUtil.addElement(trs, "name", name);
+
+            int id = 1;
+            for (Transformation transformation : transformations) {
+                Element rear = new Element("rearrangement_xml");
+                XmlUtil.addElement(rear, "id", id++);
+                transformation.toXml(rear);
+                trs.addContent(rear);
+            }
+
+            return trs;
+        } catch (IOException e) {
+            log.debug("Algorithm not created " + file.getName());
+            return null;
+        } catch (CloneNotSupportedException e) {
+            log.error("Problem with clone " + file.getName());
+            return null;
+        }
+    }
+
+   /*
             Element trs;
             try {
                 Drawer picture = new Drawer(config.getInputFormat(), transformations);
@@ -196,14 +172,9 @@ public class CreatorInformation {
                     trs.addContent(transformation.toXml());
                 }
             }
-            parent.addContent(trs);
-        } catch (Exception e) {
-            JettyServer.responseInformation(out, "Algorithm not created " + name + " transformation");
-            log.debug("Algorithm not created " + file.getName());
-        }
-    }
+  */
 
     private static BufferedReader getBufferedInputReader(File file) throws FileNotFoundException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-    }*/
+    }
 }

@@ -1,20 +1,9 @@
 Run local
 	in code: 
-		change variable REQUEST_FILE in JettyServer
+		change path to library kinetic.js in JettyServer
 		change threshold - in server big memory. threshold reduse. bound 0.0005
 	in html
-		change path to library kinetic.js in tree.xsl
 		change adress form in index.html
-	future: 
-		if html out in server is very late, change big image on href. It's help 
-
-change id in chromosome xml, not needed
-
-Сделать отображение newick trees, единственное что есть 
-http://cgi-www.cs.au.dk/cgi-chili/phyfi/go
-http://www.biomedcentral.com/1471-2105/7/315
-
-Если номера блоков всегда цифры оптимизровать под инт. 
 
 жонглироварние
 в обратную сторону тяжело, чем то что показывают
@@ -23,6 +12,10 @@ http://www.biomedcentral.com/1471-2105/7/315
 copy mgra.jar  scp mgra.jar user@192.168.222.254:/opt/mgra
 connect ssh user@192.168.222.254
 
+png сжатием без потерь делает это лучше, чем jpeg с потерями. Вау. 
 
+Протестировать загрузку файла и автодетектинг формата.
+Протестировать когда трансформация xml и картинка генерируется, упорядоченны они ли?\
+Протестировать генерацию xml и картинок.
 
-
+Доделать что бы отображались картинки. КОнфиг и все прочее. ПОдумать вот.  

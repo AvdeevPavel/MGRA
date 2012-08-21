@@ -32,9 +32,10 @@
 	.end2{color:lime}
 	.end3{color:maroon}
 </style>
-
-<script src="lib/jquery-1.8.0.js"></script>
-<script src="lib/kinetic-v3.10.5.js"></script>
+<script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+<script src="http://www.kineticjs.com/download/kinetic-v3.10.5.js"></script>
+<!--<script src="lib/jquery-1.8.0.js"></script>
+<script src="lib/kinetic-v3.10.5.js"></script>-->
 <script>
 	load_information = null; 
 
@@ -123,6 +124,10 @@
 				changeStyle('gen'+values[i], 'gen'+str);
 				changeStyle('trs'+values[i], 'gen'+str);
 			}
+
+			if (document.getElementById('gen'+str+'_info').firstChild == null) { 
+				load_information('gen'+ str, str + "_gen");
+			} 
 		});
 		return text;  
 	}
@@ -267,7 +272,11 @@
 					for (var i = 0; i &lt; values.length; ++i) {
 	                	changeStyle('gen'+values[i], str);
 						changeStyle('trs'+values[i], str);
-                 	}	
+                 	}
+	
+					if (document.getElementById(str + '_info').firstChild == null) { 
+						load_information(str, this.getName() + "_trs");
+					} 
 				});
 			} 		
 		}
@@ -361,15 +370,25 @@
 	};
 
 	$(document).ready(function(){
-		function my_load_func(div_id, inf_id) { 
-			$(div_id).load("hello.html");
-   			
-			$(div_id).ajaxSend(function() { 
-				$(inf_id).html("Please wait. We processed this request");	
-			});
-
-			$(div_id).ajaxComplete(function() { 
-				$(inf_id).html("Process is finish.");	
+		function my_load_func(nameInf, nameFile) {    			
+			$.ajax({ 
+				url: nameFile + ".html",
+				async: false,
+				cashe: false,
+				context: document.body,
+				dataType: 'html',
+				beforeSend: function() { 
+					$('#' + nameInf + "_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images, send. This may take some time.&lt;/u&gt;");	
+				}, 
+				success: function(data) { 
+					$('#' + nameInf + "_info").html(data);
+				}, 
+				error: function() {
+					$('#' + nameInf + "_error").html("&lt;strong&gt;We can not create image. You can download information in view of text file&lt;/strong&gt;");	 				
+				}, 
+				complete: function() { 
+					$('#' + nameInf + "_bar").html("");	
+				}  	
 			});
 		} 
 		load_information = my_load_func; 
@@ -458,15 +477,25 @@
 
 <xsl:template match="genome" mode ="target">
     <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-	<p id="gen{./name}_bar"></p>
+	<p id="gen{./name}_bar" align="center"></p>
+	<p id="gen{./name}_error" align="center"></p>
 	<div id="gen{./name}_info"></div>
+	<div id="buttons_gen_{./name}" align="center">
+		<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
+		<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+	</div>
 </xsl:template>
 
 <xsl:template match="genome">
 	<div id="gen{./name}" style="display:none;">
     	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-		<p id="gen{./name}_bar"></p>
+		<p id="gen{./name}_bar" align="center"></p>
+		<p id="gen{./name}_error" align="center"></p>
 		<div id="gen{./name}_info"></div>
+		<div id="buttons_gen_{./name}" align="center">
+			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
+			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+		</div>
 	</div>
 </xsl:template>
 
@@ -478,8 +507,13 @@
 <xsl:template match="transformation">
 	<div id="trs{./name}" style="display:none;">
 		<h3>Transformation for <xsl:value-of select="./name"/></h3>
-		<p id="trs{./name}_bar"></p>
+		<p id="trs{./name}_bar" align="center"></p>
+		<p id="trs{./name}_error" align="center"></p>
 		<div id="trs{./name}_info"></div>
+		<div id="buttons_trs_{./name}" align="center">
+			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
+			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+		</div>	
 	</div>
 </xsl:template>
 
@@ -494,4 +528,5 @@
 <xsl:template match="resize">
 	'<xsl:value-of select="."/>',
 </xsl:template>
+
 </xsl:stylesheet>

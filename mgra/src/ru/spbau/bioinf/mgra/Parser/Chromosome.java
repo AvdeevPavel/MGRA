@@ -3,6 +3,8 @@ package ru.spbau.bioinf.mgra.Parser;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
+
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class Chromosome implements Cloneable {
         this.genes = genes;
     }
 
-    public Chromosome(int id, String s, BlocksInformation blocksInformation, String name) {
+    public Chromosome(int id, String s, BlocksInformation blocksInformation, String name, String inputFormat) {
         this.id = id;
         String[] data = s.split(" ");
         for (String v : data) {
@@ -24,8 +26,8 @@ public class Chromosome implements Cloneable {
                genes.add(gene);
            }
         }
-
-        setLengthInGene(name, blocksInformation);
+        setLengthInGene(name, blocksInformation, inputFormat);
+        setColorInGene(blocksInformation);
     }
 
     public Chromosome clone() throws CloneNotSupportedException {
@@ -77,7 +79,7 @@ public class Chromosome implements Cloneable {
 
     public Element toXml() {
         Element chr = new Element("chromosome");
-        XmlUtil.addElement(chr, "id", (id + 1));
+        XmlUtil.addElement(chr, "id", id + 1);
         for (Gene gene : genes) {
             chr.addContent(gene.toXml());
         }
@@ -171,8 +173,8 @@ public class Chromosome implements Cloneable {
         return genes.get(genes.size() - 1).getEnd(1);
     }
 
-    private void setLengthInGene(String name, BlocksInformation blocksInformation) {
-        if (blocksInformation == null) {
+    private void setLengthInGene(String name, BlocksInformation blocksInformation, String inputFormat) {
+        if (inputFormat.equals("grimm")) {
             length = genes.size();
         } else {
             length = 0;
@@ -180,6 +182,12 @@ public class Chromosome implements Cloneable {
                 gene.setLength(blocksInformation.getLength(gene.getId(), name));
                 length += gene.getLength();
             }
+        }
+    }
+
+    private void setColorInGene(BlocksInformation blocksInformation) {
+        for(Gene gene: genes) {
+            gene.setColor(blocksInformation.getColor(gene.getId()));
         }
     }
 }

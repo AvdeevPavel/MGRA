@@ -25,7 +25,7 @@ public class Genome {
         while ((s = input.readLine())!=null) {
             s = s.trim();
             if (!s.startsWith("#") && s.length() > 0) {
-                chromosomes.add(new Chromosome(count++, s, blocksInformation, name));
+                chromosomes.add(new Chromosome(count++, s, blocksInformation, name, inputFormat));
             }
         }
 

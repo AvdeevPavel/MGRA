@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
+import ru.spbau.bioinf.mgra.Drawer.CreatorInformation;
 import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
 import ru.spbau.bioinf.mgra.Parser.Transformer;
 
@@ -103,7 +104,16 @@ public class MyHandler extends AbstractHandler {
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
             log.debug(path + " request processed.");
         } else if (path.contains(".html")) {
-            System.out.println("To appear request for transformation or genome");
+            String nameFile = path.substring(path.lastIndexOf("/") + 1);
+            String pathDirectory = path.substring(0, path.lastIndexOf("/"));
+            try {
+                requestForHtml(nameFile, pathDirectory);
+                writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
+                log.debug(nameFile + " created. " + path + " request processed.");
+            } catch (Exception e) {
+                log.error("Problem with create file " + nameFile + " " + e);
+                e.printStackTrace(); //delete
+            }
         } else if (path.contains("lib")) {
             log.debug("Handling request " + path);
             File t = new File(JettyServer.libDir, path.substring(path.lastIndexOf('/')));
@@ -211,6 +221,17 @@ public class MyHandler extends AbstractHandler {
             out.println("<p><a href=\"" +treeLink + "\">MGRA tree</a> Press this link if it doesn't works automatically or you do not want to wait.</p>");
             out.println("</body></html>");
             out.flush();
+        }
+    }
+
+    private static void requestForHtml(String nameFile, String pathDirectory) throws SaxonApiException, IOException {
+        File requestDirectory = new File(JettyServer.uploadDir.getAbsolutePath(), pathDirectory);
+        if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("gen")) {
+            CreatorInformation.createGenome(nameFile, requestDirectory);
+            applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 1);
+        } else if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("trs")) {
+            CreatorInformation.createTransformation(nameFile, requestDirectory);
+            applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 2);
         }
     }
 

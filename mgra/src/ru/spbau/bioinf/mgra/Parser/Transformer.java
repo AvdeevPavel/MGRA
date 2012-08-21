@@ -3,7 +3,6 @@ package ru.spbau.bioinf.mgra.Parser;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.Document;
-import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
 import ru.spbau.bioinf.mgra.Server.JettyServer;
 import ru.spbau.bioinf.mgra.Server.MyHandler;

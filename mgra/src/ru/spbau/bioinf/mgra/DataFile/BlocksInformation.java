@@ -1,5 +1,7 @@
 package ru.spbau.bioinf.mgra.DataFile;
 
+import ru.spbau.bioinf.mgra.Server.JettyServer;
+
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
@@ -8,7 +10,6 @@ import java.util.Properties;
 public class BlocksInformation {
     private HashMap<String, HashMap<Character, Long>> genome = new HashMap<String, HashMap<Character, Long>>();
     private HashMap<String, Color> colorGenome = new HashMap<String, Color>();
-    private String genomeFileName;
 
     /*color RGB*/
     private int red = 45;
@@ -16,10 +17,9 @@ public class BlocksInformation {
     private int blue = 0;
 
 
-    public BlocksInformation(File datasetDir, Config config, String fileName) throws IOException {
-        genomeFileName = fileName;
+    public BlocksInformation(Config config, File requestDir) throws IOException {
         if (config.getInputFormat().equals("infercars")) {
-            readBloksInformation(new File(datasetDir.getAbsolutePath() + "/" + genomeFileName), config);
+            readBloksInformation(new File(requestDir, JettyServer.GENOME_FILE_NAME), config);
         }
     }
 
@@ -45,7 +45,6 @@ public class BlocksInformation {
             }
             genomeFile.close();
         }
-
         config.resolveFormat();
     }
 

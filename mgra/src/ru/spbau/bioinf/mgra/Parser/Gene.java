@@ -3,6 +3,7 @@ package ru.spbau.bioinf.mgra.Parser;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,11 +12,32 @@ public class Gene implements Cloneable {
     private Direction direction;
     private long length;
     private double percent = 0;
+    private Color color = null;
     private List<End> ends = new LinkedList<End>();
 
     public Gene(String id, Direction direction) {
         this.id = id;
         this.direction = direction;
+    }
+
+    public void setPercent(double percent) {
+        this.percent = percent;
+    }
+
+    public void setLength(long length) {
+        this.length = length;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void addEnd(End end) {
+        ends.add(end);
+    }
+
+    public void reverse() {
+        direction = direction.reverse();
     }
 
     public Gene clone() throws CloneNotSupportedException {
@@ -26,22 +48,6 @@ public class Gene implements Cloneable {
         }
         clone.ends = newEnds;
         return clone;
-    }
-
-    public void setPercent(double percent_) {
-        percent = percent_;
-    }
-
-    public void setLength(long length_) {
-        length = length_;
-    }
-
-    public void addEnd(End end) {
-        ends.add(end);
-    }
-
-    public void reverse() {
-        direction = direction.reverse();
     }
 
     public Element toXml() {
@@ -73,6 +79,10 @@ public class Gene implements Cloneable {
 
     public int getSide(End end) {
         return getDirection().getSide(end);
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public End getEnd(int side) {

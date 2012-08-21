@@ -1,6 +1,7 @@
 package ru.spbau.bioinf.mgra.DataFile;
 
 import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
+import ru.spbau.bioinf.mgra.Server.JettyServer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Config {
     private boolean useTarget = false;
     private String target = null;
     private String completion = null;
-    private int widthMonitor = 0;
+    private int widthMonitor = 0; //change
     private String pathParentFile = "";
     private boolean reconstructedTree = false;
 
@@ -89,7 +90,43 @@ public class Config {
         }
 
         pathParentFile = path;
-        widthMonitor = new Integer(properties.getProperty("widthMonitor"));
+    }
+
+    public Config(File requestDir, String fileName) throws IOException {
+        cfgFileName = fileName;
+        BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(new File(requestDir, cfgFileName))));
+
+        String s = "";
+        while((s = reader.readLine()) != null) {
+            if (s.contains("Genomes")) {
+                break;
+            }
+        }
+
+        while((s = reader.readLine()) != null) {
+            s = s.trim();
+
+            if (s.isEmpty()) {
+                break;
+            }
+
+            char uniqueName = s.charAt(0);
+            s = s.substring(1);
+
+            String[] st = s.split(" ");
+            for(String data: st) {
+                alias.put(data, uniqueName);
+            }
+        }
+
+        while((s = reader.readLine()) != null) {
+            if (s.contains("format")) {
+                inputFormat = s.substring(s.indexOf(" ")).trim();
+                break;
+            }
+        }
+
+        reader.close();
     }
 
     public Character getAliasName(String name) {
@@ -98,14 +135,6 @@ public class Config {
 
     public String getNameFile() {
         return cfgFileName;
-    }
-
-    public ArrayList<String> getNameGenomes() {
-        ArrayList<String> st = new ArrayList<String>();
-        for(InformationGenome genome: nameGenome) {
-            st.add(genome.uniqueName + " " + genome.aliasName);
-        }
-        return st;
     }
 
     public String getInputFormat() {
@@ -132,13 +161,10 @@ public class Config {
         return pathParentFile;
     }
 
-    public int getWidthMonitor() {
+    public int getWidthMonitor() {      ///
         return widthMonitor;
     }
 
-    public int getNumberOfGenome() {
-        return nameGenome.size();
-    }
 
     public boolean isReconstructedTree() {
         return reconstructedTree;
@@ -198,7 +224,7 @@ public class Config {
 
     public void resolveFormat() throws IOException {
         if (inputFormat.equals("auto")) {
-            BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(new File(pathParentFile, "genome.txt"))));
+            BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(new File(pathParentFile, JettyServer.GENOME_FILE_NAME))));
             String s;
             int infercars = 0;
             int grimm = 0;
@@ -215,6 +241,7 @@ public class Config {
                 }
             }
             inputFormat = (infercars > grimm ? "infercars" : "grimm");
+            reader.close();
         }
     }
 }

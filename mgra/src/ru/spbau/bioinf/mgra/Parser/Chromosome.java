@@ -25,6 +25,8 @@ public class Chromosome implements Cloneable {
                Gene gene = new Gene(v.substring(1), Direction.getDirection(v.charAt(0)));
                genes.add(gene);
            }
+
+
         }
         setLengthInGene(name, blocksInformation, inputFormat);
         setColorInGene(blocksInformation);
@@ -173,7 +175,7 @@ public class Chromosome implements Cloneable {
         return genes.get(genes.size() - 1).getEnd(1);
     }
 
-    private void setLengthInGene(String name, BlocksInformation blocksInformation, String inputFormat) {
+    public void setLengthInGene(String name, BlocksInformation blocksInformation, String inputFormat) {
         if (inputFormat.equals("grimm")) {
             length = genes.size();
         } else {
@@ -185,7 +187,7 @@ public class Chromosome implements Cloneable {
         }
     }
 
-    private void setColorInGene(BlocksInformation blocksInformation) {
+    public void setColorInGene(BlocksInformation blocksInformation) {
         for(Gene gene: genes) {
             gene.setColor(blocksInformation.getColor(gene.getId()));
         }

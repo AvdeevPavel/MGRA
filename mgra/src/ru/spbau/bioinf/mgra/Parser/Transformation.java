@@ -1,6 +1,7 @@
 package ru.spbau.bioinf.mgra.Parser;
 
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 public class Transformation {
     private ArrayList<Chromosome> beforeChromosomes = new ArrayList<Chromosome>();
     private ArrayList<Chromosome> afterChromosomes = new ArrayList<Chromosome>();
+    private Chromosome longChromosome;
     End[] ends = new End[4];
 
 
@@ -19,7 +21,7 @@ public class Transformation {
         }
     }
 
-    public void update(Genome genome) throws CloneNotSupportedException {
+    public void update(Genome genome,  BlocksInformation blocksInformation, String inputFormat) throws CloneNotSupportedException {
         List<Chromosome> all = genome.getChromosomes();
         List<Integer> ids = new ArrayList<Integer>();
 
@@ -69,7 +71,7 @@ public class Transformation {
 
         if (afterChromosomes.size() > order) {
             Chromosome chr = afterChromosomes.get(order);
-            chr.setId(all.size() +1);
+            chr.setId(all.size());
             all.add(chr);
         }
 
@@ -84,6 +86,8 @@ public class Transformation {
                 chromosome.mark(end);
             }
         }
+
+        updateChromosome(genome.getName(), blocksInformation, inputFormat);
     }
 
     public ArrayList<Chromosome> getBeforeChromosomes() {
@@ -94,44 +98,11 @@ public class Transformation {
         return afterChromosomes;
     }
 
-    public static long getLengthMaxLengthOfChromosomes(ArrayList<Transformation> transformations) {
-        if (transformations != null || !transformations.isEmpty()) {
-            long maxLengthChromosome = transformations.get(0).beforeChromosomes.get(0).getLength();
-            for(Transformation transformation: transformations) {
-                for(Chromosome chromosome: transformation.beforeChromosomes) {
-                    if (maxLengthChromosome < chromosome.getLength()) {
-                        maxLengthChromosome = chromosome.getLength();
-                    }
-                }
-
-                for(Chromosome chromosome: transformation.afterChromosomes) {
-                    if (maxLengthChromosome < chromosome.getLength()) {
-                        maxLengthChromosome = chromosome.getLength();
-                    }
-                }
-            }
-            return maxLengthChromosome;
-        }
-        return 0;
-    }
-
     public int getCountChromosome() {
         return beforeChromosomes.size() + afterChromosomes.size();
     }
 
     public Chromosome getMaxLengthOfChromosome() {
-        Chromosome longChromosome  = beforeChromosomes.get(0);
-        for(Chromosome chromosome: beforeChromosomes) {
-            if (longChromosome.getLength() < chromosome.getLength()) {
-                longChromosome  = chromosome;
-            }
-        }
-
-        for(Chromosome chromosome: afterChromosomes) {
-            if (longChromosome.getLength() < chromosome.getLength()) {
-                longChromosome  = chromosome;
-            }
-        }
         return longChromosome;
     }
 
@@ -179,5 +150,46 @@ public class Transformation {
             after.addContent(chromosome.toXml());
         }
         parent.addContent(after);
+    }
+
+    private void updateChromosome(String name, BlocksInformation blocksInformation, String inputFormat) {
+        for (Chromosome chromosome : beforeChromosomes) {
+            chromosome.setLengthInGene(name, blocksInformation, inputFormat);
+            chromosome.setColorInGene(blocksInformation);
+        }
+
+        for (Chromosome chromosome : afterChromosomes) {
+            chromosome.setColorInGene(blocksInformation);
+            chromosome.setLengthInGene(name, blocksInformation, inputFormat);
+        }
+
+        setMaxLengthOfChromosome();
+
+        for (Chromosome chromosome : beforeChromosomes) {
+            if (inputFormat.equals("infercars")) {
+                chromosome.setPercentInBlocks(longChromosome.getLength());
+            }
+        }
+
+        for (Chromosome chromosome : afterChromosomes) {
+            if (inputFormat.equals("infercars")) {
+                chromosome.setPercentInBlocks(longChromosome.getLength());
+            }
+        }
+    }
+
+    private void setMaxLengthOfChromosome() {
+        this.longChromosome  = beforeChromosomes.get(0);
+        for(Chromosome chromosome: beforeChromosomes) {
+            if (this.longChromosome.getLength() < chromosome.getLength()) {
+                this.longChromosome  = chromosome;
+            }
+        }
+
+        for(Chromosome chromosome: afterChromosomes) {
+            if (this.longChromosome.getLength() < chromosome.getLength()) {
+                this.longChromosome  = chromosome;
+            }
+        }
     }
 }

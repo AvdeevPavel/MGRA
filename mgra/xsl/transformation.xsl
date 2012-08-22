@@ -13,9 +13,9 @@
 </xsl:template>
 
 <xsl:template match="rearrangement_png">
-	<blockquote>Rearrangement <xsl:value-of select="./id"/></blockquote>  
-	<xsl:if test= "resize = 'true'"> <img src="{../name}_trs_{./id}.png" width="100%"></img> </xsl:if>
-	<xsl:if test= "resize = 'false'"> <img src="{../name}_trs_{./id}.png"></img> </xsl:if>
+	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="./id"/></strong></font></blockquote>  
+	<xsl:if test= "resize = 'true'"> <img src="{../name}_trs/{./id}.png" width="100%"></img> </xsl:if>
+	<xsl:if test= "resize = 'false'"> <img src="{../name}_trs/{./id}.png"></img> </xsl:if>
 </xsl:template>
 
 <xsl:template match="rearrangement_xml">

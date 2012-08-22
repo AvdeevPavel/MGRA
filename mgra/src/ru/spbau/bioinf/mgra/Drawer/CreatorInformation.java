@@ -52,22 +52,23 @@ public class CreatorInformation {
            Element gen;
            try {
                Drawer picture = new Drawer(config.getInputFormat(), genome);
-               try {
-                   picture.writeInPng(config.getPathParentFile() + "/" + name + "_gen");
-                   gen = new Element("genome_png");
-                   XmlUtil.addElement(gen, "name", name);
-                   XmlUtil.addElement(gen, "resize", picture.isBigImage(config.getWidthMonitor()));
-                   log.debug("Done save " + name + " genome file");
-               } catch (IOException e) {
-                   gen = genome.toXml(name);
-                   log.debug("Can not save image file with genome " + file.getName() + "_gen");
-               }
+               picture.writeInPng(config.getPathParentFile() + "/" + name + "_gen");
+               gen = new Element("genome_png");
+               XmlUtil.addElement(gen, "name", name);
+               XmlUtil.addElement(gen, "resize", picture.isBigImage(config.getWidthMonitor()));
+               log.debug("Done save " + name + "_gen.png genome image file");
            } catch (OutOfMemoryError e) {
                gen = genome.toXml(name);
+               log.debug("Image with genome is largest. Try to create in xml.");
            } catch (NegativeArraySizeException e) {
                gen = genome.toXml(name);
+               log.debug("Image with genome have bag size. Try to create in xml.");
+           } catch (IOException e) {
+               gen = genome.toXml(name);
+               log.debug("Can not save image file with genome " + config.getPathParentFile() + "/" + name + "_gen. Try to create xml");
            } catch (Exception e) {
                gen = genome.toXml(name);
+               log.debug("Undefined problem." + e + ". Try to create in xml.");
            } finally {
                input.close();
            }
@@ -107,20 +108,43 @@ public class CreatorInformation {
             input.close();
 
             for (Transformation transformation : transformations) {
-                transformation.update(genome);
+                transformation.update(genome, blocksInformation, config.getInputFormat());
             }
 
             Element trs = new Element("transformation");
             XmlUtil.addElement(trs, "name", name);
+            File transDir = new File(config.getPathParentFile(), name + "_trs");
+            transDir.mkdir();
 
             int id = 1;
             for (Transformation transformation : transformations) {
-                Element rear = new Element("rearrangement_xml");
+                Element rear;
+                try {
+                    Drawer picture = new Drawer(config.getInputFormat(), transformation);
+                    picture.writeInPng(transDir.getAbsolutePath() + "/" + id);
+                    rear = new Element("rearrangement_png");
+                    XmlUtil.addElement(rear, "resize", picture.isBigImage(config.getWidthMonitor()));
+                    log.debug("Done save " + name + "/" + id +  ".png image rearrangement file");
+                } catch (OutOfMemoryError e) {
+                    rear = new Element("rearrangement_xml");
+                    transformation.toXml(rear);
+                    log.debug("Image with rearrangement is largest. Try to create in xml.");
+                } catch (NegativeArraySizeException e) {
+                    rear = new Element("rearrangement_xml");
+                    transformation.toXml(rear);
+                    log.debug("Image with rearrangement have bag size. Try to create in xml.");
+                } catch (IOException e) {
+                    rear = new Element("rearrangement_xml");
+                    transformation.toXml(rear);
+                    log.debug("Can not save image file with genome in folder " + transDir.getName() + "/" + id +". Try to create xml");
+                }  catch (Exception e) {
+                    rear = new Element("rearrangement_xml");
+                    transformation.toXml(rear);
+                    log.debug("Undefined problem." + e + ". Try to create in xml.");
+                }
                 XmlUtil.addElement(rear, "id", id++);
-                transformation.toXml(rear);
                 trs.addContent(rear);
             }
-
             return trs;
         } catch (IOException e) {
             log.debug("Algorithm not created " + file.getName());
@@ -130,47 +154,6 @@ public class CreatorInformation {
             return null;
         }
     }
-
-   /*
-            Element trs;
-            try {
-                Drawer picture = new Drawer(config.getInputFormat(), transformations);
-                try {
-                    picture.writeInPng(config.getPathParentFile() + "/" + name + "_trs");
-                    trs = new Element("transformations_png");
-                    XmlUtil.addElement(trs, "name", name);
-                    XmlUtil.addElement(trs, "resize", picture.isBigImage(config.getWidthMonitor()));
-                    JettyServer.responseInformation(out, "Done save " + name + " transformation file");
-                } catch (IOException e) {
-                     JettyServer.responseErrorServer(out, "Can not save image file with " + name + " transformation. Full file name " + file.getName());
-                     JettyServer.responseStage(out, "Try save information in xml");
-                     trs = new Element("transformations_xml");
-                     XmlUtil.addElement(trs, "name", name);
-                     log.debug("Can not save image file with transformation " + file.getName() + "_trs");
-                }
-            } catch (OutOfMemoryError e) {
-                JettyServer.responseInformation(out, "<strong> Image with transformations is largest </strong>. Try to create in xml.");
-                trs = new Element("transformations_xml");
-                XmlUtil.addElement(trs, "name", name);
-                for (Transformation transformation : transformations) {
-                    trs.addContent(transformation.toXml());
-                }
-            } catch (NegativeArraySizeException e) {
-                JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
-                trs = new Element("transformations_xml");
-                XmlUtil.addElement(trs, "name", name);
-                for (Transformation transformation : transformations) {
-                    trs.addContent(transformation.toXml());
-                }
-            } catch (Exception e) {
-                JettyServer.responseInformation(out, "<strong> Image with genome is largest </strong>. Try to create in xml.");
-                trs = new Element("transformations_xml");
-                XmlUtil.addElement(trs, "name", name);
-                for (Transformation transformation : transformations) {
-                    trs.addContent(transformation.toXml());
-                }
-            }
-  */
 
     private static BufferedReader getBufferedInputReader(File file) throws FileNotFoundException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(file)));

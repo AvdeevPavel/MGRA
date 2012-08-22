@@ -45,7 +45,20 @@ public class Genome {
         return longChromosome;
     }
 
-    protected void setMaxLength() {
+    public String getName() {
+        return name;
+    }
+
+    public Element toXml(String name) {
+        Element genome = new Element("genome_xml");
+        XmlUtil.addElement(genome, "name", name);
+        for (Chromosome chromosome : chromosomes) {
+            genome.addContent(chromosome.toXml());
+        }
+        return genome;
+    }
+
+    private void setMaxLength() {
         if (chromosomes != null || !chromosomes.isEmpty()) {
             longChromosome  = chromosomes.get(0);
             for(Chromosome chromosome: chromosomes) {
@@ -60,14 +73,5 @@ public class Genome {
         for(Chromosome chromosome: chromosomes) {
             chromosome.setPercentInBlocks(longChromosome.getLength());
         }
-    }
-
-    public Element toXml(String name) {
-        Element genome = new Element("genome_xml");
-        XmlUtil.addElement(genome, "name", name);
-        for (Chromosome chromosome : chromosomes) {
-            genome.addContent(chromosome.toXml());
-        }
-        return genome;
     }
 }

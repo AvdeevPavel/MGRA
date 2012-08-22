@@ -103,7 +103,7 @@ public class MyHandler extends AbstractHandler {
             log.debug("Handling request " + path);
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
             log.debug(path + " request processed.");
-        } else if (path.contains(".html")) {
+        } else if (path.contains("_gen.html") || path.contains("_trs.html")) {
             String nameFile = path.substring(path.lastIndexOf("/") + 1);
             String pathDirectory = path.substring(0, path.lastIndexOf("/"));
             int width = Integer.valueOf(request.getParameterValues("width")[0]);

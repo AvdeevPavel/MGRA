@@ -15,26 +15,24 @@ import java.util.ArrayList;
 public class CreatorInformation {
     private static final Logger log = Logger.getLogger(JettyServer.class);
 
-    public static void createGenome(String nameFile, File requestDirectory) throws IOException {
-        Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME);
-        BlocksInformation blocksInformation = new BlocksInformation(config, requestDirectory);
+    public static void createGenome(String nameGenome, Config config) throws IOException {
+        BlocksInformation blocksInformation = new BlocksInformation(config);
         Document doc = new Document();
-        Element rootXml = createImagesForChromosomes(new File(requestDirectory, nameFile.substring(0, nameFile.indexOf("_")) + ".gen"), config, blocksInformation);
+        Element rootXml = createImagesForChromosomes(new File(config.getPathParentFile(), nameGenome + ".gen"), config, blocksInformation);
         if (rootXml != null) {
             doc.setRootElement(rootXml);
-            XmlUtil.saveXml(doc, new File(requestDirectory, nameFile.substring(0, nameFile.lastIndexOf(".") + 1) + "xml"));
+            XmlUtil.saveXml(doc, new File(config.getPathParentFile(), nameGenome + "_gen.xml"));
         }
     }
 
-    public static void createTransformation(String nameFile, File requestDirectory) throws IOException {
-        Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME);
-        BlocksInformation blocksInformation = new BlocksInformation(config, requestDirectory);
+    public static void createTransformation(String nameTrs, Config config) throws IOException {
+        BlocksInformation blocksInformation = new BlocksInformation(config);
         Document doc= new Document();
-        Element rootXml = createImagesForRearrangement(new File(requestDirectory, nameFile.substring(0, nameFile.indexOf("_")) + ".trs"), config, blocksInformation);
+        Element rootXml = createImagesForRearrangement(new File(config.getPathParentFile(), nameTrs + ".trs"), config, blocksInformation);
 
         if (rootXml != null) {
             doc.setRootElement(rootXml);
-            XmlUtil.saveXml(doc, new File(requestDirectory, nameFile.substring(0, nameFile.lastIndexOf(".") + 1) + "xml"));
+            XmlUtil.saveXml(doc, new File(config.getPathParentFile(), nameTrs + "_trs.xml"));
         }
     }
 

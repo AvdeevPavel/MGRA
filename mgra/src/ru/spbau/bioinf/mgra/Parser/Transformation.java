@@ -46,9 +46,9 @@ public class Transformation {
             chromosome.split(afterChromosomes);
         }
 
-        for (int i = 0; i < afterChromosomes.size(); i++) {
+        for (int i = 0; i < afterChromosomes.size(); ++i) {
             Chromosome first = afterChromosomes.get(i);
-            for (int j = i + 1; j < afterChromosomes.size(); j++) {
+            for (int j = i + 1; j < afterChromosomes.size(); ++j) {
                 Chromosome second = afterChromosomes.get(j);
                 if (first.join(second)) {
                     afterChromosomes.remove(j);
@@ -61,7 +61,7 @@ public class Transformation {
         while (afterChromosomes.size() > order && ids.size() > order) {
             Chromosome chr = afterChromosomes.get(order);
             int id = ids.get(order);
-            chr.setId(id + 1);
+            chr.setId(id);
             all.remove(id);
             all.add(id, chr);
             order++;
@@ -86,16 +86,8 @@ public class Transformation {
         }
     }
 
-    public int getSizeBeforeChromosome() {
-        return beforeChromosomes.size();
-    }
-
     public ArrayList<Chromosome> getBeforeChromosomes() {
         return beforeChromosomes;
-    }
-
-    public int getSizeAfterChromosome() {
-        return afterChromosomes.size();
     }
 
     public ArrayList<Chromosome> getAfterChromosomes() {
@@ -123,25 +115,24 @@ public class Transformation {
         return 0;
     }
 
-    public static Chromosome getMaxLengthOfChromosome(ArrayList<Transformation> transformations) {
-        if (transformations != null || !transformations.isEmpty()) {
-            Chromosome longChromosome  = transformations.get(0).beforeChromosomes.get(0);
-            for(Transformation transformation: transformations) {
-                for(Chromosome chromosome: transformation.beforeChromosomes) {
-                    if (longChromosome.getLength() < chromosome.getLength()) {
-                        longChromosome  = chromosome;
-                    }
-                }
+    public int getCountChromosome() {
+        return beforeChromosomes.size() + afterChromosomes.size();
+    }
 
-                for(Chromosome chromosome: transformation.beforeChromosomes) {
-                    if (longChromosome.getLength() < chromosome.getLength()) {
-                        longChromosome  = chromosome;
-                    }
-                }
+    public Chromosome getMaxLengthOfChromosome() {
+        Chromosome longChromosome  = beforeChromosomes.get(0);
+        for(Chromosome chromosome: beforeChromosomes) {
+            if (longChromosome.getLength() < chromosome.getLength()) {
+                longChromosome  = chromosome;
             }
-            return longChromosome;
         }
-        return null;
+
+        for(Chromosome chromosome: afterChromosomes) {
+            if (longChromosome.getLength() < chromosome.getLength()) {
+                longChromosome  = chromosome;
+            }
+        }
+        return longChromosome;
     }
 
     public String resolveTypeRearrangement() {

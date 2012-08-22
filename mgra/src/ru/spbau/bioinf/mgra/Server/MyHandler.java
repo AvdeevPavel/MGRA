@@ -106,18 +106,18 @@ public class MyHandler extends AbstractHandler {
         } else if (path.contains(".html")) {
             String nameFile = path.substring(path.lastIndexOf("/") + 1);
             String pathDirectory = path.substring(0, path.lastIndexOf("/"));
+            int width = Integer.valueOf(request.getParameterValues("width")[0]);
+            //System.out.println(request.getParameterValues("neighbor")[0]);
             try {
-                requestForHtml(nameFile, pathDirectory);
+                requestForHtml(nameFile, pathDirectory, width);
                 writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
                 log.debug(nameFile + " created. " + path + " request processed.");
             } catch (Exception e) {
                 log.error("Problem with create file " + nameFile + " " + e);
-                e.printStackTrace(); //delete
             }
         } else if (path.contains("lib")) {
             log.debug("Handling request " + path);
             File t = new File(JettyServer.libDir, path.substring(path.lastIndexOf('/')));
-            System.out.println(t.getAbsolutePath());
             writeInRequest(new File(JettyServer.libDir, path.substring(path.lastIndexOf('/'))), response);
             log.debug(path + " request processed.");
         } else if (path.contains(JettyServer.REQUEST_START)) {
@@ -202,7 +202,7 @@ public class MyHandler extends AbstractHandler {
 
         responseStage(out, "Applying XSLT to XML for create html.");
         try {
-            applyXslt("tree.xml", "tree.html", datasetDir, 0);
+            applyXslt("tree.xml", "tree.html", datasetDir.getAbsolutePath(), 0);
             responseInformation(out, "XSL transformation done");
         } catch (SaxonApiException e) {
             responseErrorServer(out, "Can not end XSL transformation, sorry.");
@@ -224,13 +224,14 @@ public class MyHandler extends AbstractHandler {
         }
     }
 
-    private static void requestForHtml(String nameFile, String pathDirectory) throws SaxonApiException, IOException {
-        File requestDirectory = new File(JettyServer.uploadDir.getAbsolutePath(), pathDirectory);
+    private static void requestForHtml(String nameFile, String pathDirectory, int width) throws SaxonApiException, IOException {
+        String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
+        Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
         if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("gen")) {
-            CreatorInformation.createGenome(nameFile, requestDirectory);
+            CreatorInformation.createGenome(nameFile.substring(0, nameFile.indexOf("_")), config);
             applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 1);
         } else if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("trs")) {
-            CreatorInformation.createTransformation(nameFile, requestDirectory);
+            CreatorInformation.createTransformation(nameFile.substring(0, nameFile.indexOf("_")), config);
             applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 2);
         }
     }
@@ -270,7 +271,7 @@ public class MyHandler extends AbstractHandler {
         }
     }
 
-    private static void applyXslt(String fileXml, String fileHtml, File datasetDir, int i) throws SaxonApiException {
+    private static void applyXslt(String fileXml, String fileHtml, String datasetDir, int i) throws SaxonApiException {
         XdmNode source = getSource(JettyServer.processor, new File(datasetDir, fileXml));
         Serializer serializer = new Serializer();
         serializer.setOutputProperty(Serializer.Property.METHOD, "html");

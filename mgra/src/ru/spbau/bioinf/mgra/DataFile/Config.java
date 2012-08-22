@@ -27,7 +27,7 @@ public class Config {
     private boolean useTarget = false;
     private String target = null;
     private String completion = null;
-    private int widthMonitor = 0; //change
+    private int widthMonitor = 0;
     private String pathParentFile = "";
     private boolean reconstructedTree = false;
 
@@ -92,9 +92,11 @@ public class Config {
         pathParentFile = path;
     }
 
-    public Config(File requestDir, String fileName) throws IOException {
-        cfgFileName = fileName;
-        BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(new File(requestDir, cfgFileName))));
+    public Config(String path, String fileName, int width) throws IOException {
+        this.cfgFileName = fileName;
+        this.widthMonitor = width;
+        this.pathParentFile = path;
+        BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(new File(path, cfgFileName))));
 
         String s = "";
         while((s = reader.readLine()) != null) {

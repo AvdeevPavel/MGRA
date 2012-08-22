@@ -372,10 +372,12 @@
 	$(document).ready(function(){
 		function my_load_func(nameInf, nameFile) {    			
 			$.ajax({ 
+				type: "POST",
 				url: nameFile + ".html",
 				async: false,
 				cashe: false,
 				context: document.body,
+				data: "width="+$(window).width()+"&amp;neighbor=null",
 				dataType: 'html',
 				beforeSend: function() { 
 					$('#' + nameInf + "_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images, send. This may take some time.&lt;/u&gt;");	
@@ -481,8 +483,7 @@
 	<p id="gen{./name}_error" align="center"></p>
 	<div id="gen{./name}_info"></div>
 	<div id="buttons_gen_{./name}" align="center">
-		<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
-		<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+		<input name="download_text" type="button" value="Download data in text" onclick="alert('to appear, we download genome.txt');"/>
 	</div>
 </xsl:template>
 
@@ -493,8 +494,7 @@
 		<p id="gen{./name}_error" align="center"></p>
 		<div id="gen{./name}_info"></div>
 		<div id="buttons_gen_{./name}" align="center">
-			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
-			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+			<input name="download_text" type="button" value="Download data in text" onclick="alert('to appear, we download genome.txt');"/>
 		</div>
 	</div>
 </xsl:template>
@@ -511,8 +511,7 @@
 		<p id="trs{./name}_error" align="center"></p>
 		<div id="trs{./name}_info"></div>
 		<div id="buttons_trs_{./name}" align="center">
-			<input name="download_text" type="button" value="download data in text" onclick="alert('to appear, we download genome.txt');"/>
-			<input name="download_png" type="button" value="download data image in archive" onclick="alert('to appear, we download image in archive');"/>		
+			<input name="download_text" type="button" value="Download data in text" onclick="alert('to appear, we download genome.txt');"/>
 		</div>	
 	</div>
 </xsl:template>

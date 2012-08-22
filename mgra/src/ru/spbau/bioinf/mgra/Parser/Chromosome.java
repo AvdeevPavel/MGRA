@@ -154,7 +154,7 @@ public class Chromosome implements Cloneable {
     }
 
     public int getId() {
-        return this.id + 1;
+        return this.id;
     }
 
     public List<Gene> getGenes() {

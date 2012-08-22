@@ -6,8 +6,8 @@
 	<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 	<html>
 	<body>
-	<xsl:if test= "resize = 'true'"> <img src="{../name}_gen.png" width="100%"></img> </xsl:if>	
-	<xsl:if test= "resize = 'false'"> <img src="{../name}_gen.png"></img> </xsl:if>
+	<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>	
+	<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
 	</body>
 	</html>
 </xsl:template>

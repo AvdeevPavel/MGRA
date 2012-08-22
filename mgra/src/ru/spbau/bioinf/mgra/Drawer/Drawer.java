@@ -40,7 +40,15 @@ public class Drawer {
 
     private static double threshold = 0.0085; //configure for server: reduse - bigger memory(RAM), increase - lower memory(RAM)
 
-    private void init(int widthImage, int heigthImage) throws OutOfMemoryError, NegativeArraySizeException {
+    private void init(String inputFormat, int heigthImage, Chromosome chromosome) throws OutOfMemoryError, NegativeArraySizeException {
+        int widthImage = 0;
+        if (inputFormat.equals("grimm")) {
+            log.debug("Create image in grimm format");
+            widthImage = (widthPolygone + 1) * (int) chromosome.getLength() + 50;
+        } else {
+            log.debug("Create image in infercars format");
+            widthImage = calculateWidth(chromosome);
+        }
         log.debug("Posted buffered image width = " + widthImage + " height = " + heigthImage);
         image = new BufferedImage(widthImage, heigthImage, BufferedImage.TYPE_INT_RGB);
         graphics = image.createGraphics();
@@ -49,19 +57,15 @@ public class Drawer {
     }
 
     public Drawer(String inputFormat, Genome genome) throws OutOfMemoryError, NegativeArraySizeException {
-        int widthImage;
         int heigthImage = (heigthBlock + indent) * genome.getNumberOfChromosomes() - 3 * bound;
+        init(inputFormat, heigthImage, genome.getMaxLengthOfChromosome());
+        drawChromosomes(genome.getChromosomes(), inputFormat);
+    }
 
-        if (inputFormat.equals("grimm")) {
-            log.debug("Create image in grimm format");
-            widthImage = (widthPolygone + 1) * (int) genome.getLengthMaxLengthOfChromosomes() + 50;
-        } else {
-            log.debug("Create image in infercars format");
-            widthImage = calculateWidth(genome.getMaxLengthOfChromosome());
-        }
-
-        init(widthImage, heigthImage);
-        drawChromosomes(bound, genome.getChromosomes(), inputFormat);
+    public Drawer(String inputFormat, Transformation transformation) throws OutOfMemoryError, NegativeArraySizeException {
+        int heigthImage = (heigthBlock + indent) * transformation.getCountChromosome() - 3 * bound + 3 * heigthBlock;
+        init(inputFormat, heigthImage, transformation.getMaxLengthOfChromosome());
+        //drawTransformation();
     }
 
     public void writeInPng(String nameFile) throws IOException {
@@ -95,13 +99,13 @@ public class Drawer {
         return length;
     }
 
-    private void drawChromosomes(int startY, List<Chromosome> chromosomes, String inputFormat) {
-        int topStartY = startY;
+    private void drawChromosomes(List<Chromosome> chromosomes, String inputFormat) {
+        int topStartY = 0;
 
         Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
         graphics.setFont(font);
         FontMetrics fontMetrics = graphics.getFontMetrics();
-        int bottomStartY = startY + heigthBlock / 2 + fontMetrics.getHeight() / 4;
+        int bottomStartY = heigthBlock / 2 + fontMetrics.getHeight() / 4;
 
         for(Chromosome chromosome: chromosomes) {
             drawChromosome(chromosome, bottomStartY, topStartY, font, inputFormat);
@@ -111,7 +115,7 @@ public class Drawer {
     }
     
     private void drawChromosome(Chromosome chromosome, int bottomStartY, int topStartY, Font font, String inputFormat) {
-        drawString(chromosome.getId() + ".", font, Color.BLACK, 0, bottomStartY);
+        drawString((chromosome.getId() + 1) + ".", font, Color.BLACK, 0, bottomStartY);
 
         FontMetrics fontMetrics = graphics.getFontMetrics();
         int startX = fontMetrics.stringWidth(chromosome.getId() + ".") + 5;

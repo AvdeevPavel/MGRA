@@ -17,9 +17,9 @@ public class BlocksInformation {
     private int blue = 0;
 
 
-    public BlocksInformation(Config config, File requestDir) throws IOException {
+    public BlocksInformation(Config config) throws IOException {
         if (config.getInputFormat().equals("infercars")) {
-            readBloksInformation(new File(requestDir, JettyServer.GENOME_FILE_NAME), config);
+            readBloksInformation(new File(config.getPathParentFile(), JettyServer.GENOME_FILE_NAME), config);
         }
     }
 

@@ -6,8 +6,8 @@
 	<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 	<html>
 	<body>
-	<xsl:apply-templates select="rearrangement_png"/>
-	<xsl:apply-templates select="rearrangement_xml"/>
+		<xsl:apply-templates select="rearrangement_png"/>
+		<xsl:apply-templates select="rearrangement_xml"/>
 	</body>
 	</html>
 </xsl:template>
@@ -20,19 +20,18 @@
 
 <xsl:template match="rearrangement_xml">
 	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="./id"/></strong></font></blockquote> 
-	<p><strong>Before:</strong></p>
+	<p><strong>Before:</strong><br/>
 	<xsl:apply-templates select="before/chromosome">
 		<xsl:sort select="id" data-type="number"/>
 	</xsl:apply-templates>
-
+	</p>
 	<xsl:apply-templates select="end"/>
-	<br/>
 	
-	<p><strong>After:</strong></p>
+	<p><strong>After:</strong><br/>
 	<xsl:apply-templates select="after/chromosome">
 		<xsl:sort select="id" data-type="number"/>
 	</xsl:apply-templates>
-	<br/>
+	</p>
 </xsl:template>
 
  <xsl:template match="chromosome">

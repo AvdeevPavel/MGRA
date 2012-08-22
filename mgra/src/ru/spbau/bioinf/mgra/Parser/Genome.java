@@ -11,7 +11,6 @@ import java.util.List;
 
 public class Genome {
     private String name;
-    private long maxLengthChromosome = 0;
     private Chromosome longChromosome = null;
     private List<Chromosome> chromosomes = new ArrayList<Chromosome>();
 
@@ -42,10 +41,6 @@ public class Genome {
         return chromosomes.size();
     }
 
-    public long getLengthMaxLengthOfChromosomes() {
-        return maxLengthChromosome;
-    }
-
     public Chromosome getMaxLengthOfChromosome() {
         return longChromosome;
     }
@@ -53,10 +48,8 @@ public class Genome {
     protected void setMaxLength() {
         if (chromosomes != null || !chromosomes.isEmpty()) {
             longChromosome  = chromosomes.get(0);
-            maxLengthChromosome = chromosomes.get(0).getLength();
             for(Chromosome chromosome: chromosomes) {
-                if (maxLengthChromosome < chromosome.getLength()) {
-                    maxLengthChromosome = chromosome.getLength();
+                if (longChromosome.getLength() < chromosome.getLength()) {
                     longChromosome  = chromosome;
                 }
             }
@@ -65,7 +58,7 @@ public class Genome {
 
     private void setPercentInBlocks() {
         for(Chromosome chromosome: chromosomes) {
-            chromosome.setPercentInBlocks(maxLengthChromosome);
+            chromosome.setPercentInBlocks(longChromosome.getLength());
         }
     }
 

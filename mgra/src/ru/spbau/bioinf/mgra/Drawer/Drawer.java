@@ -45,6 +45,7 @@ public class Drawer {
             log.debug("Create image in infercars format");
             widthImage = calculateWidth(chromosome) + append;
         }
+
         log.debug("Posted buffered image width = " + widthImage + " height = " + heigthImage);
         image = new BufferedImage(widthImage, heigthImage, BufferedImage.TYPE_INT_RGB);
         graphics = image.createGraphics();
@@ -53,13 +54,17 @@ public class Drawer {
     }
 
     public Drawer(String inputFormat, Genome genome) throws OutOfMemoryError, NegativeArraySizeException {
-        int heigthImage = (heigthBlock + indent) * genome.getNumberOfChromosomes() - bound;
+        int heigthImage = (heigthBlock + indent) * genome.getNumberOfChromosomes();
         init(inputFormat, heigthImage, genome.getMaxLengthOfChromosome(), 0);
-        drawChromosomes(genome.getChromosomes(), inputFormat);
+
+        Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
+        graphics.setFont(font);
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+        drawChromosomes(genome.getChromosomes(), inputFormat, bound, bound + heigthBlock / 2 + fontMetrics.getHeight() / 4);
     }
 
     public Drawer(String inputFormat, Transformation transformation) throws OutOfMemoryError, NegativeArraySizeException {
-        int heigthImage = (heigthBlock + indent) * transformation.getCountChromosome() - bound + 3 * (heigthBlock + indent);
+        int heigthImage = (heigthBlock + indent) * transformation.getCountChromosome() + 3 * (heigthBlock + indent);
         init(inputFormat, heigthImage, transformation.getMaxLengthOfChromosome(), 40);
         drawTransformation(inputFormat, transformation);
     }
@@ -105,7 +110,7 @@ public class Drawer {
         drawString("Before:", font, Color.BLACK, 0, bottomStartY);
         topStartY += heigthBlock;
         bottomStartY += heigthBlock;
-        int step = drawChromosomesWithEnds(transformation.getBeforeChromosomes(), inputFormat, topStartY, bottomStartY);
+        int step = drawChromosomes(transformation.getBeforeChromosomes(), inputFormat, topStartY, bottomStartY);
         topStartY += step;
         bottomStartY += step;
         drawString(transformation.resolveTypeRearrangement(), font, Color.RED, image.getWidth() / 2 - fontMetrics.stringWidth(transformation.resolveTypeRearrangement()) / 2, bottomStartY);
@@ -114,42 +119,29 @@ public class Drawer {
         drawString("After:", font, Color.BLACK, 0, bottomStartY);
         topStartY += heigthBlock;
         bottomStartY += heigthBlock;
-        drawChromosomesWithEnds(transformation.getAfterChromosomes(), inputFormat, topStartY, bottomStartY);
+        drawChromosomes(transformation.getAfterChromosomes(), inputFormat, topStartY, bottomStartY);
     }
 
-    private void drawChromosomes(List<Chromosome> chromosomes, String inputFormat) {
+    private int drawChromosomes(List<Chromosome> chromosomes, String inputFormat, int topStart, int bottomStart) {
+        int bottomStartY = bottomStart;
+        int topStartY = topStart;
         Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
-        graphics.setFont(font);
-        FontMetrics fontMetrics = graphics.getFontMetrics();
-        int bottomStartY = bound + heigthBlock / 2 + fontMetrics.getHeight() / 4;
-        int topStartY = bound;
-
         for(Chromosome chromosome: chromosomes) {
             drawChromosome(chromosome, bottomStartY, topStartY, font, inputFormat);
             topStartY += (heigthBlock + indent);
             bottomStartY += (heigthBlock + indent);
         }
-    }
-
-    private int drawChromosomesWithEnds(List<Chromosome> chromosomes, String inputFormat, int topStart, int bottomStart) {
-        int bottomStartY = bottomStart;
-        int topStartY = topStart;
-        Font font = new Font("Times new roman", Font.BOLD, sizeFontString);
-
-        for(Chromosome chromosome: chromosomes) {
-            drawChromosomeWithEnds(chromosome, bottomStartY, topStartY, font, inputFormat);
-            topStartY += (heigthBlock + indent);
-            bottomStartY += (heigthBlock + indent);
-        }
-
         return (topStartY - topStart);
     }
-    
+
     private void drawChromosome(Chromosome chromosome, int bottomStartY, int topStartY, Font font, String inputFormat) {
         drawString((chromosome.getId() + 1) + ".", font, Color.BLACK, 0, bottomStartY);
 
         FontMetrics fontMetrics = graphics.getFontMetrics();
         int startX = fontMetrics.stringWidth((chromosome.getId() + 1) + ".") + 5;
+        int startRectangle = startX - 2;
+        Color colorRect = null;
+
 
         List<Gene> genes = chromosome.getGenes();
         for(Gene gene: genes) {
@@ -167,50 +159,21 @@ public class Drawer {
                 }
                 strLength = parseLength(gene.getLength());
            }
-           drawGene(gene.getId(), strLength, gene.getColor(), startX, topStartY, poly, gene.getCharDirection());
-           startX += (poly + 1);
-        }
-    }
 
-    private void drawChromosomeWithEnds(Chromosome chromosome, int bottomStartY, int topStartY, Font font, String inputFormat) {
-        drawString((chromosome.getId() + 1) + ".", font, Color.BLACK, 0, bottomStartY);
-
-        FontMetrics fontMetrics = graphics.getFontMetrics();
-        int startX = fontMetrics.stringWidth((chromosome.getId() + 1) + ".") + 5;
-        int startRectangle = startX - 2;
-        Color colorRect = null;
-
-        List<Gene> genes = chromosome.getGenes();
-        for(Gene gene: genes) {
-            int poly;
-            String strLength;
-
-            if (inputFormat.equals("grimm")) {
-                poly = widthPolygone;
-                strLength = null;
-            } else {
-                if (gene.getPercent() > threshold) {
-                    poly = new Double(step * gene.getPercent()).intValue() + 1;
-                } else {
-                    poly = widthPolygone;
-                }
-                strLength = parseLength(gene.getLength());
-            }
-
-            List<End> ends = gene.getEnds();
-            for(End end: ends) {
+           List<End> ends = gene.getEnds();
+           for(End end: ends) {
                 if (((gene.getDirection() == Direction.PLUS) && (end.getType() == EndType.TAIL)) ||((gene.getDirection() == Direction.MINUS) && (end.getType() == EndType.HEAD))) {
                     startX += 5;
                     startRectangle = startX - 2;
                     colorRect = colorForTransformation[end.getColor()];
                     break;
                 }
-            }
+           }
 
-            drawGene(gene.getId(), strLength, gene.getColor(), startX, topStartY, poly, gene.getCharDirection());
-            startX += (poly + 1);
+           drawGene(gene.getId(), strLength, gene.getColor(), startX, topStartY, poly, gene.getCharDirection());
+           startX += (poly + 1);
 
-            for(End end: ends) {
+           for(End end: ends) {
                 if (((gene.getDirection() == Direction.PLUS) && (end.getType() == EndType.HEAD)) ||((gene.getDirection() == Direction.MINUS) && (end.getType() == EndType.TAIL))) {
                     startX += 4;
                     if (colorRect == null) {
@@ -219,9 +182,12 @@ public class Drawer {
                     drawRectangle(startRectangle, startX - 2, topStartY - 2, colorRect);
                     break;
                 }
-            }
+           }
+
+           if (colorRect != null) {
+               drawRectangle(startRectangle, startX - 2, topStartY - 2, colorRect);
+           }
         }
-        drawRectangle(startRectangle, startX - 2, topStartY - 2, colorRect);
     }
 
     private void drawGene(String id, String length, Color color, int startX, int startY, int widthPoly, char direction) {

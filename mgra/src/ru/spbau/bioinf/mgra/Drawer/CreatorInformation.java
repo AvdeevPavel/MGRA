@@ -28,7 +28,7 @@ public class CreatorInformation {
     public static void createTransformation(String nameTrs, Config config) throws IOException {
         BlocksInformation blocksInformation = new BlocksInformation(config);
         Document doc= new Document();
-        Element rootXml = createImagesForRearrangement(new File(config.getPathParentFile(), nameTrs + ".trs"), config, blocksInformation);
+        Element rootXml = createXmlForRearrangement(new File(config.getPathParentFile(), nameTrs + ".trs"), config, blocksInformation);
 
         if (rootXml != null) {
             doc.setRootElement(rootXml);
@@ -79,6 +79,58 @@ public class CreatorInformation {
        }
     }
 
+    private static Element createXmlForRearrangement(File file, Config config, BlocksInformation blocksInformation) {
+        String name = file.getName().substring(0, file.getName().indexOf('.'));
+        try {
+            BufferedReader input = getBufferedInputReader(new File(file.getParentFile().getAbsolutePath(), name + ".gen"));
+            Genome genome = new Genome(name);
+
+            try {
+                genome.addChromosomes(input, blocksInformation, config.getInputFormat());
+            } catch (IOException e) {
+                log.error("Can not read file with " + name + " genome");
+                return null;
+            }
+            input.close();
+
+            input = getBufferedInputReader(file);
+            ArrayList<Transformation> transformations = new ArrayList<Transformation>();
+
+            try {
+                String s;
+                while ((s = input.readLine()) != null) {
+                    transformations.add(new Transformation(s));
+                }
+            } catch (IOException e) {
+                log.error("Can not read file with " + name + " transformation. Full file name " + file.getName());
+                return null;
+            }
+            input.close();
+
+            for (Transformation transformation : transformations) {
+                transformation.update(genome, blocksInformation, config.getInputFormat());
+            }
+
+            Element trs = new Element("transformation");
+            XmlUtil.addElement(trs, "name", name);
+            int id = 1;
+
+            for (Transformation transformation : transformations) {
+                Element rear = new Element("rearrangement");
+                transformation.toXml(rear);
+                XmlUtil.addElement(rear, "id", id++);
+                trs.addContent(rear);
+            }
+            return trs;
+        } catch (IOException e) {
+            log.debug("Algorithm not created " + file.getName());
+            return null;
+        } catch (CloneNotSupportedException e) {
+            log.error("Problem with clone " + file.getName());
+            return null;
+        }
+    }
+
     private static Element createImagesForRearrangement(File file, Config config, BlocksInformation blocksInformation) {
         String name = file.getName().substring(0, file.getName().indexOf('.'));
         try {
@@ -114,7 +166,10 @@ public class CreatorInformation {
             Element trs = new Element("transformation");
             XmlUtil.addElement(trs, "name", name);
             File transDir = new File(config.getPathParentFile(), name + "_trs");
-            transDir.mkdir();
+
+            if (!transDir.exists()) {
+                transDir.mkdir();
+            }
 
             int id = 1;
             for (Transformation transformation : transformations) {

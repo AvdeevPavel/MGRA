@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output encoding="UTF-8" method="html" omit-xml-declaration="yes" indent="yes"/>
-
+	
 <xsl:template match="target">
 <html>
 <head>
 <title>MGRA tree</title>
+<script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+<script>
+load_information = null; 
+$(document).ready(function(){
+	function my_load_func(nameInf, nameFile) {    			
+		$.ajax({ 
+			type: "POST",
+			url: nameFile + ".html",
+			async: false,
+			cashe: false,
+			context: document.body,
+			data: "width="+$(window).width(),
+			dataType: 'html',
+			beforeSend: function() { 
+				$('#' + nameInf + "_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images, send. This may take some time.&lt;/u&gt;");	
+			}, 
+			success: function(data) { 
+				$('#' + nameInf + "_info").html(data);
+			}, 
+			error: function() {
+				$('#' + nameInf + "_error").html("&lt;strong&gt;We can not create image. You can download information in view of text file&lt;/strong&gt;");	 				
+			}, 
+			complete: function() { 
+				$('#' + nameInf + "_bar").html("");	
+			}  	
+		});
+	} 
+	load_information = my_load_func; 
+	load_information("gen<xsl:value-of select="genomes/genome/name"/>", "<xsl:value-of select="genomes/genome/name"/>_gen");
+});
+</script>
 </head>
 <body>
     <header> 
@@ -47,6 +78,10 @@
 		<xsl:apply-templates select="trees/input/tree" mode = "array"/>
 		<xsl:apply-templates select="trees/reconstruct/tree" mode = "array"/>
 	]
+
+	function getRearrangementImage(id) {
+		alert("we want get " + id);
+	} 
 
 	function getClientWidth() {
 		return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
@@ -126,7 +161,7 @@
 			}
 
 			if (document.getElementById('gen'+str+'_info').firstChild == null) { 
-				load_information('gen'+ str, str + "_gen");
+				load_information('gen'+ str, str + '_gen', null);
 			} 
 		});
 		return text;  
@@ -275,7 +310,7 @@
                  	}
 	
 					if (document.getElementById(str + '_info').firstChild == null) { 
-						load_information(str, this.getName() + "_trs");
+						load_information(str, this.getName() + '_trs', null);
 					} 
 				});
 			} 		
@@ -370,17 +405,17 @@
 	};
 
 	$(document).ready(function(){
-		function my_load_func(nameInf, nameFile) {    			
+		function my_load_func(nameInf, nameFile, neighbor) {    			
 			$.ajax({ 
 				type: "POST",
 				url: nameFile + ".html",
 				async: false,
 				cashe: false,
 				context: document.body,
-				data: "width="+$(window).width()+"&amp;neighbor=null",
+				data: "width="+$(window).width()+"&amp;neighbor=" + neighbor,
 				dataType: 'html',
 				beforeSend: function() { 
-					$('#' + nameInf + "_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images, send. This may take some time.&lt;/u&gt;");	
+					$('#' + nameInf + "_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images or html text, send. This may take some time.&lt;/u&gt;");	
 				}, 
 				success: function(data) { 
 					$('#' + nameInf + "_info").html(data);
@@ -482,8 +517,8 @@
 	<p id="gen{./name}_bar" align="center"></p>
 	<p id="gen{./name}_error" align="center"></p>
 	<div id="gen{./name}_info"></div>
-	<div id="buttons_gen_{./name}" align="center">
-		<input name="download_text" type="button" value="Download data in text" onclick="alert('to appear, we download genome.txt');"/>
+	<div id="button_text_gen_{./name}" align="center">
+		<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.gen'"/>
 	</div>
 </xsl:template>
 
@@ -493,8 +528,8 @@
 		<p id="gen{./name}_bar" align="center"></p>
 		<p id="gen{./name}_error" align="center"></p>
 		<div id="gen{./name}_info"></div>
-		<div id="buttons_gen_{./name}" align="center">
-			<input name="download_text" type="button" value="Download data in text" onclick="alert('to appear, we download genome.txt');"/>
+		<div id="button_text_gen_{./name}" align="center">
+			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.gen'"/>
 		</div>
 	</div>
 </xsl:template>
@@ -511,7 +546,7 @@
 		<p id="trs{./name}_error" align="center"></p>
 		<div id="trs{./name}_info"></div>
 		<div id="buttons_trs_{./name}" align="center">
-			<input name="download_text" type="button" value="Download data in text" onclick="alert('to appear, we download genome.txt');"/>
+			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.trs'"/>
 		</div>	
 	</div>
 </xsl:template>
@@ -519,13 +554,4 @@
 <xsl:template match="name">
 	'<xsl:value-of select="."/>',
 </xsl:template>
-
-<xsl:template match="id">
-	'<xsl:value-of select="."/>',
-</xsl:template>
-
-<xsl:template match="resize">
-	'<xsl:value-of select="."/>',
-</xsl:template>
-
 </xsl:stylesheet>

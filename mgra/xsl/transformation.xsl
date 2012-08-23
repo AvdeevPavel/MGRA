@@ -6,26 +6,25 @@
 	<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 	<html>
 	<body>
-		<xsl:apply-templates select="rearrangement_png"/>
-		<xsl:apply-templates select="rearrangement_xml"/>
+		<xsl:apply-templates select="rearrangement"> 
+			<xsl:sort select="id" data-type="number"/>
+		</xsl:apply-templates>
 	</body>
 	</html>
 </xsl:template>
 
-<xsl:template match="rearrangement_png">
-	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="./id"/></strong></font></blockquote>  
-	<xsl:if test= "resize = 'true'"> <img src="{../name}_trs/{./id}.png" width="100%"></img> </xsl:if>
-	<xsl:if test= "resize = 'false'"> <img src="{../name}_trs/{./id}.png"></img> </xsl:if>
-</xsl:template>
-
-<xsl:template match="rearrangement_xml">
-	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="./id"/></strong></font></blockquote> 
+<xsl:template match="rearrangement">
+	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="id"/>.</strong></font>&#160;&#160;<a href="" onclick="getRearrangementImage({./id})">create image.</a> </blockquote> 
+	<p id="trs{./name}_bar_{./id}" align="center"></p>
+	<p id="trs{./name}_error_{./id}" align="center"></p>
+	<div id="trs{./name}_info_{./id}"></div>
 	<p><strong>Before:</strong><br/>
 	<xsl:apply-templates select="before/chromosome">
 		<xsl:sort select="id" data-type="number"/>
 	</xsl:apply-templates>
 	</p>
-	<xsl:apply-templates select="end"/>
+
+	&#160;&#160;&#160;<strong><xsl:value-of select="name_rear"/></strong>&#160;(&#160;<xsl:apply-templates select="end"/>)
 	
 	<p><strong>After:</strong><br/>
 	<xsl:apply-templates select="after/chromosome">
@@ -70,10 +69,6 @@
 
 <xsl:template match="end" mode="show">
 	<span class="end{color}"><xsl:value-of select="type"/></span>
-</xsl:template>
-
-<xsl:template match="id">
-	'<xsl:value-of select="."/>',
 </xsl:template>
 
 </xsl:stylesheet>

@@ -6,8 +6,11 @@
 	<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 	<html>
 	<body>
-	<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>	
-	<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
+		<xsl:if test= "resize = 'true'"> <img src="{./name}_gen.png" width="100%"></img> </xsl:if>	
+		<xsl:if test= "resize = 'false'"> <img src="{./name}_gen.png"></img> </xsl:if>
+		<div id="button_image_gen_{./name}" align="center">
+			<input name="download_image" type="button" value="Save as image" onclick="window.location.href='download/{./name}_gen.png'"/>
+		</div>
 	</body>
 	</html>
 </xsl:template>

@@ -123,8 +123,12 @@ public class Transformation {
             return "fusion/translocation";
         }
 
-        if (beforeChromosomes.size() == afterChromosomes.size()) {
+        if ((beforeChromosomes.size() == 1) && (afterChromosomes.size() == 1)) {
             return "reversal";
+        }
+
+        if (beforeChromosomes.size() == afterChromosomes.size()) {
+            return "translocation";
         }
 
         String st = "";
@@ -141,6 +145,7 @@ public class Transformation {
         }
         parent.addContent(before);
 
+        XmlUtil.addElement(parent, "name_rear", resolveTypeRearrangement());
         for (End end : ends) {
             parent.addContent(end.toXml());
         }

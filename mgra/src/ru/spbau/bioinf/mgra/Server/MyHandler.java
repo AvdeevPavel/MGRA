@@ -52,7 +52,6 @@ public class MyHandler extends AbstractHandler {
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String path = request.getPathInfo();
-        System.out.println("REQUEST " + path);
         log.debug("Request name " + path);
 
         if (path.equals("/")) {
@@ -103,11 +102,17 @@ public class MyHandler extends AbstractHandler {
             log.debug("Handling request " + path);
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
             log.debug(path + " request processed.");
+        } else if (path.contains("show_tree.html")) {
+            log.debug("Handling request " + path);
+            System.out.println("to appear");
+            log.debug(path + " request processed.");
         } else if (path.contains("_gen.html") || path.contains("_trs.html")) {
             String nameFile = path.substring(path.lastIndexOf("/") + 1);
             String pathDirectory = path.substring(0, path.lastIndexOf("/"));
             int width = Integer.valueOf(request.getParameterValues("width")[0]);
-            //System.out.println(request.getParameterValues("neighbor")[0]);
+            if (request.getParameterValues("neighbor") != null) {
+                System.out.println(request.getParameterValues("neighbor")[0]);
+            }
             try {
                 requestForHtml(nameFile, pathDirectory, width);
                 writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
@@ -115,9 +120,17 @@ public class MyHandler extends AbstractHandler {
             } catch (Exception e) {
                 log.error("Problem with create file " + nameFile + " " + e);
             }
+        } else if (path.contains(".html")) {
+            System.out.println("request for html with image");
+        } else if (path.contains("download")) {
+            log.debug("Download request " + path);
+            String nameFile = path.substring(path.lastIndexOf("/") + 1);
+            String pathDirectory = path.substring(0, path.lastIndexOf("/", path.lastIndexOf("/") - 1));
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + nameFile + "\"");
+            writeInRequest(new File(JettyServer.uploadDir, pathDirectory + "/" + nameFile), response);
+            log.debug(path + "download request processed.");
         } else if (path.contains("lib")) {
             log.debug("Handling request " + path);
-            File t = new File(JettyServer.libDir, path.substring(path.lastIndexOf('/')));
             writeInRequest(new File(JettyServer.libDir, path.substring(path.lastIndexOf('/'))), response);
             log.debug(path + " request processed.");
         } else if (path.contains(JettyServer.REQUEST_START)) {

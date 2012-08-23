@@ -42,8 +42,24 @@
 			padding: 5px;
 		} 
 	</style>
+	<script src="lib/jquery-1.8.0.min.js"></script>
 	<script type = "text/javascript">	
+		load_information = null;
 		var genomeCount = new Object();
+
+		function viewTree(idform) { 
+			var nameForm; 
+			if (idform == 1) { 
+				nameForm = "file";
+			} 
+			if (idform == 2) { 
+				nameForm = "inf";
+			} 
+			if (idform == 3) { 
+				nameForm = "grm";
+			} 
+			load_information(document.forms[idform].elements["trees"].value, nameForm);
+		} 
 
 		function loadFile(file) {
             var X = new XMLHttpRequest();
@@ -372,6 +388,33 @@
 															  '425t 426t 426h 407h B';
             showTarget(3, true);
 		} 
+
+		$(document).ready(function(){
+			function my_load_func(trees, form) {    			
+				$.ajax({ 
+					type: "POST",
+					url: "http://127.0.0.1:8080/showtree.html",
+					async: false,
+					cashe: false,
+					context: document.body,
+					data: "trees="+trees+"&width=",
+					dataType: 'html',
+					beforeSend: function() { 
+						$("#" + form + "_showTree_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images or html text, send. This may take some time.&lt;/u&gt;");	
+					}, 
+					success: function(data) { 
+						$("#" + form + "_showTree__info").html(data);
+					}, 
+					error: function() {
+						$("#" + form + "_showTree_error").html("&lt;strong&gt;We can not create image. You can download information in view of text file&lt;/strong&gt;");	 				
+					}, 
+					complete: function() { 
+						$("#" + form + "_showTree_bar").html("");	
+					}  	
+				});
+			} 
+			load_information = my_load_func; 
+		});
 	</script>
 </head>
 <body>
@@ -433,7 +476,10 @@
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree"/> </div>
-		<div id = "new_text"> </div>
+		<p id="showTree_bar" align="center"></p>
+		<p id="showTree_bar_error" align="center"></p>
+		<div id="showTree_bar_info" align="center"></div>
+	
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(1);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
 	    <p>
@@ -619,7 +665,11 @@
     	</p>
    	
 		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="trees"></textarea></div>
-		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(3)"/> </div>
+		<p id="grm_showTree_bar" align="center"></p>
+		<p id="grm_showTree_bar_error" align="center"></p>
+		<div id="grm_showTree_bar_info" align="center"></div>
+
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(3);"/><strong>&nbsp;recostructed tree</strong><br/>
 	    
 	    <p>

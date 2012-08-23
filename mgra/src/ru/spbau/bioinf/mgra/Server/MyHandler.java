@@ -98,13 +98,13 @@ public class MyHandler extends AbstractHandler {
                 }
                 out.close();
             }
+        } else if (path.contains("showtree.html")) {
+            log.debug("Handling request " + path);
+            System.out.println("to appear");
+            log.debug(path + " request processed.");
         } else if (path.contains("tree.html")) {
             log.debug("Handling request " + path);
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
-            log.debug(path + " request processed.");
-        } else if (path.contains("show_tree.html")) {
-            log.debug("Handling request " + path);
-            System.out.println("to appear");
             log.debug(path + " request processed.");
         } else if (path.contains("_gen.html") || path.contains("_trs.html")) {
             String nameFile = path.substring(path.lastIndexOf("/") + 1);

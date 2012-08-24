@@ -48,17 +48,9 @@
 		var genomeCount = new Object();
 
 		function viewTree(idform) { 
-			var nameForm; 
-			if (idform == 1) { 
-				nameForm = "file";
+			if (document.getElementById(document.forms[idform].name + "_showTree_info").firstChild == null) { 
+				load_information(document.forms[idform].elements["trees"].value, document.forms[idform].name);
 			} 
-			if (idform == 2) { 
-				nameForm = "inf";
-			} 
-			if (idform == 3) { 
-				nameForm = "grm";
-			} 
-			load_information(document.forms[idform].elements["trees"].value, nameForm);
 		} 
 
 		function loadFile(file) {
@@ -149,6 +141,8 @@
 			} else { 
 				viewInformForExample(document.forms[idform], "");
 			} 			
+
+			document.getElementById(document.forms[idform].name + "_showTree_info").innerHTML = "";
 			showTarget(idform, false);
 		} 
 
@@ -397,16 +391,16 @@
 					async: false,
 					cashe: false,
 					context: document.body,
-					data: "trees="+trees+"&width=",
+					data: "trees="+trees+"&width="+$("#"+form+"_showTree_info").width(),
 					dataType: 'html',
 					beforeSend: function() { 
-						$("#" + form + "_showTree_bar").html("&lt;u&gt;Please wait. We processed this request: read information, generate images or html text, send. This may take some time.&lt;/u&gt;");	
+						$("#" + form + "_showTree_bar").html("<u>Please wait. We processed this request: read information, generate images or html text, send. This may take some time.</u>");	
 					}, 
 					success: function(data) { 
-						$("#" + form + "_showTree__info").html(data);
+						$("#" + form + "_showTree_info").html(data);
 					}, 
 					error: function() {
-						$("#" + form + "_showTree_error").html("&lt;strong&gt;We can not create image. You can download information in view of text file&lt;/strong&gt;");	 				
+						$("#" + form + "_showTree_info").html("<p><strong>We can not create image. You can download information in view of text file</strong><p>");	 				
 					}, 
 					complete: function() { 
 						$("#" + form + "_showTree_bar").html("");	
@@ -475,10 +469,9 @@
     	</p>
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
-		<div align = "center"> <input name="show_tree" type="button" value="show tree"/> </div>
-		<p id="showTree_bar" align="center"></p>
-		<p id="showTree_bar_error" align="center"></p>
-		<div id="showTree_bar_info" align="center"></div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(1)"/> </div>
+		<p id="fileForm_showTree_bar" align="center"></p>
+		<div id="fileForm_showTree_info" align="center"></div>
 	
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(1);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
@@ -574,7 +567,10 @@
     	</p>
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
-		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="alert('to appear, we show tree in new window browser');"/> </div>
+		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(2)"/> </div>
+		<p id="infForm_showTree_bar" align="center"></p>
+		<div id="infForm_showTree_info" align="center"></div>
+
 		<input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(2);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
 	    <p>
@@ -666,9 +662,8 @@
    	
 		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(3)"/> </div>
-		<p id="grm_showTree_bar" align="center"></p>
-		<p id="grm_showTree_bar_error" align="center"></p>
-		<div id="grm_showTree_bar_info" align="center"></div>
+		<p id="grmForm_showTree_bar" align="center"></p>
+		<div id="grmForm_showTree_info" align="center"></div>
 
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(3);"/><strong>&nbsp;recostructed tree</strong><br/>
 	    

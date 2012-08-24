@@ -163,7 +163,7 @@ public class Config {
         return pathParentFile;
     }
 
-    public int getWidthMonitor() {      ///
+    public int getWidthMonitor() {
         return widthMonitor;
     }
 

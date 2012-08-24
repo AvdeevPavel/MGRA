@@ -1,6 +1,5 @@
 package ru.spbau.bioinf.mgra.Tree;
 
-import ru.spbau.bioinf.mgra.Parser.Transformer;
 import java.util.*;
 
 public class Branch implements Comparable<Branch> {
@@ -15,8 +14,8 @@ public class Branch implements Comparable<Branch> {
             second = temp;
         }
 
-        firstSet = Transformer.convertToSet(first);
-        secondSet = Transformer.convertToSet(second);
+        firstSet = TreeReader.convertToSet(first);
+        secondSet = TreeReader.convertToSet(second);
     }
 
     public Branch(String first, String second, int weight_) {

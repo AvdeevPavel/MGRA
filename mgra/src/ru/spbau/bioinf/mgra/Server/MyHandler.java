@@ -7,11 +7,12 @@ import net.sf.saxon.s9api.XdmNode;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+
 import ru.spbau.bioinf.mgra.DataFile.BlocksInformation;
 import ru.spbau.bioinf.mgra.DataFile.Config;
-import ru.spbau.bioinf.mgra.Drawer.CreatorInformation;
-import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
 import ru.spbau.bioinf.mgra.Parser.Transformer;
+import ru.spbau.bioinf.mgra.MyException.LongUniqueName;
+import ru.spbau.bioinf.mgra.Tree.TreeReader;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -100,6 +101,8 @@ public class MyHandler extends AbstractHandler {
             }
         } else if (path.contains("showtree.html")) {
             log.debug("Handling request " + path);
+            System.out.println(request.getParameterValues("width")[0]);
+            System.out.println(request.getParameterValues("trees")[0]);
             System.out.println("to appear");
             log.debug(path + " request processed.");
         } else if (path.contains("tree.html")) {
@@ -110,25 +113,43 @@ public class MyHandler extends AbstractHandler {
             String nameFile = path.substring(path.lastIndexOf("/") + 1);
             String pathDirectory = path.substring(0, path.lastIndexOf("/"));
             int width = Integer.valueOf(request.getParameterValues("width")[0]);
-            if (request.getParameterValues("neighbor") != null) {
-                System.out.println(request.getParameterValues("neighbor")[0]);
-            }
             try {
-                requestForHtml(nameFile, pathDirectory, width);
+                String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
+                Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
+                if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("gen")) {
+                    Transformer.createGenome(nameFile.substring(0, nameFile.indexOf("_")), config);
+                    applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 1);
+                } else if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("trs")) {
+                    Transformer.createTransformationToXml(nameFile.substring(0, nameFile.indexOf("_")), config);
+                    applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 2);
+                }
                 writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
                 log.debug(nameFile + " created. " + path + " request processed.");
             } catch (Exception e) {
                 log.error("Problem with create file " + nameFile + " " + e);
             }
         } else if (path.contains(".html")) {
-            System.out.println("request for html with image");
+            log.debug("Handling request " + path);
+            int idRear = Integer.valueOf(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".")));
+            String nameTransf = path.substring(path.lastIndexOf('/', path.lastIndexOf('/') - 1) + 1, path.lastIndexOf('_'));
+            String pathDirectory = path.substring(0, path.lastIndexOf("/", path.lastIndexOf('/') - 1));
+            int width = Integer.valueOf(request.getParameterValues("width")[0]);
+            String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
+            Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
+            String answer = Transformer.createTransformationToPng(nameTransf, config, idRear);
+            if (answer != null) {
+                ServletOutputStream out = response.getOutputStream();
+                out.write(answer.getBytes(), 0, answer.getBytes().length);
+                out.close();
+            }
+            log.debug(path + " request processed.");
         } else if (path.contains("download")) {
             log.debug("Download request " + path);
-            String nameFile = path.substring(path.lastIndexOf("/") + 1);
-            String pathDirectory = path.substring(0, path.lastIndexOf("/", path.lastIndexOf("/") - 1));
+            String nameFile = path.substring(path.indexOf("download") + "download".length() + 1);
+            String pathDirectory = path.substring(0, path.indexOf("download"));
             response.setHeader("Content-Disposition", "attachment;filename=\"" + nameFile + "\"");
             writeInRequest(new File(JettyServer.uploadDir, pathDirectory + "/" + nameFile), response);
-            log.debug(path + "download request processed.");
+            log.debug(path + " download request processed.");
         } else if (path.contains("lib")) {
             log.debug("Handling request " + path);
             writeInRequest(new File(JettyServer.libDir, path.substring(path.lastIndexOf('/'))), response);
@@ -211,11 +232,18 @@ public class MyHandler extends AbstractHandler {
         }
 
         responseStage(out, "Start to transform output data.");
-        new Transformer(config, out);
+        int i;
+        if (config.isUseTarget() && config.getTarget() != null) {
+            TreeReader.createTarget(config, out);
+            i = 3;
+        } else {
+            TreeReader.createFullPage(config, out);
+            i = 0;
+        }
 
         responseStage(out, "Applying XSLT to XML for create html.");
         try {
-            applyXslt("tree.xml", "tree.html", datasetDir.getAbsolutePath(), 0);
+            applyXslt("tree.xml", "tree.html", datasetDir.getAbsolutePath(), i);
             responseInformation(out, "XSL transformation done");
         } catch (SaxonApiException e) {
             responseErrorServer(out, "Can not end XSL transformation, sorry.");
@@ -234,18 +262,6 @@ public class MyHandler extends AbstractHandler {
             out.println("<p><a href=\"" +treeLink + "\">MGRA tree</a> Press this link if it doesn't works automatically or you do not want to wait.</p>");
             out.println("</body></html>");
             out.flush();
-        }
-    }
-
-    private static void requestForHtml(String nameFile, String pathDirectory, int width) throws SaxonApiException, IOException {
-        String requestDirectory = JettyServer.uploadDir.getAbsolutePath() + pathDirectory;
-        Config config = new Config(requestDirectory, JettyServer.CFG_FILE_NAME, width);
-        if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("gen")) {
-            CreatorInformation.createGenome(nameFile.substring(0, nameFile.indexOf("_")), config);
-            applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 1);
-        } else if (nameFile.substring(nameFile.indexOf("_") + 1, nameFile.indexOf(".")).equals("trs")) {
-            CreatorInformation.createTransformation(nameFile.substring(0, nameFile.indexOf("_")), config);
-            applyXslt(nameFile.substring(0, nameFile.indexOf(".") + 1) + "xml", nameFile, requestDirectory, 2);
         }
     }
 

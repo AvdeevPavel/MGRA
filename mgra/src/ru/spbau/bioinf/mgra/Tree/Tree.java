@@ -1,7 +1,6 @@
 package ru.spbau.bioinf.mgra.Tree;
 
 import org.jdom.Element;
-import ru.spbau.bioinf.mgra.Drawer.CreatorInformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;

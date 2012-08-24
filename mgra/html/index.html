@@ -69,6 +69,13 @@
 			document.forms[idform].elements["information_reconstracted"].value = document.forms[idform].reconstracted.checked;
 		} 
 
+		function showCompletion(idform, show) {
+			document.getElementById(document.forms[idform].name + "_completionDiv").style.display= show ? '' : 'none';
+			document.getElementById(document.forms[idform].name + "_completionControl").style.display=show ? 'none' : '';
+            document.forms[idform].elements["useTarget"].value=show ? 1 : 0;
+			return false;
+        }
+
 		function showTarget(idform, show) {
 			document.getElementById(document.forms[idform].name + "_targetDiv").style.display= show ? '' : 'none';
 			document.getElementById(document.forms[idform].name + "_targetControl").style.display=show ? 'none' : '';
@@ -144,6 +151,7 @@
 
 			document.getElementById(document.forms[idform].name + "_showTree_info").innerHTML = "";
 			showTarget(idform, false);
+			showCompletion(idform, false);
 		} 
 
 		function setFormat(format) { 
@@ -200,7 +208,8 @@
                                                             '81t 83h 80h 84t Q\n'+
                                                             '794h 795t 795h 796t Q\n'+
                                                             '1196h 1198h 1202t 1199t D\n';
-            showTarget(2, true);
+            showTarget(2, false);
+			showCompletion(2, true);
         }
 
         function setMam7() {
@@ -236,6 +245,7 @@
             form.elements["completion"].value = '';
 
             showTarget(2, false);
+			showCompletion(2, false);
         }
 
 		function setRosaceae() { 
@@ -261,6 +271,7 @@
             form.elements["completion"].value = '';
 
             showTarget(2, true);
+			showCompletion(2, false);
 		} 
 
 
@@ -307,6 +318,7 @@
             form.elements["target"].value = 'DCPW';
             form.elements["completion"].value = '';
             showTarget(3, true);
+			showCompletion(3, false);
         }
 
         function setToy() {
@@ -340,6 +352,7 @@
             form.elements["completion"].value = '';
 
             showTarget(3, false);
+			showCompletion(3, false);
         }
 
 		function setShigella() { 
@@ -378,9 +391,10 @@
             
 			form.elements["stages"].value = '4';       
             form.elements["completion"].value = '357h 365t 268t 321h D\n' + 
-															  '400t 401h 398h 401t D\n' + 
-															  '425t 426t 426h 407h B';
-            showTarget(3, true);
+												'400t 401h 398h 401t D\n' + 
+												'425t 426t 426h 407h B';
+            showTarget(3, false);
+			showCompletion(3, true);
 		} 
 
 		$(document).ready(function(){
@@ -482,25 +496,38 @@
 		    Smaller values require 'target' specification to produce ancestral reconstruction.
 	      	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
 		</p>
-   		<p>	
-			<strong>Completion</strong><br/>
-		    Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
-		    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
-		    replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
-		    'oo' stands for a chromosome end.
-			Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
-		</p> 
-		<div id = "content">
-		    <textarea rows="5" cols="60" name="completion" id="completion"></textarea>
+   		
+		<div id="fileForm_completionControl">
+			<a href="#" onclick="return showCompletion(1, true);">Show completion field</a>
 		</div>
 
+		<div id="fileForm_completionDiv" style="display:none;">
+    		<p>
+    	    	<a href="#" onclick="return showCompletion(1, false);">Remove completion field</a>
+	   		</p>
+
+    		<p>	
+			    Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+			    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+			 	replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+			    'oo' stands for a chromosome end.
+				Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+			</p> 
+			<div id = "content_text1">
+				<strong>Completion:</strong>
+			</div>
+			<div id = "content">
+			    <textarea rows="4" cols="60" name="completion" id="completion"></textarea>
+			</div>
+		</div> 
+
 	    <div id="fileForm_targetControl">
-            <a href="#" onclick="return showTarget(1, true);">Show Target and Completion fields</a>
+            <a href="#" onclick="return showTarget(1, true);">Show target field</a>
         </div>
 
         <div id="fileForm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return showTarget(1, false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return showTarget(1, false);">Remove target field</a>
 	   		</p>
 
     		<p>
@@ -512,11 +539,11 @@
     	    	<strong>Target:</strong>&nbsp;&nbsp;&nbsp;<input type='text' size='10' name='target' id="target"/><br>
     	   	</p>
 		</div> 
-			<p>
-				<div align = "center"> 
-			        <input type="submit" value="run mgra"/>
-				</div>
-		    </p>
+		<p>
+			<div align = "center"> 
+		        <input type="submit" value="run mgra"/>
+			</div>
+		</p>
     </form>
 	
 	<!--Form for infercars format-->
@@ -551,7 +578,7 @@
 				Synteny blocks for 3 genomes in rosaceous subfamilies: Prunus, Fragaria, Vitis. <br/>
 				<u>Paper:</u> Sook Jung, Alessandro Cestaro, Michela Troggio, Dorrie Main, Ping Zheng, Ilhyung Cho, Kevin M Folta, Bryon Sosinski, Albert Abbott, Jean-Marc Celton, Pere Arús, Vladimir Shulaev, Ignazio Verde, Michele Morgante, Daniel Rokhsar, Riccardo Velasco and Daniel J Sargent, 4 April 2012. Whole genome comparisons of Fragaria, Prunus and Malus reveal different modes of evolution between Rosaceous subfamilies.
 			</p>
-		</div>
+		</div>	
 		
 		<table id="infForm_genomes">
 	    </table>
@@ -581,25 +608,37 @@
 	        It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
 	    </p>
 		
-   		<p>	
-			<strong>Completion</strong><br/>
-	        Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
-	        Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
-	        replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
-	        'oo' stands for a chromosome end.
-	        Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
-	    </p> 
-		<div id = "content">
-			<textarea rows="5" cols="60" name="completion" id="completion"></textarea>
-		</div>	
+		<div id="infForm_completionControl">
+			<a href="#" onclick="return showCompletion(2, true);">Show completion field</a>
+		</div>
+
+		<div id="infForm_completionDiv" style="display:none;">
+    		<p>
+    	    	<a href="#" onclick="return showCompletion(2, false);">Remove completion field</a>
+	   		</p>
+
+    		<p>	
+			    Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+			    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+			 	replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+			    'oo' stands for a chromosome end.
+				Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+			</p> 
+			<div id = "content_text1">
+				<strong>Completion:</strong>
+			</div>
+			<div id = "content">
+			    <textarea rows="4" cols="60" name="completion" id="completion"></textarea>
+			</div>
+		</div> 
 
 	    <div id="infForm_targetControl">
-            <a href="#" onclick="return showTarget(2, true);">Show Target and Completion fields</a>
+            <a href="#" onclick="return showTarget(2, true);">Show target field</a>
         </div>
 
         <div id="infForm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return showTarget(2, false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return showTarget(2, false);">Remove target field</a>
 	   		</p>
     		<p>
 				<p>
@@ -675,25 +714,38 @@
 	      	It is not recommended to have stages higher than 3 if no complete phylogenetic tree is known.
 	    </p>
 
- 		<p>	
-			<strong>Completion</strong><br/>
-			Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
-		    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
-		    replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
-		    'oo' stands for a chromosome end.
-		    Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
-		</p>
-		<div id = "content">
-		    <textarea rows="6" cols="60" name="completion" id="completion"></textarea>
+		<div id="grmForm_completionControl">
+			<a href="#" onclick="return showCompletion(3, true);">Show completion field</a>
 		</div>
 
+		<div id="grmForm_completionDiv" style="display:none;">
+    		<p>
+    	    	<a href="#" onclick="return showCompletion(3, false);">Remove completion field</a>
+	   		</p>
+
+    		<p>	
+			    Manual (human-assisted) completion of T-consistent transformation (the last stage of MGRA).
+			    Each row contains exactly five terms: `a b c d E' denoting a 2-break operating on the \vec{T}-consistent multicolor E,
+			 	replacing the multiedges (a,b) and (c,d) with the multiedges (a,c) and (b,d).
+			    'oo' stands for a chromosome end.
+				Manual completion can be derived from visual inspection of the breakpoint graph after MGRA Stage 3.
+			</p> 
+			<div id = "content_text1">
+				<strong>Completion:</strong>
+			</div>
+			<div id = "content">
+			    <textarea rows="4" cols="60" name="completion" id="completion"></textarea>
+			</div>
+		</div> 
+
+
 	    <div id="grmForm_targetControl">
-            <a href="#" onclick="return showTarget(3, true);">Show Target and Completion fields</a>
+            <a href="#" onclick="return showTarget(3, true);">Show target field</a>
         </div>
 
         <div id="grmForm_targetDiv" style="display:none;">
     		<p>
-    	    	<a href="#" onclick="return showTarget(3, false);">Remove Target and Completion fields</a>
+    	    	<a href="#" onclick="return showTarget(3, false);">Remove target field</a>
 	   		</p>
     		<p>
 				<p>

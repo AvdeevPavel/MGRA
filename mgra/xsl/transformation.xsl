@@ -14,10 +14,10 @@
 </xsl:template>
 
 <xsl:template match="rearrangement">
-	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="id"/>.</strong></font>&#160;&#160;<a href="" onclick="getRearrangementImage({./id})">create image.</a> </blockquote> 
-	<p id="trs{./name}_bar_{./id}" align="center"></p>
-	<p id="trs{./name}_error_{./id}" align="center"></p>
-	<div id="trs{./name}_info_{./id}"></div>
+	<blockquote><font size="4"><strong>Rearrangement <xsl:value-of select="id"/>.</strong></font>&#160;&#160;<input id="rear_image_{../name}{./id}" type="button" value="create image" onclick="getRearrangementImage('{../name}', {./id})"/></blockquote> 
+	<p id="trs{../name}_bar{./id}" align="center"></p>
+	<div id="trs{../name}_info{./id}"></div>
+	<div id="trs{../name}_xml{./id}">
 	<p><strong>Before:</strong><br/>
 	<xsl:apply-templates select="before/chromosome">
 		<xsl:sort select="id" data-type="number"/>
@@ -31,6 +31,7 @@
 		<xsl:sort select="id" data-type="number"/>
 	</xsl:apply-templates>
 	</p>
+	</div>
 </xsl:template>
 
  <xsl:template match="chromosome">

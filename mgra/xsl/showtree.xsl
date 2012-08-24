@@ -1,50 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output encoding="UTF-8" method="html" omit-xml-declaration="yes" indent="yes"/>
-
-<xsl:template match="full">
+	
+<xsl:template match="trees">
 <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 <html>
-<head>
-<title>MGRA tree</title>
-				
-<style type="text/css">
-	.end0{color:green}
-	.end1{color:red}
-	.end2{color:lime}
-	.end3{color:maroon}
-</style>
-<script src="lib/jquery-1.8.0.min.js"></script>
-<script src="lib/kinetic-v3.10.5.js"></script>
+<head>			
+<script src="http://www.kineticjs.com/download/kinetic-v3.10.5.js"></script>
+<!--<script src="lib/kinetic-v3.10.5.js"></script>-->
 <script>
-	load_information = null;
-	getClientWidth = null; 
-	getClientHeight = null; 
-
-	var values =  [
-		<xsl:apply-templates select="genomes/genome/name"/>
-	]
-				
 	var trees = [ 
-		<xsl:apply-templates select="trees/input/tree" mode = "array"/>
-		<xsl:apply-templates select="trees/reconstruct/tree" mode = "array"/>
+		<xsl:apply-templates select="tree" mode = "array"/>
 	]
 
-	function getRearrangementImage(nameTransfor, id) {
-		if (document.getElementById("trs" + nameTransfor + "_info" + id).firstChild == null) { 
-			load_information("trs"+nameTransfor, nameTransfor+"_trs/"+id, id)
-			document.getElementById("trs" + nameTransfor + "_xml" + id).innerHTML = "";
-			document.getElementById("rear_image_" + nameTransfor + id).style.display = "none";
-		} 
+	function getClientWidth() {
+		return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientWidth:document.body.clientWidth;
 	}
-				
-	function changeStyle(id, show){
-		var element = document.getElementById(id);
-		if (element != null) {
-			element.style.display= id == show ? "" : "none";
-		}
+		
+	function getClientHeight() {
+		return document.compatMode=='CSS1Compat' &amp;&amp; !window.opera?document.documentElement.clientHeight:document.body.clientHeight;
 	}
-
+					
 	function createStage(nameContainer, width_, height_) {	
 		var stage = new Kinetic.Stage({ 
 			container: nameContainer,
@@ -101,16 +77,6 @@
        		document.body.style.cursor = "pointer";
        	});
 
-		text.on("dblclick", function(evt) { 
-			for (var i = 0; i &lt; values.length; ++i) {
-				changeStyle('gen'+values[i], 'gen'+str);
-				changeStyle('trs'+values[i], 'gen'+str);
-			}
-
-			if (document.getElementById('gen'+str+'_info').firstChild == null) { 
-				load_information('gen'+ str, str + '_gen', "");
-			} 
-		});
 		return text;  
 	}
 
@@ -244,24 +210,6 @@
 			} 
 		}
 		stage.add(layer);
-
-		for(var i = 0; i &lt; values.length; ++i) { 
-			var line = layer.get('#mainLine_' + values[i])[0];
-			if (line != null) { 
-				line.saveImageData();
-				line.on("dblclick", function(evt) { 
-					str = 'trs' + this.getName();
-					for (var i = 0; i &lt; values.length; ++i) {
-	                	changeStyle('gen'+values[i], str);
-						changeStyle('trs'+values[i], str);
-                 	}
-	
-					if (document.getElementById(str + '_info').firstChild == null) { 
-						load_information(str, this.getName() + '_trs', "");
-					} 
-				});
-			} 		
-		}
 	} 
 		
 	function changeLines(i, lines, x1, y1) { 
@@ -350,87 +298,12 @@
     	    }, false);
 		} 
 	};
-
-	$(document).ready(function(){
-		function my_load_func(nameInf, nameFile, id) {    			
-			$.ajax({ 
-				type: "POST",
-				url: nameFile + ".html",
-				async: false,
-				cashe: false,
-				context: document.body,
-				data: "width="+$(window).width(),
-				dataType: 'html',
-				beforeSend: function() { 
-					$("#" + nameInf + "_bar" + id).html("&lt;u&gt;Please wait. We processed this request: read information, generate images or html text, send. This may take some time.&lt;/u&gt;");	
-				}, 
-				success: function(data) { 
-					$("#" + nameInf + "_info" + id).html(data);
-				}, 
-				error: function() {
-					$("#" + nameInf + "_info" + id).html("&lt;p align=\"center\"&gt;&lt;strong&gt;We can not create image. You can download information in view of text file&lt;/strong&gt;&lt;/p&gt;");	 				
-				}, 
-				complete: function() { 
-					$("#" + nameInf + "_bar" + id).html("");	
-				}  	
-			});
-		} 
-		function my_getWidth() { 
-			return $(window).width();
-		} 
-		function my_getHeight() { 
-			return $(window).height();
-		} 
-		load_information = my_load_func; 
-		getClientWidth = my_getWidth;
-		getClientHeight = my_getHeight;
-	});	
 </script>
 </head>
 <body>
-	<header> 
-		<h1><p align="center"><a href="http://mgra.bioinf.spbau.ru">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>  
-	</header>
-	<p><font size="4"><strong>Information for working subtree(s): </strong></font></p> 
-	<ol type="1">
-		<li>
-			You can drag and drop nodes. Click interesting node and drag what you want.   
-		</li>
-		<br/>
-		<li>
-			If node is dark blue, you push double click and see genome.
-		</li>
-		<br/>
-		<li>
-			If arrow is black, you push double click and see transformation.        		
-		</li>
-		<br/>
-	</ol>
-	<xsl:apply-templates select="trees"/>
-	<xsl:apply-templates select="genomes"/>	
-	<xsl:apply-templates select="transformations"/>
-	<footer>
-	<hr/>
-	MGRA 1.0 &#169; 2008,09 by Max Alekseyev
-	</footer>
+	<xsl:apply-templates select="tree" mode ="createForm"/>
 </body>
 </html>
-</xsl:template>
-
-<!--Trees transformation-->
-<xsl:template match="trees">
-	<xsl:apply-templates select="input"/>
-	<xsl:apply-templates select="reconstruct"/>
-</xsl:template>
-
-<xsl:template match="input">
-	<p><font size = "10"><string> Input subtree(s): </string></font></p>
-	<xsl:apply-templates select="tree" mode = "createForm"/>
-</xsl:template>
-
-<xsl:template match="reconstruct">
-	<p><font size = "10"><string> Reconstructed subtree(s): </string></font></p>
-	<xsl:apply-templates select="tree" mode = "createForm"/>
 </xsl:template>
 
 <xsl:template match="tree" mode = "array">
@@ -462,48 +335,4 @@
 	},
 </xsl:template>
 
-<!--Genomes transformation-->
-<xsl:template match="genomes">
-	<xsl:apply-templates select = "genome"/>
-</xsl:template>
-
-<xsl:template match="genome" mode ="target">
-    <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-	<p id="gen{./name}_bar" align="center"></p>
-	<div id="gen{./name}_info"></div>
-	<div id="button_text_gen_{./name}" align="center">
-		<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.gen'"/>
-	</div>
-</xsl:template>
-
-<xsl:template match="genome">
-	<div id="gen{./name}" style="display:none;">
-    	<h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
-		<p id="gen{./name}_bar" align="center"></p>
-		<div id="gen{./name}_info"></div>
-		<div id="button_text_gen_{./name}" align="center">
-			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.gen'"/>
-		</div>
-	</div>
-</xsl:template>
-
-<!--Transformations XSL transformation-->
-<xsl:template match="transformations">
-	<xsl:apply-templates select = "transformation"/>
-</xsl:template>
-	
-<xsl:template match="transformation">
-	<div id="trs{./name}" style="display:none;">
-		<h3>Transformation for <xsl:value-of select="./name"/></h3>
-		<p id="trs{./name}_bar" align="center"></p>
-		<div id="trs{./name}_info"></div>
-		<div id="buttons_trs_{./name}" align="center">
-			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='download/{./name}.trs'"/>
-		</div>	
-	</div>
-</xsl:template>
-
-<xsl:template match="name">
-	'<xsl:value-of select="."/>',
-</xsl:template>
 </xsl:stylesheet>

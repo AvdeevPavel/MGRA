@@ -6,8 +6,9 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlets.MultiPartFilter;
+
 import ru.spbau.bioinf.mgra.DataFile.Config;
-import ru.spbau.bioinf.mgra.Drawer.Drawer;
+import ru.spbau.bioinf.mgra.Parser.Drawer;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -32,7 +33,7 @@ public class JettyServer {
     public static final File xslDir = new File("xsl");
     public static final Processor processor = new Processor(false);
     public static final XsltCompiler comp = processor.newXsltCompiler();
-    public static XsltTransformer[] xslt = new XsltTransformer[3];
+    public static XsltTransformer[] xslt = new XsltTransformer[5];
 
     public static final File execDir = new File("exec");
     public static File exeFile;
@@ -47,6 +48,8 @@ public class JettyServer {
             xslt[0] = comp.compile(new StreamSource(new InputStreamReader(new FileInputStream(new File(xslDir, "tree.xsl")), "UTF-8"))).load();
             xslt[1] = comp.compile(new StreamSource(new InputStreamReader(new FileInputStream(new File(xslDir, "genome.xsl")), "UTF-8"))).load();
             xslt[2] = comp.compile(new StreamSource(new InputStreamReader(new FileInputStream(new File(xslDir, "transformation.xsl")), "UTF-8"))).load();
+            xslt[3] = comp.compile(new StreamSource(new InputStreamReader(new FileInputStream(new File(xslDir, "target.xsl")), "UTF-8"))).load();
+            xslt[4] = comp.compile(new StreamSource(new InputStreamReader(new FileInputStream(new File(xslDir, "showtree.xsl")), "UTF-8"))).load();
         } catch (Throwable e) {
             log.error("Error initializing xslt", e);
         }

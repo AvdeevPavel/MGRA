@@ -1,8 +1,6 @@
 package ru.spbau.bioinf.mgra.Tree;
 
 import org.jdom.Element;
-import ru.spbau.bioinf.mgra.Drawer.CreatorInformation;
-import ru.spbau.bioinf.mgra.Parser.Transformer;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
 import java.util.ArrayList;
@@ -210,10 +208,11 @@ public class Node {
     /*Other function*/
     private void addCell(Element parent, HashMap<HashSet<Character>, String> builtGenome) {
         Element cell = new Element("cell");
+
         if (builtGenome.get(dataSet) != null) {
             XmlUtil.addElement(cell, "name", builtGenome.get(dataSet));
         } else {
-            XmlUtil.addElement(cell, "name", Transformer.convertToString(dataSet));
+            XmlUtil.addElement(cell, "name", TreeReader.convertToString(dataSet));
         }
 
         XmlUtil.addElement(cell, "level", this.height);
@@ -258,7 +257,7 @@ public class Node {
     @Override
     public String toString() {
         if (children.isEmpty()) {
-            return Transformer.convertToString(dataSet);
+            return TreeReader.convertToString(dataSet);
         } else {
             String ans = "(";
             for(int i = 0; i < children.size(); ++i) {

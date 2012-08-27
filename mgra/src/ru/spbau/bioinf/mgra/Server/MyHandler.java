@@ -127,9 +127,11 @@ public class MyHandler extends AbstractHandler {
             log.debug(path + " request processed.");
         } else if (path.contains("tree.html")) {
             log.debug("Handling request " + path);
+            //path = path.substring("/file".length()); //
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
             log.debug(path + " request processed.");
         } else if (path.contains("_gen.html") || path.contains("_trs.html")) {
+            //path = path.substring("/file".length()); //
             String nameFile = path.substring(path.lastIndexOf("/") + 1);
             String pathDirectory = path.substring(0, path.lastIndexOf("/"));
             int width = Integer.valueOf(request.getParameterValues("width")[0]);
@@ -150,6 +152,7 @@ public class MyHandler extends AbstractHandler {
             }
         } else if (path.contains(".html")) {
             log.debug("Handling request " + path);
+            //path = path.substring("/file".length()); //
             int idRear = Integer.valueOf(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".")));
             String nameTransf = path.substring(path.lastIndexOf('/', path.lastIndexOf('/') - 1) + 1, path.lastIndexOf('_'));
             String pathDirectory = path.substring(0, path.lastIndexOf("/", path.lastIndexOf('/') - 1));
@@ -165,6 +168,7 @@ public class MyHandler extends AbstractHandler {
             log.debug(path + " request processed.");
         } else if (path.contains("download")) {
             log.debug("Download request " + path);
+            //path = path.substring("/file".length()); //
             String nameFile = path.substring(path.indexOf("download") + "download".length() + 1);
             String pathDirectory = path.substring(0, path.indexOf("download"));
             response.setHeader("Content-Disposition", "attachment;filename=\"" + nameFile + "\"");
@@ -172,10 +176,12 @@ public class MyHandler extends AbstractHandler {
             log.debug(path + " download request processed.");
         } else if (path.contains("lib")) {
             log.debug("Handling request " + path);
+            //path = path.substring("/file".length()); //
             writeInRequest(new File(JettyServer.libDir, path.substring(path.lastIndexOf('/'))), response);
             log.debug(path + " request processed.");
         } else if (path.contains(JettyServer.REQUEST_START)) {
             log.debug("Handling request " + path);
+            //path = path.substring("/file".length());
             writeInRequest(new File(JettyServer.uploadDir.getAbsolutePath(), path), response);
             log.debug(path + " request processed.");
         }

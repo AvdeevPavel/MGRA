@@ -42,21 +42,17 @@
 			padding: 5px;
 		} 
 	</style>
-	<script src="lib/jquery-1.8.0.min.js"></script>
 	<script type = "text/javascript">	
-		load_information = null;
 		var genomeCount = new Object();
 
 		function viewTree(idform) { 
-			if (document.getElementById(document.forms[idform].name + "_showTree_info").firstChild == null) { 
-				load_information(document.forms[idform].elements["trees"].value, document.forms[idform].name);
-			} 
+			window.open("http://127.0.0.1:8080/showtree.html?trees=" + document.forms[idform].elements["trees"].value,'scrollbars=true, width=800, height=600');
 		} 
 
 		function loadFile(file) {
             var X = new XMLHttpRequest();
             X.open('GET', file, false );
-            X.setRequestHeader('Content-Type', 'text/html')
+            X.setRequestHeader('Content-Type', 'text/html');
             X.send('');
             return X.responseText;
         }
@@ -72,7 +68,6 @@
 		function showCompletion(idform, show) {
 			document.getElementById(document.forms[idform].name + "_completionDiv").style.display= show ? '' : 'none';
 			document.getElementById(document.forms[idform].name + "_completionControl").style.display=show ? 'none' : '';
-            document.forms[idform].elements["useTarget"].value=show ? 1 : 0;
 			return false;
         }
 
@@ -149,7 +144,6 @@
 				viewInformForExample(document.forms[idform], "");
 			} 			
 
-			document.getElementById(document.forms[idform].name + "_showTree_info").innerHTML = "";
 			showTarget(idform, false);
 			showCompletion(idform, false);
 		} 
@@ -194,7 +188,7 @@
             form.elements["alias6"].value = 'chimpanzee panTro2';
 
             form.elements["genome"].value = loadFile('mam6/blocks6.txt');
-			form.elements["trees"].value = '(((M,R),D),(Q,(H,C)))';
+			form.elements["trees"].value = '(((M,R),D),(Q,(H,C)));';
 			form.reconstracted.checked = false;
 			setReconstructed(2);
 
@@ -235,8 +229,8 @@
             form.elements["alias7"].value = 'opossum monDom4'; 
             
             form.elements["genome"].value = loadFile('mam7/blocks7.txt');
-            form.elements["trees"].value = '((M,R),DOQHC)\n' +
-                                           '(MRDO,(Q,(H,C)))';
+            form.elements["trees"].value = '((M,R),DOQHC);\n' +
+                                           '(MRDO,(Q,(H,C)));';
 
 			form.reconstracted.checked = true;
 			setReconstructed(2);
@@ -263,7 +257,7 @@
             form.elements["alias3"].value = 'vv vitus';
             
             form.elements["genome"].value = loadFile('rosaceae/rosaceae.txt');
-            form.elements["trees"].value = '((P,S),V)';
+            form.elements["trees"].value = '((P,S),V);';
 			form.reconstracted.checked = false;
 			setReconstructed(2);
             form.elements["stages"].value = '3';
@@ -309,9 +303,9 @@
             form.elements["alias7"].value = 'pig';
 			form.elements["genome7"].value = loadFile('murphy05/murphy05_7.txt');           
 
-            form.elements["trees"].value = '((H,(M,R)),DCPW)\n'+
-                                           '((D,C),HRMPW)\n' +
-                                           '((P,W),HRMDC)';
+            form.elements["trees"].value = '((H,(M,R)),DCPW);\n'+
+                                           '((D,C),HRMPW);\n' +
+                                           '((P,W),HRMDC);';
 			form.reconstracted.checked = false;
 			setReconstructed(3);
             form.elements["stages"].value = '3';
@@ -343,7 +337,7 @@
             form.elements["alias4"].value = 'P4';
     		form.elements["genome4"].value = loadFile('toy/toyblks_4.txt');
 			
-            form.elements["trees"].value = '((1,2),(3,4))';
+            form.elements["trees"].value = '((1,2),(3,4));';
 			form.reconstracted.checked = false; 
 			setReconstructed(3);
 
@@ -385,7 +379,7 @@
             form.elements["alias6"].value = 'Shi6 S6';
 			form.elements["genome6"].value = loadFile('shigella/shigella_6.txt');           
 
-            form.elements["trees"].value = '(((A,B),F),((D,C),E))';
+            form.elements["trees"].value = '(((A,B),F),((D,C),E));';
 			form.reconstracted.checked = false;
 			setReconstructed(3);
             
@@ -396,34 +390,7 @@
             showTarget(3, false);
 			showCompletion(3, true);
 		} 
-
-		$(document).ready(function(){
-			function my_load_func(trees, form) {    			
-				$.ajax({ 
-					type: "POST",
-					url: "http://127.0.0.1:8080/showtree.html",
-					async: false,
-					cashe: false,
-					context: document.body,
-					data: "trees="+trees+"&width="+$("#"+form+"_showTree_info").width(),
-					dataType: 'html',
-					beforeSend: function() { 
-						$("#" + form + "_showTree_bar").html("<u>Please wait. We processed this request: read information, generate images or html text, send. This may take some time.</u>");	
-					}, 
-					success: function(data) { 
-						$("#" + form + "_showTree_info").html(data);
-					}, 
-					error: function() {
-						$("#" + form + "_showTree_info").html("<p><strong>We can not create image. You can download information in view of text file</strong><p>");	 				
-					}, 
-					complete: function() { 
-						$("#" + form + "_showTree_bar").html("");	
-					}  	
-				});
-			} 
-			load_information = my_load_func; 
-		});
-	</script>
+</script>
 </head>
 <body>
 	<header> 
@@ -479,13 +446,11 @@
 
 		<p>
     	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
-    	    MGRA assumes that only terminal branches are known.  
+    	    MGRA assumes that only terminal branches are known. Subtrees are separated from each other ';'. 
     	</p>
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(1)"/> </div>
-		<p id="fileForm_showTree_bar" align="center"></p>
-		<div id="fileForm_showTree_info" align="center"></div>
 	
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(1);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
@@ -590,13 +555,11 @@
 
 		<p>
     	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
-    	    MGRA assumes that only terminal branches are known.  
+    	    MGRA assumes that only terminal branches are known. Subtrees are separated from each other ';'.  
     	</p>
    		
 		<div id = "content"> <textarea rows="5" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(2)"/> </div>
-		<p id="infForm_showTree_bar" align="center"></p>
-		<div id="infForm_showTree_info" align="center"></div>
 
 		<input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(2);"/><strong>&nbsp;recostructed tree</strong><br/>
 		
@@ -696,14 +659,12 @@
 	    
     	<p>
     	    <strong>Known subtrees of the phylogenetic tree of the above genomes in <a href=http://en.wikipedia.org/wiki/Newick_format>Newick format</a></strong><br>
-    	    MGRA assumes that only terminal branches are known.  
+    	    MGRA assumes that only terminal branches are known. Subtrees are separated from each other ';'.   
     	</p>
    	
 		<div id = "content"> <textarea rows="6" cols="60" name="trees" id="trees"></textarea></div>
 		<div align = "center"> <input name="show_tree" type="button" value="show tree" onclick="viewTree(3)"/> </div>
-		<p id="grmForm_showTree_bar" align="center"></p>
-		<div id="grmForm_showTree_info" align="center"></div>
-
+		
 	    <input type="checkbox" name="reconstracted" value="1" onclick="setReconstructed(3);"/><strong>&nbsp;recostructed tree</strong><br/>
 	    
 	    <p>
@@ -767,7 +728,7 @@
 	<div id = "showHelp" style="display:none;"> <div id = "content">
 		<h2><p align="center">How to work</p></h2>		
     	This is web server provide interface for working <a href="http://cseweb.ucsd.edu/~ppevzner/download/mgra20090215.zip">MGRA algorithm</a>. 
-		<h3><u>Algorithm:</u></h3>		
+		<!--<h3><u>Algorithm:</u></h3>		
 		<ol type = "1">
 		<li>
 			<strong>You need choose input data format. Server supported two input formats are grimm and infercars. </strong> 
@@ -812,7 +773,7 @@
 		</li>
 		<ol>
 
-		Name genome is one symbol
+		Name genome is one symbol-->
 	</div>
 	</div>
 

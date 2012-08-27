@@ -63,7 +63,7 @@ public class Config {
 
         /*[Trees]*/
         String inputTrees = properties.getProperty("trees");
-        String[] treesString = inputTrees.split("[\n]");
+        String[] treesString = inputTrees.split(";");
         for(String s: treesString) {
             s = s.trim();
             trees.add(s);

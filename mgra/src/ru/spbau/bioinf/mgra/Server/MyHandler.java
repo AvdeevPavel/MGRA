@@ -111,7 +111,11 @@ public class MyHandler extends AbstractHandler {
             datasetDir.mkdirs();
 
             String pathDir = datasetDir.getCanonicalPath().replaceAll("\\\\", "/");
-            String[] data = path.substring(path.indexOf("=")).split("[ \t\n]");
+
+            String[] data = null;
+            if (request.getParameterValues("trees")[0] != null) {
+                data = request.getParameterValues("trees")[0].split(";");
+            }
 
             try {
                 TreeReader.createShowTree(data, pathDir);

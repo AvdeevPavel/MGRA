@@ -6,8 +6,7 @@
 <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
 <html>
 <head>			
-<script src="http://www.kineticjs.com/download/kinetic-v3.10.5.js"></script>
-<!--<script src="lib/kinetic-v3.10.5.js"></script>-->
+<script src="lib/kinetic-v3.10.5.js"></script>
 <script>
 	var trees = [ 
 		<xsl:apply-templates select="tree" mode = "array"/>

@@ -1,8 +1,10 @@
 package ru.spbau.bioinf.mgra.Tree;
 
 import org.jdom.Element;
+import ru.spbau.bioinf.mgra.Parser.Transformation;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +64,31 @@ public class Node {
         }
         if (cur.length() > 0) {
             children.add(new Node(cur));
+        }
+    }
+
+    public void appendTransforamtion(String pathDirectory, HashMap<HashSet<Character>, String> builtGenome) throws IOException {
+        if ((children.get(0) != null) && (children.get(1) != null)) {
+            if (builtGenome.get(children.get(1).dataSet) != null) {
+                String nameTrs;
+                if (builtGenome.get(children.get(0).dataSet) != null) {
+                    nameTrs = builtGenome.get(children.get(0).dataSet) + ".trs";
+                } else {
+                    nameTrs = TreeReader.convertToString(dataSet) + ".trs";
+                }
+                BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(new File(pathDirectory, builtGenome.get(children.get(1).dataSet) + ".trs"))));
+                PrintWriter out = new PrintWriter(new FileWriter(new File(pathDirectory, nameTrs), true));
+                String s;
+                while ((s = input.readLine()) != null) {
+                    String[] data = s.split("[ \t]");
+                    if (data.length >= 4) {
+                        String temp = data[0] + " " + data[2] + "\t" + data[1] + " " + data[3] + "\t" + nameTrs.substring(0, nameTrs.indexOf('.'));
+                        out.println(temp);
+                    }
+                }
+                out.close();
+                input.close();
+            }
         }
     }
 

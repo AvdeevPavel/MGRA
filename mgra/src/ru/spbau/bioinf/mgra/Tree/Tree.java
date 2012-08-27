@@ -3,6 +3,7 @@ package ru.spbau.bioinf.mgra.Tree;
 import org.jdom.Element;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +49,10 @@ public class Tree {
     public void createBranches(ArrayList<Branch> branches) {
         root.createBranches(root.getDataSet(), branches);
         branches.add(root.createRootBranch());
+    }
+
+    public void appendTransfromation(String pathDirectory, HashMap<HashSet<Character>, String> builtGenome) throws IOException {
+        root.appendTransforamtion(pathDirectory, builtGenome);
     }
 
     public Element toXml(HashMap<HashSet<Character>, String> builtGenome) {

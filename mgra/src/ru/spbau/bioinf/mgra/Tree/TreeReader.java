@@ -9,6 +9,7 @@ import ru.spbau.bioinf.mgra.Server.JettyServer;
 import ru.spbau.bioinf.mgra.Server.MyHandler;
 import ru.spbau.bioinf.mgra.Server.XmlUtil;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,6 +71,7 @@ public class TreeReader {
 
         Element xmlTrees = new Element("trees");
         HashMap<HashSet<Character>, String> builtGenome = getBuiltGenome(config);
+        appendTransformation(trees, newTrees, config.getPathParentFile(), builtGenome, out);
         Element input = new Element("input");
         Element reconstruct = new Element("reconstruct");
 
@@ -99,20 +101,31 @@ public class TreeReader {
         save(config.getPathParentFile(), out, "tree.xml", doc);
     }
 
-    public static void createShowTree(ArrayList<String> stringTrees, String path, PrintWriter out) throws IOException, InterruptedException {
-        MyHandler.responseStage(out, "Read trees.");
-        ArrayList<Tree> trees = readTrees(stringTrees);
+    public static void createShowTree(String[] stringTrees, String path) throws IOException, InterruptedException {
+        log.debug("Start view showtree");
+        log.debug("Read trees.");
+        ArrayList<String> st = new ArrayList<String>();
+        for(String s: stringTrees) {
+            st.add(s);
+        }
 
-        MyHandler.responseStage(out, "Merge trees.");
+        log.debug("Merge trees.");
+        ArrayList<Tree> trees = readTrees(st);
         trees = merge(trees);
 
+        log.debug("Convert trees to xml.");
         Document doc = new Document();
         Element rootXml = new Element("trees");
-
         convertTreeToXML(rootXml, trees, new HashMap<HashSet<Character>, String>());
         doc.setRootElement(rootXml);
 
-        save(path, out, "showtree.xml", doc);
+        log.debug("Save to xml.");
+        try {
+            XmlUtil.saveXml(doc, new File(path, "showtree.xml"));
+            log.debug("Done");
+        } catch (Exception e) {
+            log.error("Can not save, because" + e);
+        }
     }
 
     public static HashSet<Character> convertToSet(String name) {
@@ -303,6 +316,23 @@ public class TreeReader {
                 XmlUtil.addElement(gen, "name", file.getName().substring(0, file.getName().indexOf('.')));
                 parent.addContent(gen);
             }
+        }
+    }
+
+    private static void appendTransformation(ArrayList<Tree> trees, ArrayList<Tree> reconstructTrees, String pathDirectory, HashMap<HashSet<Character>, String> builtGenome, PrintWriter out) {
+        try {
+            for(Tree tree: trees) {
+                tree.appendTransfromation(pathDirectory, builtGenome);
+            }
+
+            if (reconstructTrees != null) {
+                for(Tree tree: reconstructTrees) {
+                    tree.appendTransfromation(pathDirectory, builtGenome);
+                }
+            }
+        } catch (IOException e) {
+            MyHandler.responseErrorServer(out, "Can not update root transformation. Output data can contains error.");
+            log.error("Can not work with append transformation " + e);
         }
     }
 

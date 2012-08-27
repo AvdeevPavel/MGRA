@@ -53,7 +53,7 @@ public class Branch implements Comparable<Branch> {
     public boolean compatibilityAll(Collection<Branch> inputSet) {
         for(Branch branch: inputSet) {
             if (!this.compatibilityTo(branch)) {
-                return false;
+               return false;
             }
         }
         return true;
@@ -120,10 +120,9 @@ public class Branch implements Comparable<Branch> {
                 if (stats.get(i).isSizeBranchOne()) {
                     currentSet.add(stats.get(i));
                 } else {
-                    int index = currentSet.size();
                     currentSet.add(stats.get(i));
                     screeningOfBranches_visit(i + 1, inputSet, currentSet, stats, ans);
-                    currentSet.remove(index);
+                    currentSet.remove(stats.get(i));
                     flag = true;
                }
             }
@@ -137,7 +136,6 @@ public class Branch implements Comparable<Branch> {
                     break;
                 }
             }
-
             ans.add(index, tmp);
 
             if (ans.size() > 3) {

@@ -143,6 +143,7 @@
 			id: "mainLine_" + text,
 			name: text
 		});
+		line1.saveImageData();
 
 		var headlen = 15;   
 		var angle = Math.atan2(5 - toY, stage.getWidth() / 2 - toX);
@@ -266,6 +267,7 @@
 		
 	function changeLines(i, lines, x1, y1) { 
 		if (lines[0] != null) { 
+			lines[0].saveImageData();
 			lines[0].attrs.points[i] ={x: x1, y: y1};				
 			lines[0].saveImageData();
 			var headlen = 15;   

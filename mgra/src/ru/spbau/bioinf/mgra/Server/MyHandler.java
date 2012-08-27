@@ -101,9 +101,25 @@ public class MyHandler extends AbstractHandler {
             }
         } else if (path.contains("showtree.html")) {
             log.debug("Handling request " + path);
-            System.out.println(request.getParameterValues("width")[0]);
-            System.out.println(request.getParameterValues("trees")[0]);
-            System.out.println("to appear");
+            updateDateDir();
+
+            File datasetDir;
+            do {
+                String dir = JettyServer.REQUEST_START + requestId.getAndIncrement();
+                datasetDir = new File(dateDir, dir);
+            } while (datasetDir.exists());
+            datasetDir.mkdirs();
+
+            String pathDir = datasetDir.getCanonicalPath().replaceAll("\\\\", "/");
+            String[] data = path.substring(path.indexOf("=")).split("[ \t\n]");
+
+            try {
+                TreeReader.createShowTree(data, pathDir);
+                applyXslt("showtree.xml", "showtree.html", pathDir, 4);
+                writeInRequest(new File(pathDir, "showtree.html"), response);
+            } catch (Exception e) {
+                log.error("Problem with create file showtree.html " + e);
+            }
             log.debug(path + " request processed.");
         } else if (path.contains("tree.html")) {
             log.debug("Handling request " + path);

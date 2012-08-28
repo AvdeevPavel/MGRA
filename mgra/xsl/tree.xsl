@@ -14,8 +14,8 @@
 	.end2{color:lime}
 	.end3{color:maroon}
 </style>
-<script src="lib/jquery-1.8.0.min.js"></script>
-<script src="lib/kinetic-v3.10.5.js"></script>
+<script src="/mgra/lib/jquery-1.8.0.min.js"></script>
+<script src="/mgra/lib/kinetic-v3.10.5.js"></script>
 <script>
 	load_information = null;
 	getClientWidth = null; 
@@ -357,7 +357,7 @@
 		function my_load_func(nameInf, nameFile, id) {    			
 			$.ajax({ 
 				type: "POST",
-				url: nameFile + ".html",
+				url: "/mgra/" + nameFile + ".html",
 				async: false,
 				cashe: false,
 				context: document.body,

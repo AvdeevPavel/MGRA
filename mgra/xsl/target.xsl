@@ -6,14 +6,14 @@
 <html>
 <head>
 <title>MGRA tree</title>
-<script src="lib/jquery-1.8.0.min.js"></script>
+<script src="/mgra/lib/jquery-1.8.0.min.js"></script>
 <script>
 load_information = null; 
 $(document).ready(function(){
 	function my_load_func(nameInf, nameFile) {    			
 		$.ajax({ 
 			type: "POST",
-			url: nameFile + ".html",
+			url: "/mgra/" + nameFile + ".html",
 			async: false,
 			cashe: false,
 			context: document.body,

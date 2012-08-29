@@ -68,6 +68,7 @@
 		function showCompletion(idform, show) {
 			document.getElementById(document.forms[idform].name + "_completionDiv").style.display= show ? '' : 'none';
 			document.getElementById(document.forms[idform].name + "_completionControl").style.display=show ? 'none' : '';
+			document.forms[idform].elements["useCompletion"].value=show ? 1 : 0;
 			return false;
         }
 
@@ -519,6 +520,7 @@
 		<input type="hidden" name="useFormat" id="useFormat" value="infercars"/>
 		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
 	    <input type="hidden" name="useTarget" id="useTarget" value="0"/>
+		<input type="hidden" name="useCompletion" id="useCompletion" value="0"/>
 	
 		<div id="mam6_information" style="display:none;">
 			<p style="text-indent: 25px;"> <strong> Information on the example: </strong> </p>

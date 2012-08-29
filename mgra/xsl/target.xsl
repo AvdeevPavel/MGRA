@@ -9,7 +9,6 @@
 <script src="/mgra/lib/jquery-1.8.0.min.js"></script>
 <script>
 load_information = null; 
-download_information = null;
 $(document).ready(function(){
 	function my_load_func(nameInf, nameFile) {    			
 		$.ajax({ 
@@ -34,20 +33,7 @@ $(document).ready(function(){
 			}  	
 		});
 	} 
-	function my_download_func(nameFile) {    			
-		$.ajax({ 
-			type: "POST",
-			url: "/mgra/" + nameFile,
-			async: false,
-			cashe: false,
-			data: "width="+$(window).width() + "&amp;parentHref=" + location.href,
-			success: function(data) { 
-				window.location.href = data;
-			}, 
-		});
-	} 
 	load_information = my_load_func; 
-	download_information = my_download_func;
 	load_information("gen<xsl:value-of select="genomes/genome/name"/>", "<xsl:value-of select="genomes/genome/name"/>_gen");
 });
 </script>
@@ -70,7 +56,7 @@ $(document).ready(function(){
 	<p id="gen{./name}_bar" align="center"></p>
 	<div id="gen{./name}_info"></div>
 	<div id="button_text_gen_{./name}" align="center">
-		<input name="download_text" type="button" value="Save as text" onclick="download_information('download/{./name}.gen')"/>
+		<input name="download_text" type="button" value="Save as text" onclick="window.location.href='{./name}.gen'"/>
 	</div>
 </xsl:template>
 </xsl:stylesheet>

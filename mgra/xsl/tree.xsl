@@ -491,7 +491,7 @@
 		<p id="trs{./name}_bar" align="center"></p>
 		<div id="trs{./name}_info"></div>
 		<div id="buttons_trs_{./name}" align="center">
-			<input name="download_text" type="button" value="Save as text" onclick="window.location.href={./name}.trs'"/>
+			<input name="download_text" type="button" value="Save as text" onclick="window.location.href='{./name}.trs'"/>
 		</div>	
 	</div>
 </xsl:template>

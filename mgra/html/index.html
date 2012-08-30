@@ -269,6 +269,67 @@
 			showCompletion(2, false);
 		} 
 
+		function setEcoliAndShigella() { 
+			setFormat('infForm'); 
+			initGenomes(2, 21); 
+			var form = document.forms[2];
+			
+			form.elements["name1"].value = '1';
+            form.elements["name2"].value = '2';
+            form.elements["name3"].value = '3';
+			form.elements["name4"].value = '4';
+			form.elements["name5"].value = '5';
+			form.elements["name6"].value = '6';
+			form.elements["name7"].value = '7';
+			form.elements["name8"].value = '8';
+			form.elements["name9"].value = '9';
+			form.elements["name10"].value = 'A';
+			form.elements["name11"].value = 'B';
+			form.elements["name12"].value = 'C';
+			form.elements["name13"].value = 'D';
+			form.elements["name14"].value = 'E';
+			form.elements["name15"].value = 'F';
+			form.elements["name16"].value = 'G';
+			form.elements["name17"].value = 'H';
+			form.elements["name18"].value = 'M';
+			form.elements["name19"].value = 'N';
+			form.elements["name20"].value = 'O';
+			form.elements["name21"].value = 'P';
+
+           	form.elements["alias1"].value = 'E1'
+           	form.elements["alias2"].value = 'E2'
+           	form.elements["alias3"].value = 'E5'
+           	form.elements["alias4"].value = 'E7'
+           	form.elements["alias5"].value = 'E9'
+           	form.elements["alias6"].value = 'E13'
+           	form.elements["alias7"].value = 'E15'
+           	form.elements["alias8"].value = 'E16'
+           	form.elements["alias9"].value = 'E17'
+           	form.elements["alias10"].value = 'E20'
+           	form.elements["alias11"].value = 'E22'
+           	form.elements["alias12"].value = 'E25'
+           	form.elements["alias13"].value = 'E26'
+           	form.elements["alias14"].value = 'E27'
+           	form.elements["alias15"].value = 'E28'
+           	form.elements["alias16"].value = 'E29'
+           	form.elements["alias17"].value = 'E30'
+           	form.elements["alias18"].value = 'E31'
+           	form.elements["alias19"].value = 'E32'
+           	form.elements["alias20"].value = 'E33'
+           	form.elements["alias21"].value = 'E34'
+            
+            form.elements["genome"].value = loadFile('e_coli/ecoli.txt');
+        
+			form.reconstracted.checked = true;
+			setReconstructed(2);
+            form.elements["stages"].value = '3';
+            form.elements["target"].value = '';
+            form.elements["completion"].value = '';
+
+            showTarget(2, false);
+			showCompletion(2, false);
+		} 
+
 
         function setMurphy() {
 			setFormat('grmForm');
@@ -413,6 +474,7 @@
 				<a href="#" onclick="setRosaceae(); return false;">rosaceae</a> <br>      
 				<a href="#" onclick="setMam7(); return false;">mam7</a> <br>	
 				<a href="#" onclick="setMam6(); return false;">mam6</a> <br>
+				<a href="#" onclick="setEcoliAndShigella(); return false;">ecoli with shigella</a> <br>  
 		        <a href="#" onclick="setMurphy(); return false;">murphy05</a> <br>
 		        <a href="#" onclick="setToy(); return false;">toy</a> <br>
 				<a href="#" onclick="setShigella(); return false;">shigella</a> <br>      
@@ -429,6 +491,7 @@
 		<input type="hidden" name="useFormat" id="useFormat" value="auto"/>
 		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
 		<input type="hidden" name="useTarget" id="useTarget" value="0"/>
+		<input type="hidden" name="useCompletion" id="useCompletion" value="0"/>
 
 		<table id="fileForm_genomes">
 	    </table>
@@ -629,6 +692,7 @@
 		<input type="hidden" name="useFormat" id="useFormat" value="grimm"/>
 		<input type="hidden" name="information_reconstracted" id="information_reconstracted" value="false"/>
 		<input type="hidden" name="useTarget" id="useTarget" value="0"/>
+		<input type="hidden" name="useCompletion" id="useCompletion" value="0"/>
 	
 		<div id="murphy_information" style="display:none;">
 			<p style="text-indent: 25px;"><strong>Information on the example:</strong></p>

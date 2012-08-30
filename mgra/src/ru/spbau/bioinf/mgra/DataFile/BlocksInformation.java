@@ -26,6 +26,7 @@ public class BlocksInformation {
     public static void writeGenomeFile(File genomeFileUpload, Properties properties, File datasetDir, Config config, String fileName) throws IOException {
         if (genomeFileUpload != null) {
             genomeFileUpload.renameTo(new File(datasetDir, fileName));
+            config.resolveFormat();
         } else {
             PrintWriter genomeFile = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(datasetDir, fileName)), "UTF-8"));
             if (config.getInputFormat().equals("grimm")) {
@@ -45,7 +46,6 @@ public class BlocksInformation {
             }
             genomeFile.close();
         }
-        config.resolveFormat();
     }
 
     public Long getLength(String numberBlock, String key) {

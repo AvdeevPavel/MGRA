@@ -148,7 +148,7 @@ public class Transformer {
             } else {
                 answer = "<img src=\"" + nameTrs + "_trs/" + idRear + ".png\"></img>\n";
             }
-            answer = answer.concat("<div align=\"center\"><input name=\"download_image\" type=\"button\" value=\"Save as image\" onclick=\"window.location.href='download/" + nameTrs + "_trs/" + idRear + ".png'\"/></div>");
+            answer = answer.concat("<div align=\"center\"><input name=\"download_image\" type=\"button\" value=\"Save as image\" onclick=\"window.location.href='" + nameTrs + "_trs/" + idRear + ".png'\"/></div>");
             return answer;
         } catch (OutOfMemoryError e) {
             log.debug("Image with " + nameTrs + " rearrangement is largest.");

@@ -50,7 +50,6 @@ public class MyHandler extends AbstractHandler {
         }
     }
 
-    @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String path = request.getPathInfo();
         log.debug("Request name " + path);
@@ -66,7 +65,7 @@ public class MyHandler extends AbstractHandler {
 
                         while (uploads.hasMoreElements()) {
                             String fileField = (String) uploads.nextElement();
-                            if ("genome".equals(fileField)) {
+                            if ("genome_file".equals(fileField)) {
                                 files[0] = (File) wrapper.getAttribute(fileField);
                             }
                         }
@@ -174,7 +173,6 @@ public class MyHandler extends AbstractHandler {
             try {
                 String nameFile = path.substring(path.lastIndexOf("/") + 1);
                 String parentHref = request.getParameterValues("parentHref")[0].substring("http://".length());
-                //System.out.println(nameFile + " " + parentHref);
                 String pathDirectory = parentHref.substring(parentHref.indexOf("/"), parentHref.lastIndexOf("/"));
                 response.setHeader("Content-Disposition", "attachment;filename=\"" + nameFile + "\"");
                 writeInRequest(new File(JettyServer.uploadDir, pathDirectory + "/" + nameFile), response);
@@ -236,16 +234,12 @@ public class MyHandler extends AbstractHandler {
         out.println("<html><title>MGRA processing information</title>");
         response(out, "<body><pre>");
 
-        responseStage(out, "Greating CFG file.");
+        responseStage(out, "Reading CFG file.");
+        log.debug("Reading CFG file.");
         Config config;
         try {
             config = new Config(datasetDir.getAbsolutePath(), properties, JettyServer.CFG_FILE_NAME);
-            config.createFile(true);
-            responseInformation(out, "CFG file created");
-        } catch (IOException e) {
-            responseErrorServer(out, "Problem to create CFG file");
-            log.error("Problem to create CFG file ", e);
-            throw e;
+            responseInformation(out, "CFG file read");
         } catch (LongUniqueName e) {
             responseErrorUser(out, "Your name genome is not valid. Max length name = 1. Please check your input data");
             log.error("Problem with name in genome", e);
@@ -253,6 +247,7 @@ public class MyHandler extends AbstractHandler {
         }
 
         responseStage(out, "Start create genome file.");
+        log.debug("Start create genome file.");
         try {
             BlocksInformation.writeGenomeFile(genomeFileUpload, properties, datasetDir, config, JettyServer.GENOME_FILE_NAME);
             responseInformation(out, "Genome file created");
@@ -262,7 +257,19 @@ public class MyHandler extends AbstractHandler {
             throw e;
         }
 
+        responseStage(out, "Creating CFG file.");
+        log.debug("Creating CFG file.");
+        try {
+            config.createFile(true);
+            responseInformation(out, "CFG file created");
+        } catch (IOException e) {
+            responseErrorServer(out, "Problem to create CFG file");
+            log.error("Problem to create CFG file ", e);
+            throw e;
+        }
+
         responseStage(out, "Start MGRA algorithm");
+        log.debug("Start MGRA algorithm");
         try {
             JettyServer.runMgraTool(config, out);
         } catch (Exception e) {
@@ -272,6 +279,7 @@ public class MyHandler extends AbstractHandler {
         }
 
         responseStage(out, "Start to transform output data.");
+        log.debug("Start to transform output data.");
         int i;
         if (config.isUseTarget() && config.getTarget() != null) {
             TreeReader.createTarget(config, out);
@@ -282,6 +290,7 @@ public class MyHandler extends AbstractHandler {
         }
 
         responseStage(out, "Applying XSLT to XML for create html.");
+        log.debug("Applying XSLT to XML for create html.");
         try {
             applyXslt("tree.xml", "tree.html", datasetDir.getAbsolutePath(), i);
             responseInformation(out, "XSL transformation done");

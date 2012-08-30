@@ -50,14 +50,14 @@ public class TreeReader {
             MyHandler.responseStage(out, "Create branch for input tree.");
             ArrayList<Branch> dataBranch = createBranchOfInputTree(trees);
 
-            ArrayList<ArrayList<Branch>> currentSet = subStageInAlgorithm(out, config, dataBranch);
+            ArrayList<ArrayList<Branch>> currentSet = subStageInAlgorithm(out, config, dataBranch, true);
             if (currentSet == null || currentSet.isEmpty()) {
                 MyHandler.responseInformation(out, "Not found correct branches. Is input tree correct?");
                 config.createFile(false);
                 MyHandler.responseStage(out, "Run MGRA tool without input tree.");
                 JettyServer.runMgraTool(config, out);
                 dataBranch.clear();
-                currentSet = subStageInAlgorithm(out, config, dataBranch);
+                currentSet = subStageInAlgorithm(out, config, dataBranch, false);
             }
 
             MyHandler.response(out, "STAGE: Create trees with new correct branches");
@@ -202,11 +202,11 @@ public class TreeReader {
         return ans;
     }
 
-    private static ArrayList<ArrayList<Branch>> subStageInAlgorithm(PrintWriter out, Config config, ArrayList<Branch> dataBranch) {
+    private static ArrayList<ArrayList<Branch>> subStageInAlgorithm(PrintWriter out, Config config, ArrayList<Branch> dataBranch, boolean isDropBf) {
         MyHandler.responseStage(out, "Read branch for stats.txt");
         ArrayList<Branch> inputBranch = null;
         try {
-            inputBranch = readBranchInStats(config, true);
+            inputBranch = readBranchInStats(config, isDropBf);
             MyHandler.responseInformation(out, "Finish read branch.");
         } catch (Exception e) {
             MyHandler.responseErrorServer(out, "Problem read file stats.txt with information for reconstructed trees and branches");
@@ -240,23 +240,22 @@ public class TreeReader {
         while(!((s = input.readLine()).contains("\\hline"))) {
             if (s.contains("\\emptyset")) {
                 continue;
-            }
-            if (s.contains("\\bf")) {
-                if (isDropBf) {
-                    continue;
-                } else {
+            } else if (s.contains("\\bf")) {
+                if (!isDropBf) {
                     String st = s.substring(s.indexOf('{') + 4, s.lastIndexOf('}'));
                     String first = st.substring(0, st.indexOf('+')).trim();
                     String second = st.substring(st.indexOf('+') + 1).trim();
                     String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
                     ans.add(new Branch(first, second, Integer.valueOf(weight)));
+
                 }
+            } else {
+                String st = s.substring(s.indexOf('{') + 1, s.lastIndexOf('}'));
+                String first = st.substring(0, st.indexOf('+')).trim();
+                String second = st.substring(st.indexOf('+') + 1).trim();
+                String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
+                ans.add(new Branch(first, second, Integer.valueOf(weight)));
             }
-            String st = s.substring(s.indexOf('{') + 1, s.lastIndexOf('}'));
-            String first = st.substring(0, st.indexOf('+')).trim();
-            String second = st.substring(st.indexOf('+') + 1).trim();
-            String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
-            ans.add(new Branch(first, second, Integer.valueOf(weight)));
         }
 
         return ans;

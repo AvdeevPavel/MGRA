@@ -26,6 +26,7 @@ public class Config {
     private int stage = 0;
     private boolean useTarget = false;
     private String target = null;
+    private boolean useCompletion = false;
     private String completion = null;
     private int widthMonitor = 0;
     private String pathParentFile = "";
@@ -85,8 +86,15 @@ public class Config {
                 target = st.trim();
         }
 
-        if (useTarget) {
-            completion = properties.getProperty("completion");
+        useCompletion = "1".equals(properties.getProperty("useCompletion"));
+        if (useCompletion) {
+            String st = properties.getProperty("completion");
+            if (st == null)
+                completion = st;
+            else if (st.isEmpty())
+                completion = null;
+            else
+                completion = st.trim();
         }
 
         pathParentFile = path;
@@ -215,9 +223,11 @@ public class Config {
         cfgFile.println("colorscheme set19");
         cfgFile.println();
 
-        if (useTarget) {
-            cfgFile.println("[Completion]");
-            cfgFile.println(completion);
+        if (useCompletion) {
+            if (completion != null) {
+                cfgFile.println("[Completion]");
+                cfgFile.println(completion);
+            }
             cfgFile.println();
         }
 

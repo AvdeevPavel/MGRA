@@ -86,7 +86,6 @@ public class Branch implements Comparable<Branch> {
         }
 
         LinkedList<InformationForBranch> informationTrees = new LinkedList<InformationForBranch>();
-
         screeningOfBranches_visit(0, data, new HashSet<Branch>(), input, informationTrees);
 
         boolean[] mark = new boolean[informationTrees.size()];

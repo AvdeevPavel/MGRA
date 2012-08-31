@@ -219,45 +219,42 @@ public class TreeReader {
 
     private static ArrayList<Branch> readBranchInStats(Config config, boolean isDropBf) throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(new File(config.getPathParentFile(), "stats.txt"))));
-        int stage = 0;
+        ArrayList<Branch> ans = new ArrayList<Branch>();
         String s;
 
         while((s = input.readLine()) != null) {
             if (s.contains("Rearrangement characters")) {
-                ++stage;
-                if (stage == config.getStage()) {
-                    break;
+                ans.clear();
+
+                //drop string of table in Latex
+                for(int i = 0; i < 6; ++i) {
+                    input.readLine();
+                }
+
+                while(!((s = input.readLine()).contains("\\hline"))) {
+                    if (s.contains("\\emptyset")) {
+                        continue;
+                    } else if (s.contains("\\bf")) {
+                        if (!isDropBf) {
+                            String st = s.substring(s.indexOf('{') + 4, s.lastIndexOf('}'));
+                            String first = st.substring(0, st.indexOf('+')).trim();
+                            String second = st.substring(st.indexOf('+') + 1).trim();
+                            String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
+                            ans.add(new Branch(first, second, Integer.valueOf(weight)));
+                        }
+                    } else {
+                        String st = s.substring(s.indexOf('{') + 1, s.lastIndexOf('}'));
+                        String first = st.substring(0, st.indexOf('+')).trim();
+                        String second = st.substring(st.indexOf('+') + 1).trim();
+                        String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
+                        ans.add(new Branch(first, second, Integer.valueOf(weight)));
+                    }
                 }
             }
         }
 
-        //drop string of table in Latex
-        for(int i = 0; i < 6; ++i) {
-            input.readLine();
-        }
-
-        ArrayList<Branch> ans = new ArrayList<Branch>();
-        while(!((s = input.readLine()).contains("\\hline"))) {
-            if (s.contains("\\emptyset")) {
-                continue;
-            } else if (s.contains("\\bf")) {
-                if (!isDropBf) {
-                    String st = s.substring(s.indexOf('{') + 4, s.lastIndexOf('}'));
-                    String first = st.substring(0, st.indexOf('+')).trim();
-                    String second = st.substring(st.indexOf('+') + 1).trim();
-                    String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
-                    ans.add(new Branch(first, second, Integer.valueOf(weight)));
-
-                }
-            } else {
-                String st = s.substring(s.indexOf('{') + 1, s.lastIndexOf('}'));
-                String first = st.substring(0, st.indexOf('+')).trim();
-                String second = st.substring(st.indexOf('+') + 1).trim();
-                String weight = s.substring(s.indexOf('=') + 1, s.indexOf('&', s.indexOf('='))).trim();
-                ans.add(new Branch(first, second, Integer.valueOf(weight)));
-            }
-        }
-
+        for(Branch branch: ans)
+            System.out.println(branch);
         return ans;
     }
 

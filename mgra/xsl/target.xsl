@@ -42,6 +42,10 @@ $(document).ready(function(){
     <header> 
 		<h1><p align="center"><a href="http://mgra.bioinf.spbau.ru">MGRA (Multiple Genome Rearrangements and Ancestors) web server, beta version</a></p></h1>
 	</header>
+	<div align="center">
+		<input name="download_cfg_text" type="button" value="Save as input configure file" onclick="window.location.href='mgra.cfg'"/>
+		<input name="download_genome_text" type="button" value="Save as input genome file" onclick="window.location.href='genome.txt'"/>
+	</div>
     <xsl:apply-templates select="genomes/genome"/>	
 	<footer>
 	<hr/>
@@ -55,7 +59,7 @@ $(document).ready(function(){
     <h3>Chromosomes for genome <xsl:value-of select="./name"/></h3>
 	<p id="gen{./name}_bar" align="center"></p>
 	<div id="gen{./name}_info"></div>
-	<div id="button_text_gen_{./name}" align="center">
+	<div align="center">
 		<input name="download_text" type="button" value="Save as text" onclick="window.location.href='{./name}.gen'"/>
 	</div>
 </xsl:template>

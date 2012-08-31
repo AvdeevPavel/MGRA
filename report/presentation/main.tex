@@ -1,0 +1,75 @@
+\documentclass[10pt,pdf,hyperref={unicode}]{beamer}
+\usetheme{Antibes} % Beamer theme v 3.0
+\usecolortheme{blue}
+\usepackage[T2A]{fontenc}       %поддержка кириллицы
+\usepackage[utf8]{inputenc}   %пока бибтех не дружит до конца с юникодом
+\usepackage[english,russian]{babel}     %определение языков в документе
+\usepackage{amssymb,amsmath}    %математика
+
+
+
+%% Выбор шрифтов %%
+\usefonttheme[onlylarge]{structurebold}
+
+% Привычный шрифт для математических формул
+\usefonttheme[onlymath]{serif}
+
+% Более крупный шрифт для подзаголовков титульного листа
+\setbeamerfont{institute}{size=\normalsize}
+
+
+% Если используется последовательное появление пунктов списков на
+% слайде (не злоупотребляйте в слайдах для защиты дипломной работы),
+% чтобы еще непоявившиеся пункты были все-таки немножко видны.
+\setbeamercovered{transparent}
+
+%%% Сокращения %%%
+% Синий цвет выделения
+\setbeamercolor{color1}{bg=blue!60!black,fg=white}
+\newcommand{\celcius}{\,^{\circ}\mathrm{C}}  %градус Цельсия
+\newcommand{\grad}{\,^{\circ}} 
+
+
+\title{MGRA(Multiple Genome Rearrangements and Ancestors) server}
+\author{Авдеев Павел}
+\institute{Algorithmic Biology Lab \\
+    \vspace{0.7cm}
+    Руководитель:  Максим Алексеев \\
+    \vspace{0.7cm}
+}
+\date{
+    Санкт-Петербург\\
+    31 августа 2012г.
+}
+
+\begin{document}
+\begin{frame}
+  \maketitle
+\end{frame}
+
+\begin{frame}
+	\begin{center}
+		\only<1-4>{Здесь должен быть скучный текст.\\} 
+		\only<2-4>{\huge{НО} \\}
+		\only<3-4>{\normalsize{Лучше один раз увидеть, чем один раз услышать} \\}
+		\only<4>{\large{поэтому...} \\}
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Благодарности}
+	\begin{enumerate}
+		\item Максиму Алексееву за терпение и помощь.
+		\item Якову Сироткину
+		\item Лаборатории за уникальную возможность хорошо провести лето.
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Последний слайд}
+	\begin{center}
+		\Huge{\textbf{Спасибо за внимание!}}
+	\end{center}
+\end{frame}
+
+\end{document}
